@@ -26,4 +26,239 @@
   "screens":"tool_tracking,edit_idle_time",
   "access_mode":"read"
   }
+  ,
+  {
+  "id":3,
+   "role_name":"Admin",
+   "role_desc":"Plant Admin",
+   "company_name":"Bill Forge",
+   "plant_name":"Hot Forging MC",
+  "screens":"tool_tracking,edit_idle_time",
+  "access_mode":"read"
+  },
+  {
+  "id":3,
+   "role_name":"Admin",
+   "role_desc":"Plant Admin",
+   "company_name":"Bill Forge",
+   "plant_name":"Hot Forging MC",
+  "screens":"tool_tracking,edit_idle_time",
+  "access_mode":"read"
+  },
+  {
+  "id":3,
+   "role_name":"Admin",
+   "role_desc":"Plant Admin",
+   "company_name":"Bill Forge",
+   "plant_name":"Hot Forging MC",
+  "screens":"tool_tracking,edit_idle_time",
+  "access_mode":"read"
+  },
+  {
+  "id":3,
+   "role_name":"Admin",
+   "role_desc":"Plant Admin",
+   "company_name":"Bill Forge",
+   "plant_name":"Hot Forging MC",
+  "screens":"tool_tracking,edit_idle_time",
+  "access_mode":"read"
+  },
+  {
+  "id":3,
+   "role_name":"Admin",
+   "role_desc":"Plant Admin",
+   "company_name":"Bill Forge",
+   "plant_name":"Hot Forging MC",
+  "screens":"tool_tracking,edit_idle_time",
+  "access_mode":"read"
+  },
+  {
+  "id":3,
+   "role_name":"Admin",
+   "role_desc":"Plant Admin",
+   "company_name":"Bill Forge",
+   "plant_name":"Hot Forging MC",
+  "screens":"tool_tracking,edit_idle_time",
+  "access_mode":"read"
+  },
+  {
+  "id":3,
+   "role_name":"Admin",
+   "role_desc":"Plant Admin",
+   "company_name":"Bill Forge",
+   "plant_name":"Hot Forging MC",
+  "screens":"tool_tracking,edit_idle_time",
+  "access_mode":"read"
+  },
+  {
+  "id":3,
+   "role_name":"Admin",
+   "role_desc":"Plant Admin",
+   "company_name":"Bill Forge",
+   "plant_name":"Hot Forging MC",
+  "screens":"tool_tracking,edit_idle_time",
+  "access_mode":"read"
+  },
+  {
+  "id":3,
+   "role_name":"Admin",
+   "role_desc":"Plant Admin",
+   "company_name":"Bill Forge",
+   "plant_name":"Hot Forging MC",
+  "screens":"tool_tracking,edit_idle_time",
+  "access_mode":"read"
+  },
+  {
+  "id":3,
+   "role_name":"Admin",
+   "role_desc":"Plant Admin",
+   "company_name":"Bill Forge",
+   "plant_name":"Hot Forging MC",
+  "screens":"tool_tracking,edit_idle_time",
+  "access_mode":"read"
+  },
+  {
+  "id":3,
+   "role_name":"Admin",
+   "role_desc":"Plant Admin",
+   "company_name":"Bill Forge",
+   "plant_name":"Hot Forging MC",
+  "screens":"tool_tracking,edit_idle_time",
+  "access_mode":"read"
+  },
+  {
+  "id":3,
+   "role_name":"Admin",
+   "role_desc":"Plant Admin",
+   "company_name":"Bill Forge",
+   "plant_name":"Hot Forging MC",
+  "screens":"tool_tracking,edit_idle_time",
+  "access_mode":"read"
+  },
+  {
+  "id":3,
+   "role_name":"Admin",
+   "role_desc":"Plant Admin",
+   "company_name":"Bill Forge",
+   "plant_name":"Hot Forging MC",
+  "screens":"tool_tracking,edit_idle_time",
+  "access_mode":"read"
+  },
+  {
+  "id":3,
+   "role_name":"Admin",
+   "role_desc":"Plant Admin",
+   "company_name":"Bill Forge",
+   "plant_name":"Hot Forging MC",
+  "screens":"tool_tracking,edit_idle_time",
+  "access_mode":"read"
+  },
+  {
+  "id":3,
+   "role_name":"Admin",
+   "role_desc":"Plant Admin",
+   "company_name":"Bill Forge",
+   "plant_name":"Hot Forging MC",
+  "screens":"tool_tracking,edit_idle_time",
+  "access_mode":"read"
+  },
+  {
+  "id":3,
+   "role_name":"Admin",
+   "role_desc":"Plant Admin",
+   "company_name":"Bill Forge",
+   "plant_name":"Hot Forging MC",
+  "screens":"tool_tracking,edit_idle_time",
+  "access_mode":"read"
+  },
+  {
+  "id":3,
+   "role_name":"Admin",
+   "role_desc":"Plant Admin",
+   "company_name":"Bill Forge",
+   "plant_name":"Hot Forging MC",
+  "screens":"tool_tracking,edit_idle_time",
+  "access_mode":"read"
+  },
+  {
+  "id":3,
+   "role_name":"Admin",
+   "role_desc":"Plant Admin",
+   "company_name":"Bill Forge",
+   "plant_name":"Hot Forging MC",
+  "screens":"tool_tracking,edit_idle_time",
+  "access_mode":"read"
+  },
+  {
+  "id":3,
+   "role_name":"Admin",
+   "role_desc":"Plant Admin",
+   "company_name":"Bill Forge",
+   "plant_name":"Hot Forging MC",
+  "screens":"tool_tracking,edit_idle_time",
+  "access_mode":"read"
+  },
+  {
+  "id":3,
+   "role_name":"Admin",
+   "role_desc":"Plant Admin",
+   "company_name":"Bill Forge",
+   "plant_name":"Hot Forging MC",
+  "screens":"tool_tracking,edit_idle_time",
+  "access_mode":"read"
+  },
+  {
+  "id":3,
+   "role_name":"Admin",
+   "role_desc":"Plant Admin",
+   "company_name":"Bill Forge",
+   "plant_name":"Hot Forging MC",
+  "screens":"tool_tracking,edit_idle_time",
+  "access_mode":"read"
+  },
+  {
+  "id":3,
+   "role_name":"Admin",
+   "role_desc":"Plant Admin",
+   "company_name":"Bill Forge",
+   "plant_name":"Hot Forging MC",
+  "screens":"tool_tracking,edit_idle_time",
+  "access_mode":"read"
+  },
+  {
+  "id":3,
+   "role_name":"Admin",
+   "role_desc":"Plant Admin",
+   "company_name":"Bill Forge",
+   "plant_name":"Hot Forging MC",
+  "screens":"tool_tracking,edit_idle_time",
+  "access_mode":"read"
+  },
+  {
+  "id":3,
+   "role_name":"Admin",
+   "role_desc":"Plant Admin",
+   "company_name":"Bill Forge",
+   "plant_name":"Hot Forging MC",
+  "screens":"tool_tracking,edit_idle_time",
+  "access_mode":"read"
+  },
+  {
+  "id":3,
+   "role_name":"Admin",
+   "role_desc":"Plant Admin",
+   "company_name":"Bill Forge",
+   "plant_name":"Hot Forging MC",
+  "screens":"tool_tracking,edit_idle_time",
+  "access_mode":"read"
+  },
+  {
+  "id":3,
+   "role_name":"Admin",
+   "role_desc":"Plant Admin",
+   "company_name":"Bill Forge",
+   "plant_name":"Hot Forging MC",
+  "screens":"tool_tracking,edit_idle_time",
+  "access_mode":"read"
+  }
 ]

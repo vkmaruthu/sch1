@@ -141,6 +141,26 @@ label{
   font-size: 15px;
 }
 
+.availTextRight{
+  font-size: 15px;
+      margin-bottom: 0px !important;
+}
+.availTextLeft{
+    font-size: 15px;
+    color: #003785;
+    font-weight: bold;
+}
+.timeFontStyle{
+    font-size: 38px;
+    color: #013785;
+    margin-bottom: -8px;
+}
+
+p{
+      font-size: 15px;
+}
+
+
 
 /* **************************************************************************************************** */
 /*==========  Mobile First Method  ==========*/
@@ -196,7 +216,7 @@ label{
       }
 
       .dashMachineImg{
-        margin-left: 31%;
+        margin-left: 40%;
       }
       .statusImg{
         width: 30%;
@@ -275,7 +295,8 @@ label{
         min-height: 50px;
       }
       .dashMachineImg{
-        margin-left: 31%;
+        margin-left: 40%;
+        width: 84%;
       }
       .statusImg{
         width: 32%;

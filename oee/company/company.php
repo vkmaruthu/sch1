@@ -27,15 +27,20 @@ loadTable:function(){
             for(var i=0;i<obj.length;i++){
               globalCompanyData.push({"id":obj.id,"role_name":obj.role_name,"role_desc":obj.role_desc, "company_name":obj.company_name, 
               "plant_name":obj.plant_name, "screens":obj.screens, "access_mode":obj.access_mode});
-            }*/
+            }
+    "scrollX": true,
+            "scrollY": 250,*/
+
+
+
     var DataTableProject = $('#companyTable').DataTable( {
-           "paging":false,
-            "ordering":true,
-            "info":true,
-            "searching":true,         
-            "destroy":true,
-            "scrollX": true,
-            "scrollY": 250,
+            'paging'      : true,
+            'lengthChange': false,
+            'searching'   : true,
+            'ordering'    : true,
+            'info'        : true,
+            'autoWidth'   : false,
+         
             "data":obj,   
             "columns": [
               { data: "id" ,className: "text-left",
@@ -106,6 +111,11 @@ $('.select2').select2();
       $("#updateCompany").hide();
   });
   $("#fromCompany").fadeOut("fast");
+
+
+
+
+
   
 });
 
@@ -213,8 +223,8 @@ $('.select2').select2();
            <hr class="hr-primary"/>  
           </form>
 
-      <div > 
-          <table id="companyTable" class="table table-hover table-bordered table-responsive nowrap" style="font-size: 12px;width:100%;">
+      <div class=""> 
+          <table id="companyTable" class="table table-bordered table-hover table-responsive nowarp" style="font-size: 12px;">
            <thead>
              <tr>
               <th>Action</th>
@@ -227,6 +237,8 @@ $('.select2').select2();
              </tr>
            </thead>
            </table>
+
+
          </div>
       </div>
     </div>
