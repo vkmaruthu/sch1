@@ -40,7 +40,7 @@ loadTable:function(){
             "columns": [
               { data: "id" ,className: "text-left",
                 render: function (data, type, row, meta) {
-                  var c='<button type="button" class="btn btn-success btn-xs" onclick=""><i class="fa fa-check-square-o"></i> View Plant</button>';
+                  var c='<button type="button" class="btn btn-success btn-xs" onclick="tempData.oeecompany.gotoPlants();"><i class="fa fa-check-square-o"></i> View Plant</button>';
                   return c;
                 }
               },
@@ -51,7 +51,7 @@ loadTable:function(){
               { data: "screens"},
               { data: "id" ,className: "text-left",
                 render: function (data, type, row, meta) {
-                  var a='<button type="button" class="btn btn-primary btn-xs" onclick="tempData.oeecompany.editRole('+row.id+');"><i class="fa fa-pencil-square-o"></i> </button>';
+                  var a='<button type="button" class="btn btn-primary btn-xs" onclick="tempData.oeecompany.editCompany('+row.id+');"><i class="fa fa-pencil-square-o"></i> </button>';
                    var b='<button type="button" class="btn btn-danger btn-xs" onclick=""><i class="fa fa-trash"></i> </button>';
                   return a+' '+b;
                 }
@@ -63,7 +63,7 @@ loadTable:function(){
 
     },
 
-    editRole:function (id){
+    editCompany:function (id){
         for(var i=0;i<globalCompanyData.length;i++){
             if(id==globalCompanyData[i].id){
               alert(globalCompanyData[i].id);
@@ -88,6 +88,11 @@ loadTable:function(){
  openPopup:function(){
     $('#moreInfo').modal({show:true});
   },
+
+  gotoPlants:function(){
+	  window.location="plant.php";
+  }
+
 };
 
 $(document).ready(function() {
@@ -152,7 +157,26 @@ $('.select2').select2();
                 </div>
               </div>
             
-              <div class="row" style="margin-top: 10px;">
+              <div class="row" style="margin-top: 1px;">
+                <div class="col-md-6">
+                <label class="control-label col-md-4 col-sm-6 col-xs-12">Contact Person</label>
+                <div class="col-md-6 col-sm-6 col-xs-12">
+                  <input type="text" name="contactPerson" id="contactPerson" onkeyup=""
+                   placeholder="Contact Person" class="form-control" required="true"/>
+                </div>
+                </div>
+
+               <div class="col-md-6">
+                <label class="control-label col-md-4 col-sm-6 col-xs-12">Contact Number</label>
+                <div class="col-md-6 col-sm-6 col-xs-12">
+                  <input type="text" name="contactNumber" id="contactNumber" onkeyup=""
+                   placeholder="Contact Number" class="form-control" required="true"/>
+                </div>
+                </div>
+
+              </div>
+
+              <div class="row" style="margin-top: 1px;">
                 <div class="col-md-6">
                 <label class="control-label col-md-4 col-sm-6 col-xs-12">Address</label>
                 <div class="col-md-6 col-sm-6 col-xs-12">
@@ -161,30 +185,15 @@ $('.select2').select2();
                 </div>
                 
                 <div class="col-md-6">
-                <label class="control-label col-md-4 col-sm-6 col-xs-12">Contact Person</label>
-                <div class="col-md-6 col-sm-6 col-xs-12">
-                  <input type="text" name="contactPerson" id="contactPerson" onkeyup=""
-                   placeholder="Contact Person" class="form-control" required="true"/>
-                </div>
-                </div>
-              </div>
-
-              <div class="row" style="margin-top: 1px;">
-                <div class="col-md-6">
-                <label class="control-label col-md-4 col-sm-6 col-xs-12">Contact Number</label>
-                <div class="col-md-6 col-sm-6 col-xs-12">
-                  <input type="text" name="contactNumber" id="contactNumber" onkeyup=""
-                   placeholder="Contact Number" class="form-control" required="true"/>
-                </div>
-                </div>
-                
-                <div class="col-md-6">
                 <label class="control-label col-md-4 col-sm-6 col-xs-12">File Upload</label>
                 <div class="col-md-6 col-sm-6 col-xs-12">
-                   <button type="button" id="btnFileUpload" onclick="tempData.oeecompany.openPopup();" 
-                    class="btn btn-primary">
-                    <i class="fa fa-upload"></i>&nbsp; File Upload
-                  </button> 
+                   
+                  <input type="file" name="fileUpload" id="fileUpload" class="form-control col-md-12 col-xs-12" onchange=""/>
+                  <span class="pull-right">[ Upload only Image ]  </span>
+                  <div id="size"></div>
+                  <span id="lblError" style="color:red;font-size:13px;"></span>
+                  <span id="success"></span>
+                 
                 </div>
                 </div>
               </div> 
@@ -235,43 +244,6 @@ $('.select2').select2();
   <!-- <div class="control-sidebar-bg"></div> -->
 </div>
 <!-- ./wrapper -->
-
-
-<div id="moreInfo" class="modal fade"  role="dialog" data-keyboard="false" data-backdrop="static">
-  <div class="modal-dialog">
-    <div class="modal-content">
-      <div class="modal-header">
-     <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-     <h4 class="modal-title">Upload Company Image</span></h4>
-      </div>
-      <div class="modal-body">
-        <div id="moreInfoBody">
-            <form id="upload_data" data-parsley-validate class="form-horizontal form-label-left" method="post" name="upload_excel" enctype="multipart/form-data">
-               <input type="hidden" name="comp_idd" id="comp_idd" /> 
-               <div class="row">
-                 <div class="col-md-12 col-sm-12 col-xs-12">
-                  <input type="file" name="fileUpload" id="fileUpload" class="form-control col-md-12 col-xs-12" onchange=""/>
-                  <span class="pull-right">[ Upload only Image ]  </span>
-                  <div id="size"></div>
-                  <span id="lblError" style="color:red;font-size:13px;"></span>
-                  <span id="success"></span>
-                 </div>
-              </div> 
-                <br>
-                <div class="row">
-                <div class="col-md-4 col-sm-3"></div>
-                <div class="col-md-4 col-sm-3 col-xs-6">
-                   <button type="submit" name="import" id="import" class="btn btn-primary" style="width:180px;">Upload</button>
-                </div>
-                </div>    
-            </form>         
-          </div>
-        </div>
-      <div class="modal-footer" style="border-top:none;"></div>
-    </div>
-  </div>
-</div> 
-
 
 </body>
 </html>

@@ -42,12 +42,12 @@ loadTable:function(){
               { data: "role_desc" },
               { data: "company_name"},
               { data: "plant_name" },
-               { data: "id" ,className: "text-left",
+              { data: "plant_name" },
+              { data: "id" ,className: "text-left",
                 render: function (data, type, row, meta) {
                   var a='<button type="button" class="btn btn-primary btn-xs" onclick="tempData.oeecompany.editUser('+row.id+');"><i class="fa fa-pencil-square-o"></i> </button>';
                    var b='<button type="button" class="btn btn-danger btn-xs" onclick=""><i class="fa fa-trash"></i> </button>';
                   return a+' '+b;
-                  return a;
                 }
               },
                ]
@@ -142,7 +142,7 @@ $('.select2').select2();
                 </div>
               </div>
             
-              <div class="row" style="margin-top: 10px;">
+              <div class="row" style="margin-top: 1px;">
                 <div class="col-md-6">
                 <label class="control-label col-md-4 col-sm-6 col-xs-12">Email Id</label>
                 <div class="col-md-6 col-sm-6 col-xs-12">
@@ -154,38 +154,29 @@ $('.select2').select2();
                <div class="col-md-6">
                 <label class="control-label col-md-4 col-sm-6 col-xs-12">Password</label>
                 <div class="col-md-6 col-sm-6 col-xs-12">
-                  <input type="text" name="emailId" id="emailId" onkeyup=""
-                   placeholder="Email Id" class="form-control" required="true"/>
+                  <input type="password" name="password" id="password" onkeyup=""
+                   placeholder="Password" class="form-control" required="true"/>
                 </div>
                 </div>
               </div>
 
               <div class="row" style="margin-top: 1px;">
                 <div class="col-md-6">
-                <label class="control-label col-md-4 col-sm-6 col-xs-12">Screen Access Permission</label>
+                <label class="control-label col-md-4 col-sm-6 col-xs-12">Contact Number</label>
                 <div class="col-md-6 col-sm-6 col-xs-12">
-                  <div class="form-group">
-                    <select class="form-control select2" multiple="multiple" data-placeholder="Select" style="width: 100%;" id="screen">
-                      <option value="1">Dashboard</option>
-                      <option value="2">Reports</option>
-                      <option value="3">Edit Idle Time</option>
-                      <option value="4">Parts</option>
-                      <option value="5">Tools</option>
-                      <option value="6">Shift config</option>
-                      <option value="7">OEE Config</option>
-                    </select>
-                  </div>
+                  <input type="text" name="contactNumber" id="contactNumber" onkeyup=""
+                   placeholder="Contact Number" class="form-control" required="true"/>
                 </div>
                 </div>
                 
                 <div class="col-md-6">
-                <label class="control-label col-md-4 col-sm-6 col-xs-12">Screen Access Mode</label>
+                <label class="control-label col-md-4 col-sm-6 col-xs-12">User Role</label>
                 <div class="col-md-6 col-sm-6 col-xs-12">
                   <div class="form-group">
-                    <select class="form-control select2" style="width: 100%;" id="accessMode">
+                    <select class="form-control select2" style="width: 100%;" id="userRole">
                       <option selected="selected">Select</option>
-                      <option value="1">Read</option>
-                      <option value="2">Read/Write</option>
+                      <option value="1">Admin</option>
+                      <option value="2">User</option>
                     </select>
                   </div>
                 </div>
