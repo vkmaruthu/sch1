@@ -40,7 +40,6 @@ loadTable:function(){
             'ordering'    : true,
             'info'        : true,
             'autoWidth'   : false,
-         
             "data":obj,   
             "columns": [
               { data: "id" ,className: "text-left",

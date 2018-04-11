@@ -7,10 +7,8 @@ if(tempData===null||tempData===undefined){
    tempData={};
 }
 
-var globalRoleData=new Array();
-var myMap = new Map();
-  
-tempData.oeeroles=
+var globalWCData=new Array();
+tempData.oeeplant=
 {
 loadTable:function(){
     debugger;
@@ -22,26 +20,20 @@ loadTable:function(){
             async: false,
             dataType: 'json',
             success: function(obj){
-            globalRoleData=obj;
-            /*
-            for(var i=0;i<obj.length;i++){
-              globalRoleData.push({"id":obj.id,"role_name":obj.role_name,"role_desc":obj.role_desc, "company_name":obj.company_name, 
-              "plant_name":obj.plant_name, "screens":obj.screens, "access_mode":obj.access_mode});
-            }*/
-    var DataTableProject = $('#roleTable').DataTable( {
-           "paging":false,
-            "ordering":true,
-            "info":true,
-            "searching":true,         
-            "destroy":true,
-            "scrollX": true,
-            "scrollY": 250,
+            globalWCData=obj;
+    var DataTableProject = $('#plantTable').DataTable( {
+        	'paging'      : true,
+            'lengthChange': false,
+            'searching'   : true,
+            'ordering'    : true,
+            'info'        : true,
+            'autoWidth'   : false,
             "data":obj,   
             "columns": [
               { data: "id" ,className: "text-left",
                 render: function (data, type, row, meta) {
-                  var a='<button type="button" class="btn btn-primary btn-xs" onclick="tempData.oeeroles.editRole('+row.id+');"><i class="fa fa-pencil-square-o"></i> Edit</button>';
-                  return a;
+                  var c='<button type="button" class="btn btn-success btn-xs" onclick="tempData.oeeplant.gotoWorkcenter();"><i class="fa fa-check-square-o"></i> View Plant</button>';
+                  return c;
                 }
               },
               { data: "role_name" },
@@ -49,7 +41,13 @@ loadTable:function(){
               { data: "company_name"},
               { data: "plant_name" },
               { data: "screens"},
-              { data: "access_mode" },
+              { data: "id" ,className: "text-left",
+                render: function (data, type, row, meta) {
+                  var a='<button type="button" class="btn btn-primary btn-xs" onclick="tempData.oeeplant.editPlant('+row.id+');"><i class="fa fa-pencil-square-o"></i> </button>';
+                   var b='<button type="button" class="btn btn-danger btn-xs" onclick=""><i class="fa fa-trash"></i> </button>';
+                  return a+' '+b;
+                }
+              },
                ]
            } );   
           }
@@ -57,40 +55,44 @@ loadTable:function(){
 
     },
 
-    editRole:function (id){
-        for(var i=0;i<globalRoleData.length;i++){
-            if(id==globalRoleData[i].id){
-              alert(globalRoleData[i].id);
+    editPlant:function (id){
+        for(var i=0;i<globalWCData.length;i++){
+            if(id==globalWCData[i].id){
+              alert(globalWCData[i].id);
 
-              $('#roleName').val(globalRoleData[i].role_name);
-              $('#roleDesc').val(globalRoleData[i].role_desc);
-              $("#companyName").val("1").change();
-
-              $('#plantName').val("2").change();
-              $('#accessMode').val("2").change();
-
-              $('#screen').val([2,3,5]).change();
-
+              $('#plantCode').val(globalWCData[i].role_name);
+              $('#plantDesc').val(globalWCData[i].role_desc);
+              $('#address').val(globalWCData[i].screens);
+              $('#contactPerson').val(globalWCData[i].access_mode);
+              $('#contactNumber').val(globalWCData[i].screens);
               break;
             }
-
-          $("#fromRoles").fadeIn("fast");
         }
-           /*   globalRoleData.push({"id":obj.id,"role_name":obj.role_name,"role_desc":obj.role_desc, "company_name":obj.company_name, 
+        $("#fromPlant").fadeIn("fast");
+        $("#addPlant").hide();
+        $("#updatePlant").show();
+           /*   globalWCData.push({"id":obj.id,"role_name":obj.role_name,"role_desc":obj.role_desc, "company_name":obj.company_name, 
               "plant_name":obj.plant_name, "screens":obj.screens, "access_mode":obj.access_mode});*/
             
-    }
+    },
+
+  gotoWorkcenter:function(){
+	  window.location="workcenter.php";
+  }
+
 };
 
 $(document).ready(function() {
 debugger;
-$('.select2').select2();
 
-  tempData.oeeroles.loadTable();
-  $('#btnAddRoles').click(function(){
-    $("#fromRoles").fadeToggle("slow");
+$('.select2').select2();
+  tempData.oeeplant.loadTable();
+  $('#createPlant').click(function(){
+    $("#fromPlant").fadeToggle("slow");
+      $("#addPlant").show();
+      $("#updatePlant").hide();
   });
-  $("#fromRoles").fadeOut("fast");
+  $("#fromPlant").fadeOut("fast");
   
 });
 
@@ -100,17 +102,17 @@ $('.select2').select2();
     <section class="content">
       <div class="commonPageHead">
         <div class="col-md-10 col-sm-12 col-xs-10 pull-left headerTitle" >
-        <h3 style="margin-top: 2px;">User Configuration<h3>
+        <h3 style="margin-top: 2px;">Plant<h3>
         </div>
       </div>
 
     <div class="panel panel-default">
       <div class="panel-heading "> 
         <div class="panel-title pull-left">
-              <p style="margin: 0px; font-size: 18px; font-weight: 600;">Create Roles</p>
+        <a href="company.php" class="btn btn-info btn-xs"><i class="fa fa-reply"></i> Company</a>
         </div>
-        <button type="button" id="btnAddRoles" class="btn btn-sm btn-primary pull-right" style="margin-top: -3px;margin-bottom: -2px;">
-              <i class="fa fa-pencil-square-o"></i>&nbsp; Create Roles
+        <button type="button" id="createPlant" class="btn btn-sm btn-primary pull-right" style="margin-top: -3px;margin-bottom: -2px;">
+              <i class="fa fa-pencil-square-o"></i>&nbsp; Create Plant
         </button>
           <div class="clearfix"></div>
       </div>   
@@ -120,115 +122,95 @@ $('.select2').select2();
           <div id="status" class="alert alert-success" style="color:green;text-align:center;font-weight:600;display:none;"></div>
           <div id="error" class="alert alert-danger" style="color:white;text-align:center;font-weight:600;display:none;"></div>
 
-        <form class="" id="fromRoles">     
+        <form class="" id="fromPlant">     
           <input type="hidden" name="comp_id" id="comp_id"/> 
           <input type="hidden" name="plant_id" id="plant_id"/> 
             <div class="form-group">
              <div class="row">
                 <div class="col-md-6">
-                  <label class="control-label col-md-4 col-sm-6 col-xs-12">Role Name</label>
+                  <label class="control-label col-md-4 col-sm-6 col-xs-12">Plant Code</label>
                   <div class="col-md-6 col-sm-6 col-xs-12">
-                    <input type="text" name="roleName" id="roleName" onkeyup=""
-                     placeholder="Role Name" maxlength="10" class="form-control" required="true" autofocus/>
+                    <input type="text" name="plantCode" id="plantCode" onkeyup=""
+                     placeholder="Plant Code" maxlength="10" class="form-control" required="true" autofocus/>
                   </div>
                 </div>
                 
                 <div class="col-md-6">
-                <label class="control-label col-md-4 col-sm-6 col-xs-12">Description</label>
+                <label class="control-label col-md-4 col-sm-6 col-xs-12">Plant Description</label>
                 <div class="col-md-6 col-sm-6 col-xs-12">
-                  <input type="text" name="roleDesc" id="roleDesc" onkeyup=""
-                   placeholder="Role Description" class="form-control" required="true"/>
+                  <input type="text" name="plantDesc" id="plantDesc" onkeyup=""
+                   placeholder="Plant Description" class="form-control" required="true"/>
                 </div>
                 </div>
               </div>
             
-              <div class="row" style="margin-top: 10px;">
+              <div class="row" style="margin-top: 1px;">
                 <div class="col-md-6">
-                <label class="control-label col-md-4 col-sm-6 col-xs-12">Company Name</label>
+                <label class="control-label col-md-4 col-sm-6 col-xs-12">Contact Person</label>
                 <div class="col-md-6 col-sm-6 col-xs-12">
-                  <div class="form-group">
-                    <select class="form-control select2" style="width: 100%;" id="companyName">
-                      <option selected="selected">Select Company</option>
-                       <option value="1">Bill Forge</option>
-                       <option value="2">MillTech</option>
-                    </select>
-                  </div>
+                  <input type="text" name="contactPerson" id="contactPerson" onkeyup=""
+                   placeholder="Contact Person" class="form-control" required="true"/>
                 </div>
                 </div>
-                
-                <div class="col-md-6">
-                <label class="control-label col-md-4 col-sm-6 col-xs-12">Plant Name</label>
+
+               <div class="col-md-6">
+                <label class="control-label col-md-4 col-sm-6 col-xs-12">Contact Number</label>
                 <div class="col-md-6 col-sm-6 col-xs-12">
-                  <div class="form-group">
-                    <select class="form-control select2" style="width: 100%;" id="plantName">
-                      <option selected="selected">Select Plant</option>
-                      <option value="1">Hot Forging MC.</option>
-                      <option value="2">MillTech</option>
-                    </select>
-                  </div>
+                  <input type="text" name="contactNumber" id="contactNumber" onkeyup=""
+                   placeholder="Contact Number" class="form-control" required="true"/>
                 </div>
                 </div>
+
               </div>
 
               <div class="row" style="margin-top: 1px;">
                 <div class="col-md-6">
-                <label class="control-label col-md-4 col-sm-6 col-xs-12">Screen Access Permission</label>
+                <label class="control-label col-md-4 col-sm-6 col-xs-12">Address</label>
                 <div class="col-md-6 col-sm-6 col-xs-12">
-                  <div class="form-group">
-                    <select class="form-control select2" multiple="multiple" data-placeholder="Select" style="width: 100%;" id="screen">
-                      <option value="1">Dashboard</option>
-                      <option value="2">Reports</option>
-                      <option value="3">Edit Idle Time</option>
-                      <option value="4">Parts</option>
-                      <option value="5">Tools</option>
-                      <option value="6">Shift config</option>
-                      <option value="7">OEE Config</option>
-                    </select>
-                  </div>
+                  <textarea class="form-control" placeholder="Address" rows="2" id="address" name="address"></textarea>
                 </div>
                 </div>
                 
                 <div class="col-md-6">
-                <label class="control-label col-md-4 col-sm-6 col-xs-12">Screen Access Mode</label>
+                <label class="control-label col-md-4 col-sm-6 col-xs-12">File Upload</label>
                 <div class="col-md-6 col-sm-6 col-xs-12">
-                  <div class="form-group">
-                    <select class="form-control select2" style="width: 100%;" id="accessMode">
-                      <option selected="selected">Select</option>
-                      <option value="1">Read</option>
-                      <option value="2">Read/Write</option>
-                    </select>
-                  </div>
+                   
+                  <input type="file" name="fileUpload" id="fileUpload" class="form-control col-md-12 col-xs-12" onchange=""/>
+                  <span class="pull-right">[ Upload only Image ]  </span>
+                  <div id="size"></div>
+                  <span id="lblError" style="color:red;font-size:13px;"></span>
+                  <span id="success"></span>
+                 
                 </div>
                 </div>
               </div> 
 
               <div class="row">
                    <div class="col-md-12 text-center">
-                    <button type="button" id="addRole" onclick="" 
+                    <button type="button" id="addPlant" onclick="" 
                       class="btn btn-sm btn-success">
-                      <i class="fa fa-floppy-o"></i>&nbsp; Add Role 
+                      <i class="fa fa-floppy-o"></i>&nbsp; Add Plant 
                     </button>
-                    <button type="button" id="updateRole" onclick=""  class="btn btn-sm btn-success" style="display:none;">
-                      <i class="fa fa-floppy-o"></i>&nbsp; Update Role
+                    <button type="button" id="updatePlant" onclick=""  class="btn btn-sm btn-success" style="display:none;">
+                      <i class="fa fa-floppy-o"></i>&nbsp; Update Plant
                     </button>
                    </div>
               </div>
             </div>  
- <hr class="hr-primary"/>  
+           <hr class="hr-primary"/>  
           </form>
 
-
       <div > 
-          <table id="roleTable" class="table table-hover table-bordered table-responsive nowrap" style="font-size: 12px;width:100%;">
+          <table id="plantTable" class="table table-hover table-bordered table-responsive nowrap" style="font-size: 12px;width:100%;">
            <thead>
              <tr>
-              <th>Action</th> 
-              <th>Role Name</th>
-              <th>Description</th>
-              <th>Company Name</th>
-              <th>Plant Name</th>
-              <th>Access Permissions for Screens</th>
-              <th>Access Mode</th>
+              <th>Action</th>
+              <th>Plant Code</th> 
+              <th>Plant Descreption</th>
+              <th>Address</th>
+              <th>Contact Person</th>
+              <th>Contact Number</th>
+              <th>Action</th>
              </tr>
            </thead>
            </table>

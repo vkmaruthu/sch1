@@ -24,18 +24,17 @@ loadTable:function(){
             success: function(obj){
             globalPlantData=obj;
     var DataTableProject = $('#plantTable').DataTable( {
-           "paging":false,
-            "ordering":true,
-            "info":true,
-            "searching":true,         
-            "destroy":true,
-            "scrollX": true,
-            "scrollY": 250,
+            'paging'      : true,
+            'lengthChange': false,
+            'searching'   : true,
+            'ordering'    : true,
+            'info'        : true,
+            'autoWidth'   : false,
             "data":obj,   
             "columns": [
               { data: "id" ,className: "text-left",
                 render: function (data, type, row, meta) {
-                  var c='<button type="button" class="btn btn-success btn-xs" onclick="tempData.oeeplant.gotoWorkcenter();"><i class="fa fa-check-square-o"></i> View Plant</button>';
+                  var c='<button type="button" class="btn btn-success btn-xs" onclick="tempData.oeeplant.gotoWorkcenter();"><i class="fa fa-check-square-o"></i> View Work Center</button>';
                   return c;
                 }
               },
@@ -63,24 +62,24 @@ loadTable:function(){
             if(id==globalPlantData[i].id){
               alert(globalPlantData[i].id);
 
-              $('#companyCode').val(globalPlantData[i].role_name);
-              $('#companyDesc').val(globalPlantData[i].role_desc);
+              $('#plantCode').val(globalPlantData[i].role_name);
+              $('#plantDesc').val(globalPlantData[i].role_desc);
               $('#address').val(globalPlantData[i].screens);
               $('#contactPerson').val(globalPlantData[i].access_mode);
               $('#contactNumber').val(globalPlantData[i].screens);
               break;
             }
         }
-        $("#fromCompany").fadeIn("fast");
-        $("#addCompany").hide();
-        $("#updateCompany").show();
+        $("#fromPlant").fadeIn("fast");
+        $("#addPlant").hide();
+        $("#updatePlant").show();
            /*   globalPlantData.push({"id":obj.id,"role_name":obj.role_name,"role_desc":obj.role_desc, "company_name":obj.company_name, 
               "plant_name":obj.plant_name, "screens":obj.screens, "access_mode":obj.access_mode});*/
             
     },
 
   gotoWorkcenter:function(){
-	  window.location="plant.php";
+	  window.location="workcenter.php";
   }
 
 };
@@ -91,11 +90,11 @@ debugger;
 $('.select2').select2();
   tempData.oeeplant.loadTable();
   $('#createPlant').click(function(){
-    $("#fromCompany").fadeToggle("slow");
-      $("#addCompany").show();
-      $("#updateCompany").hide();
+    $("#fromPlant").fadeToggle("slow");
+      $("#addPlant").show();
+      $("#updatePlant").hide();
   });
-  $("#fromCompany").fadeOut("fast");
+  $("#fromPlant").fadeOut("fast");
   
 });
 
@@ -125,24 +124,24 @@ $('.select2').select2();
           <div id="status" class="alert alert-success" style="color:green;text-align:center;font-weight:600;display:none;"></div>
           <div id="error" class="alert alert-danger" style="color:white;text-align:center;font-weight:600;display:none;"></div>
 
-        <form class="" id="fromCompany">     
+        <form class="" id="fromPlant">     
           <input type="hidden" name="comp_id" id="comp_id"/> 
           <input type="hidden" name="plant_id" id="plant_id"/> 
             <div class="form-group">
              <div class="row">
                 <div class="col-md-6">
-                  <label class="control-label col-md-4 col-sm-6 col-xs-12">Company Code</label>
+                  <label class="control-label col-md-4 col-sm-6 col-xs-12">Plant Code</label>
                   <div class="col-md-6 col-sm-6 col-xs-12">
-                    <input type="text" name="companyCode" id="companyCode" onkeyup=""
-                     placeholder="Company Code" maxlength="10" class="form-control" required="true" autofocus/>
+                    <input type="text" name="plantCode" id="plantCode" onkeyup=""
+                     placeholder="Plant Code" maxlength="10" class="form-control" required="true" autofocus/>
                   </div>
                 </div>
                 
                 <div class="col-md-6">
-                <label class="control-label col-md-4 col-sm-6 col-xs-12">Company Description</label>
+                <label class="control-label col-md-4 col-sm-6 col-xs-12">Plant Description</label>
                 <div class="col-md-6 col-sm-6 col-xs-12">
-                  <input type="text" name="companyDesc" id="companyDesc" onkeyup=""
-                   placeholder="Company Description" class="form-control" required="true"/>
+                  <input type="text" name="plantDesc" id="plantDesc" onkeyup=""
+                   placeholder="Plant Description" class="form-control" required="true"/>
                 </div>
                 </div>
               </div>
@@ -190,12 +189,12 @@ $('.select2').select2();
 
               <div class="row">
                    <div class="col-md-12 text-center">
-                    <button type="button" id="addCompany" onclick="" 
+                    <button type="button" id="addPlant" onclick="" 
                       class="btn btn-sm btn-success">
-                      <i class="fa fa-floppy-o"></i>&nbsp; Add Company 
+                      <i class="fa fa-floppy-o"></i>&nbsp; Add Plant 
                     </button>
-                    <button type="button" id="updateCompany" onclick=""  class="btn btn-sm btn-success" style="display:none;">
-                      <i class="fa fa-floppy-o"></i>&nbsp; Update Company
+                    <button type="button" id="updatePlant" onclick=""  class="btn btn-sm btn-success" style="display:none;">
+                      <i class="fa fa-floppy-o"></i>&nbsp; Update Plant
                     </button>
                    </div>
               </div>
@@ -208,8 +207,8 @@ $('.select2').select2();
            <thead>
              <tr>
               <th>Action</th>
-              <th>Comapany Code</th> 
-              <th>Company Descreption</th>
+              <th>Plant Code</th> 
+              <th>Plant Descreption</th>
               <th>Address</th>
               <th>Contact Person</th>
               <th>Contact Number</th>
