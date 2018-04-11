@@ -90,7 +90,7 @@ debugger;
 
 $('.select2').select2();
   tempData.oeeplant.loadTable();
-  $('#createCompany').click(function(){
+  $('#createPlant').click(function(){
     $("#fromCompany").fadeToggle("slow");
       $("#addCompany").show();
       $("#updateCompany").hide();
@@ -112,10 +112,10 @@ $('.select2').select2();
     <div class="panel panel-default">
       <div class="panel-heading "> 
         <div class="panel-title pull-left">
-              <p style="margin: 0px; font-size: 18px; font-weight: 600;">Create Company</p>
+        <a href="company.php" class="btn btn-info btn-xs"><i class="fa fa-reply"></i> Company</a>
         </div>
-        <button type="button" id="createCompany" class="btn btn-sm btn-primary pull-right" style="margin-top: -3px;margin-bottom: -2px;">
-              <i class="fa fa-pencil-square-o"></i>&nbsp; Create Company
+        <button type="button" id="createPlant" class="btn btn-sm btn-primary pull-right" style="margin-top: -3px;margin-bottom: -2px;">
+              <i class="fa fa-pencil-square-o"></i>&nbsp; Create Plant
         </button>
           <div class="clearfix"></div>
       </div>   

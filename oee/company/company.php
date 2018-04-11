@@ -122,7 +122,7 @@ $('.select2').select2();
     <div class="panel panel-default">
       <div class="panel-heading "> 
         <div class="panel-title pull-left">
-              <p style="margin: 0px; font-size: 18px; font-weight: 600;">Create Company</p>
+              
         </div>
         <button type="button" id="createCompany" class="btn btn-sm btn-primary pull-right" style="margin-top: -3px;margin-bottom: -2px;">
               <i class="fa fa-pencil-square-o"></i>&nbsp; Create Company
