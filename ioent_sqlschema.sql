@@ -27,14 +27,14 @@ DROP TABLE IF EXISTS `ioentdb_sfs`.`sfs_company` ;
 
 CREATE TABLE IF NOT EXISTS `ioentdb_sfs`.`sfs_company` (
   `id` INT(11) NOT NULL AUTO_INCREMENT,
-  `comp_code` VARCHAR(4) NULL DEFAULT NULL,
-  `comp_desc` VARCHAR(40) NULL DEFAULT NULL,
+  `code` VARCHAR(4) NULL DEFAULT NULL,
+  `descp` VARCHAR(40) NULL DEFAULT NULL,
   `address` TEXT NULL DEFAULT NULL,
   `contact_person` VARCHAR(40) NULL DEFAULT NULL,
   `contact_number` VARCHAR(20) NULL DEFAULT NULL,
   `image_file_name` TEXT NOT NULL,
   PRIMARY KEY (`id`),
-  UNIQUE INDEX `company` (`comp_code` ASC))
+  UNIQUE INDEX `company` (`code` ASC))
 ENGINE = InnoDB
 DEFAULT CHARACTER SET = latin1;
 
@@ -132,8 +132,8 @@ DROP TABLE IF EXISTS `ioentdb_sfs`.`sfs_plant` ;
 
 CREATE TABLE IF NOT EXISTS `ioentdb_sfs`.`sfs_plant` (
   `id` INT(11) NOT NULL AUTO_INCREMENT,
-  `plant_code` VARCHAR(8) NOT NULL,
-  `plant_desc` VARCHAR(30) NOT NULL,
+  `code` VARCHAR(8) NOT NULL,
+  `descp` VARCHAR(30) NOT NULL,
   `address` TEXT NULL DEFAULT NULL,
   `contact_person` VARCHAR(40) NULL DEFAULT NULL,
   `contact_number` VARCHAR(20) NULL DEFAULT NULL,
@@ -142,7 +142,7 @@ CREATE TABLE IF NOT EXISTS `ioentdb_sfs`.`sfs_plant` (
   `image_file_name` TEXT NOT NULL,
   `comp_id` INT(11) NOT NULL,
   PRIMARY KEY (`id`, `comp_id`),
-  UNIQUE INDEX `comp_id` (`plant_code` ASC),
+  UNIQUE INDEX `comp_id` (`code` ASC),
   INDEX `fk_sfs_plant_details_sfs_comp_details1_idx` (`comp_id` ASC),
   CONSTRAINT `fk_sfs_plant_details_sfs_comp_details1`
     FOREIGN KEY (`comp_id`)
@@ -160,14 +160,14 @@ DROP TABLE IF EXISTS `ioentdb_sfs`.`sfs_workcenter` ;
 
 CREATE TABLE IF NOT EXISTS `ioentdb_sfs`.`sfs_workcenter` (
   `id` INT(11) NOT NULL AUTO_INCREMENT,
-  `wc_code` VARCHAR(8) NULL DEFAULT NULL,
-  `wc_desc` VARCHAR(40) NULL DEFAULT NULL,
+  `code` VARCHAR(8) NULL DEFAULT NULL,
+  `descp` VARCHAR(40) NULL DEFAULT NULL,
   `contact_person` VARCHAR(40) NULL DEFAULT NULL,
   `contact_number` VARCHAR(20) NULL DEFAULT NULL,
   `image_file_name` TEXT NOT NULL,
   `plant_id` INT(11) NOT NULL,
   PRIMARY KEY (`id`, `plant_id`),
-  UNIQUE INDEX `plant_id` (`wc_code` ASC),
+  UNIQUE INDEX `plant_id` (`code` ASC),
   INDEX `fk_sfs_unit_details_sfs_plant_details1_idx` (`plant_id` ASC),
   CONSTRAINT `fk_sfs_unit_details_sfs_plant_details1`
     FOREIGN KEY (`plant_id`)
@@ -204,11 +204,11 @@ CREATE TABLE IF NOT EXISTS `ioentdb_sfs`.`sfs_equipment` (
   `id` INT NOT NULL AUTO_INCREMENT,
   `eq_code` VARCHAR(45) NOT NULL,
   `eq_desc` VARCHAR(30) NULL DEFAULT NULL,
-  `eq_protocol` INT(11) NULL,
+  `eq_protocol` VARCHAR(11) NULL,
   `wc_id` INT(11) NOT NULL,
   `order_id` INT(11) NULL DEFAULT '0',
-  `equipment_type_id` INT NOT NULL,
-  `equipment_model_id` INT NOT NULL,
+  `eq_type_id` INT NOT NULL,
+  `eq_model_id` INT NOT NULL,
   `conn_state` INT(11) NULL DEFAULT '0',
   `reason_code_id` INT NOT NULL,
   `reason_code_arr` VARCHAR(100) NULL DEFAULT '0',
@@ -225,15 +225,16 @@ CREATE TABLE IF NOT EXISTS `ioentdb_sfs`.`sfs_equipment` (
   `cur_date_time` DATETIME NULL DEFAULT NULL,
   `maint_alert_sent` TINYINT(1) NOT NULL DEFAULT '0',
   `image_file_name` TEXT NULL DEFAULT NULL,
-  PRIMARY KEY (`eq_code`, `wc_id`, `equipment_type_id`, `equipment_model_id`, `reason_code_id`),
-  INDEX `fk_sfs_equipment_sfs_equipment_type1_idx` (`equipment_type_id` ASC),
+  `mac_id` VARCHAR(20) NULL,
+  PRIMARY KEY (`eq_code`, `wc_id`, `eq_type_id`, `eq_model_id`, `reason_code_id`),
+  INDEX `fk_sfs_equipment_sfs_equipment_type1_idx` (`eq_type_id` ASC),
   INDEX `fk_sfs_equipment_sfs_reason_code1_idx` (`reason_code_id` ASC),
   INDEX `fk_sfs_equipment_sfs_workcenter1_idx` (`wc_id` ASC),
   UNIQUE INDEX `eq_code_UNIQUE` (`eq_code` ASC),
-  INDEX `fk_sfs_equipment_sfs_equipment_model1_idx` (`equipment_model_id` ASC),
+  INDEX `fk_sfs_equipment_sfs_equipment_model1_idx` (`eq_model_id` ASC),
   UNIQUE INDEX `id_UNIQUE` (`id` ASC),
   CONSTRAINT `fk_sfs_equipment_sfs_equipment_type1`
-    FOREIGN KEY (`equipment_type_id`)
+    FOREIGN KEY (`eq_type_id`)
     REFERENCES `ioentdb_sfs`.`sfs_equipment_type` (`id`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION,
@@ -248,7 +249,7 @@ CREATE TABLE IF NOT EXISTS `ioentdb_sfs`.`sfs_equipment` (
     ON DELETE NO ACTION
     ON UPDATE NO ACTION,
   CONSTRAINT `fk_sfs_equipment_sfs_equipment_model1`
-    FOREIGN KEY (`equipment_model_id`)
+    FOREIGN KEY (`eq_model_id`)
     REFERENCES `ioentdb_sfs`.`sfs_equipment_model` (`id`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION)
