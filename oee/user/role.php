@@ -23,19 +23,13 @@ loadTable:function(){
             dataType: 'json',
             success: function(obj){
             globalRoleData=obj;
-            /*
-            for(var i=0;i<obj.length;i++){
-              globalRoleData.push({"id":obj.id,"role_name":obj.role_name,"role_desc":obj.role_desc, "company_name":obj.company_name, 
-              "plant_name":obj.plant_name, "screens":obj.screens, "access_mode":obj.access_mode});
-            }*/
     var DataTableProject = $('#roleTable').DataTable( {
-           "paging":false,
-            "ordering":true,
-            "info":true,
-            "searching":true,         
-            "destroy":true,
-            "scrollX": true,
-            "scrollY": 250,
+            'paging'      : true,
+            'lengthChange': false,
+            'searching'   : true,
+            'ordering'    : true,
+            'info'        : true,
+            'autoWidth'   : false,
             "data":obj,   
             "columns": [
               { data: "role_name" },
@@ -46,8 +40,9 @@ loadTable:function(){
               { data: "access_mode" },
                { data: "id" ,className: "text-left",
                 render: function (data, type, row, meta) {
-                  var a='<button type="button" class="btn btn-primary btn-xs" onclick="tempData.oeeroles.editRole('+row.id+');"><i class="fa fa-pencil-square-o"></i> Edit</button>';
-                  return a;
+                    var a='<button type="button" class="btn btn-primary btn-xs" onclick="tempData.oeecompany.editRole('+row.id+');"><i class="fa fa-pencil-square-o"></i> </button>';
+                    var b='<button type="button" class="btn btn-danger btn-xs" onclick=""><i class="fa fa-trash"></i> </button>';
+                   return a+' '+b;
                 }
               },
                ]
@@ -217,9 +212,8 @@ $('.select2').select2();
  <hr class="hr-primary"/>  
           </form>
 
-
-      <div > 
-          <table id="roleTable" class="table table-hover table-bordered table-responsive nowrap" style="font-size: 12px;width:100%;">
+      <div class="table-responsive"> 
+          <table id="roleTable" class="table table-hover table-bordered nowrap" style="font-size: 12px;width:100%;">
            <thead>
              <tr>
               <th>Role Name</th>
@@ -249,6 +243,5 @@ $('.select2').select2();
   <!-- <div class="control-sidebar-bg"></div> -->
 </div>
 <!-- ./wrapper -->
-
 </body>
 </html>

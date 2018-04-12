@@ -28,6 +28,9 @@
   <!-- AdminLTE Skins. Choose a skin from the css/skins
        folder instead of downloading all of them to reduce the load. -->
   <link rel="stylesheet" href="../../dist/css/skins/_all-skins.css">
+  
+   <!-- Choose color  -->
+  <link rel="stylesheet" href="../common/css/spectrum.css">
 
 <style type="text/css">
   /* Let's get this party started */

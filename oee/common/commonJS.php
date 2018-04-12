@@ -46,3 +46,7 @@
 
 <!-- Select2 -->
 <script src="../../bower_components/select2/dist/js/select2.full.min.js"></script>
+
+<!-- Color Picker -->
+<script src="../common/js/spectrum.js"></script>
+
