@@ -8,7 +8,7 @@ if(tempData===null||tempData===undefined){
 }
 
 var globalWCData=new Array();
-tempData.oeeplant=
+tempData.oeewc=
 {
 loadTable:function(){
     debugger;
@@ -21,7 +21,7 @@ loadTable:function(){
             dataType: 'json',
             success: function(obj){
             globalWCData=obj;
-    var DataTableProject = $('#plantTable').DataTable( {
+    var DataTableProject = $('#wcTable').DataTable( {
         	'paging'      : true,
             'lengthChange': false,
             'searching'   : true,
@@ -32,7 +32,7 @@ loadTable:function(){
             "columns": [
               { data: "id" ,className: "text-left",
                 render: function (data, type, row, meta) {
-                  var c='<button type="button" class="btn btn-success btn-xs" onclick="tempData.oeeplant.gotoWorkcenter();"><i class="fa fa-check-square-o"></i> View Plant</button>';
+                  var c='<button type="button" class="btn btn-success btn-xs" onclick="tempData.oeewc.gotoEquipment();"><i class="fa fa-check-square-o"></i> View Equipment</button>';
                   return c;
                 }
               },
@@ -40,10 +40,9 @@ loadTable:function(){
               { data: "role_desc" },
               { data: "company_name"},
               { data: "plant_name" },
-              { data: "screens"},
               { data: "id" ,className: "text-left",
                 render: function (data, type, row, meta) {
-                  var a='<button type="button" class="btn btn-primary btn-xs" onclick="tempData.oeeplant.editPlant('+row.id+');"><i class="fa fa-pencil-square-o"></i> </button>';
+                  var a='<button type="button" class="btn btn-primary btn-xs" onclick="tempData.oeewc.editWC('+row.id+');"><i class="fa fa-pencil-square-o"></i> </button>';
                    var b='<button type="button" class="btn btn-danger btn-xs" onclick=""><i class="fa fa-trash"></i> </button>';
                   return a+' '+b;
                 }
@@ -55,29 +54,25 @@ loadTable:function(){
 
     },
 
-    editPlant:function (id){
+    editWC:function (id){
         for(var i=0;i<globalWCData.length;i++){
             if(id==globalWCData[i].id){
               alert(globalWCData[i].id);
-
-              $('#plantCode').val(globalWCData[i].role_name);
-              $('#plantDesc').val(globalWCData[i].role_desc);
+              $('#wcCode').val(globalWCData[i].role_name);
+              $('#wcDesc').val(globalWCData[i].role_desc);
               $('#address').val(globalWCData[i].screens);
               $('#contactPerson').val(globalWCData[i].access_mode);
               $('#contactNumber').val(globalWCData[i].screens);
               break;
             }
         }
-        $("#fromPlant").fadeIn("fast");
-        $("#addPlant").hide();
-        $("#updatePlant").show();
-           /*   globalWCData.push({"id":obj.id,"role_name":obj.role_name,"role_desc":obj.role_desc, "company_name":obj.company_name, 
-              "plant_name":obj.plant_name, "screens":obj.screens, "access_mode":obj.access_mode});*/
-            
+        $("#fromWC").fadeIn("fast");
+        $("#addWC").hide();
+        $("#updateWC").show();
     },
 
-  gotoWorkcenter:function(){
-	  window.location="workcenter.php";
+  gotoEquipment:function(){
+	  window.location="equipment.php";
   }
 
 };
@@ -86,13 +81,13 @@ $(document).ready(function() {
 debugger;
 
 $('.select2').select2();
-  tempData.oeeplant.loadTable();
-  $('#createPlant').click(function(){
-    $("#fromPlant").fadeToggle("slow");
-      $("#addPlant").show();
-      $("#updatePlant").hide();
+  tempData.oeewc.loadTable();
+  $('#createWC').click(function(){
+    $("#fromWC").fadeToggle("slow");
+      $("#addWC").show();
+      $("#updateWC").hide();
   });
-  $("#fromPlant").fadeOut("fast");
+  $("#fromWC").fadeOut("fast");
   
 });
 
@@ -102,17 +97,17 @@ $('.select2').select2();
     <section class="content">
       <div class="commonPageHead">
         <div class="col-md-10 col-sm-12 col-xs-10 pull-left headerTitle" >
-        <h3 style="margin-top: 2px;">Plant<h3>
+        <h3 style="margin-top: 2px;">Work Center<h3>
         </div>
       </div>
 
     <div class="panel panel-default">
       <div class="panel-heading "> 
         <div class="panel-title pull-left">
-        <a href="company.php" class="btn btn-info btn-xs"><i class="fa fa-reply"></i> Company</a>
+        <a href="plant.php" class="btn btn-info btn-xs"><i class="fa fa-reply"></i> Plant</a>
         </div>
-        <button type="button" id="createPlant" class="btn btn-sm btn-primary pull-right" style="margin-top: -3px;margin-bottom: -2px;">
-              <i class="fa fa-pencil-square-o"></i>&nbsp; Create Plant
+        <button type="button" id="createWC" class="btn btn-sm btn-primary pull-right" style="margin-top: -3px;margin-bottom: -2px;">
+              <i class="fa fa-pencil-square-o"></i>&nbsp; Create Work Center
         </button>
           <div class="clearfix"></div>
       </div>   
@@ -122,24 +117,24 @@ $('.select2').select2();
           <div id="status" class="alert alert-success" style="color:green;text-align:center;font-weight:600;display:none;"></div>
           <div id="error" class="alert alert-danger" style="color:white;text-align:center;font-weight:600;display:none;"></div>
 
-        <form class="" id="fromPlant">     
+        <form class="" id="fromWC">     
           <input type="hidden" name="comp_id" id="comp_id"/> 
           <input type="hidden" name="plant_id" id="plant_id"/> 
             <div class="form-group">
              <div class="row">
                 <div class="col-md-6">
-                  <label class="control-label col-md-4 col-sm-6 col-xs-12">Plant Code</label>
+                  <label class="control-label col-md-4 col-sm-6 col-xs-12">Work Center Code</label>
                   <div class="col-md-6 col-sm-6 col-xs-12">
-                    <input type="text" name="plantCode" id="plantCode" onkeyup=""
-                     placeholder="Plant Code" maxlength="10" class="form-control" required="true" autofocus/>
+                    <input type="text" name="wcCode" id="wcCode" onkeyup=""
+                     placeholder="Work Center Code" maxlength="10" class="form-control" required="true" autofocus/>
                   </div>
                 </div>
                 
                 <div class="col-md-6">
-                <label class="control-label col-md-4 col-sm-6 col-xs-12">Plant Description</label>
+                <label class="control-label col-md-4 col-sm-6 col-xs-12">Work Center Description</label>
                 <div class="col-md-6 col-sm-6 col-xs-12">
-                  <input type="text" name="plantDesc" id="plantDesc" onkeyup=""
-                   placeholder="Plant Description" class="form-control" required="true"/>
+                  <input type="text" name="wcDesc" id="wcDesc" onkeyup=""
+                   placeholder="Work Center Description" class="form-control" required="true"/>
                 </div>
                 </div>
               </div>
@@ -163,14 +158,7 @@ $('.select2').select2();
 
               </div>
 
-              <div class="row" style="margin-top: 1px;">
-                <div class="col-md-6">
-                <label class="control-label col-md-4 col-sm-6 col-xs-12">Address</label>
-                <div class="col-md-6 col-sm-6 col-xs-12">
-                  <textarea class="form-control" placeholder="Address" rows="2" id="address" name="address"></textarea>
-                </div>
-                </div>
-                
+              <div class="row" style="margin-top: 1px;">          
                 <div class="col-md-6">
                 <label class="control-label col-md-4 col-sm-6 col-xs-12">File Upload</label>
                 <div class="col-md-6 col-sm-6 col-xs-12">
@@ -187,12 +175,12 @@ $('.select2').select2();
 
               <div class="row">
                    <div class="col-md-12 text-center">
-                    <button type="button" id="addPlant" onclick="" 
+                    <button type="button" id="addWC" onclick="" 
                       class="btn btn-sm btn-success">
-                      <i class="fa fa-floppy-o"></i>&nbsp; Add Plant 
+                      <i class="fa fa-floppy-o"></i>&nbsp; Add Work Center 
                     </button>
-                    <button type="button" id="updatePlant" onclick=""  class="btn btn-sm btn-success" style="display:none;">
-                      <i class="fa fa-floppy-o"></i>&nbsp; Update Plant
+                    <button type="button" id="updateWC" onclick=""  class="btn btn-sm btn-success" style="display:none;">
+                      <i class="fa fa-floppy-o"></i>&nbsp; Update Work Center
                     </button>
                    </div>
               </div>
@@ -200,14 +188,13 @@ $('.select2').select2();
            <hr class="hr-primary"/>  
           </form>
 
-      <div > 
-          <table id="plantTable" class="table table-hover table-bordered table-responsive nowrap" style="font-size: 12px;width:100%;">
+      <div class="table-responsive"> 
+          <table id="wcTable" class="table table-hover table-bordered nowrap" style="font-size: 12px;width:100%;">
            <thead>
              <tr>
               <th>Action</th>
-              <th>Plant Code</th> 
-              <th>Plant Descreption</th>
-              <th>Address</th>
+              <th>Work Center Code</th> 
+              <th>Work Center Descreption</th>
               <th>Contact Person</th>
               <th>Contact Number</th>
               <th>Action</th>

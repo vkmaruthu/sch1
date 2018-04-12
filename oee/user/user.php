@@ -23,19 +23,13 @@ loadTable:function(){
             dataType: 'json',
             success: function(obj){
             globalUserData=obj;
-            /*
-            for(var i=0;i<obj.length;i++){
-              globalUserData.push({"id":obj.id,"role_name":obj.role_name,"role_desc":obj.role_desc, "company_name":obj.company_name, 
-              "plant_name":obj.plant_name, "screens":obj.screens, "access_mode":obj.access_mode});
-            }*/
     var DataTableProject = $('#userTable').DataTable( {
-           "paging":false,
-            "ordering":true,
-            "info":true,
-            "searching":true,         
-            "destroy":true,
-            "scrollX": true,
-            "scrollY": 250,
+            'paging'      : true,
+            'lengthChange': false,
+            'searching'   : true,
+            'ordering'    : true,
+            'info'        : true,
+            'autoWidth'   : false,
             "data":obj,   
             "columns": [
               { data: "role_name" },
@@ -43,6 +37,14 @@ loadTable:function(){
               { data: "company_name"},
               { data: "plant_name" },
               { data: "plant_name" },
+              
+              { data: "id" ,className: "text-left",
+                  render: function (data, type, row, meta) {
+                    var c='<button type="button" class="btn btn-warning btn-xs" onclick=""><i class="fa fa-remove"></i>Inactive </button>';
+                    return c;
+                  }
+              },
+              
               { data: "id" ,className: "text-left",
                 render: function (data, type, row, meta) {
                   var a='<button type="button" class="btn btn-primary btn-xs" onclick="tempData.oeecompany.editUser('+row.id+');"><i class="fa fa-pencil-square-o"></i> </button>';
@@ -76,9 +78,6 @@ loadTable:function(){
         }
 
      $("#fromUsers").fadeIn("fast");
-           /*   globalUserData.push({"id":obj.id,"role_name":obj.role_name,"role_desc":obj.role_desc, "company_name":obj.company_name, 
-              "plant_name":obj.plant_name, "screens":obj.screens, "access_mode":obj.access_mode});*/
-            
     }
 };
 
@@ -199,8 +198,8 @@ $('.select2').select2();
           </form>
 
 
-      <div > 
-          <table id="userTable" class="table table-hover table-bordered table-responsive nowrap" style="font-size: 12px;width:100%;">
+      <div class="table-responsive"> 
+          <table id="userTable" class="table table-hover table-bordered  nowrap" style="font-size: 12px;width:100%;">
            <thead>
              <tr>
               <th>First Name</th>
@@ -208,6 +207,7 @@ $('.select2').select2();
               <th>Email Id</th>
               <th>Contact Number</th>
               <th>User Role</th>
+              <th>Status</th>
               <th>Action</th> 
              </tr>
            </thead>

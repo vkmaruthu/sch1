@@ -12,90 +12,288 @@ var myMap = new Map();
   
 tempData.oeeplant=
 {
-loadTable:function(){
+loadPlants:function(){
     debugger;
-
-    var url="loadData.txt";
+    var comp_id = $('#comp_id').val();
+    var url="getDataController.php";
+    var myData={getPlantDetails:"getPlantDetails", "comp_id":comp_id};
        $.ajax({
             type:"POST",
             url:url,
             async: false,
             dataType: 'json',
+            data:myData,
             success: function(obj){
-            globalPlantData=obj;
-    var DataTableProject = $('#plantTable').DataTable( {
-            'paging'      : true,
-            'lengthChange': false,
-            'searching'   : true,
-            'ordering'    : true,
-            'info'        : true,
-            'autoWidth'   : false,
-            "data":obj,   
-            "columns": [
-              { data: "id" ,className: "text-left",
-                render: function (data, type, row, meta) {
-                  var c='<button type="button" class="btn btn-success btn-xs" onclick="tempData.oeeplant.gotoWorkcenter();"><i class="fa fa-check-square-o"></i> View Work Center</button>';
-                  return c;
-                }
-              },
-              { data: "role_name" },
-              { data: "role_desc" },
-              { data: "company_name"},
-              { data: "plant_name" },
-              { data: "screens"},
-              { data: "id" ,className: "text-left",
-                render: function (data, type, row, meta) {
-                  var a='<button type="button" class="btn btn-primary btn-xs" onclick="tempData.oeeplant.editPlant('+row.id+');"><i class="fa fa-pencil-square-o"></i> </button>';
-                   var b='<button type="button" class="btn btn-danger btn-xs" onclick=""><i class="fa fa-trash"></i> </button>';
-                  return a+' '+b;
-                }
-              },
-               ]
-           } );   
-          }
+                
+            globalPlantData=obj.plantDetails;
+
+            if(obj.plantDetails==null){
+                  $('#plantTable').DataTable({
+                    "paging":false,
+                    "ordering":true,
+                    "info":true,
+                    "searching":false,         
+                    "destroy":true,
+                }).clear().draw();
+
+              }else{
+
+            var DataTableProject = $('#plantTable').DataTable( {
+                    'paging'      : true,
+                    'lengthChange': false,
+                    'searching'   : true,
+                    'ordering'    : true,
+                    'info'        : true,
+                    'autoWidth'   : false,
+                    "destroy":true,
+                    "data":obj.plantDetails,   
+                    "columns": [
+                      { data: "id" ,className: "text-left",
+                        render: function (data, type, row, meta) {
+                          var c='<button type="button" class="btn btn-success btn-xs" onclick="tempData.oeeplant.gotoWorkcenter('+row.id+',\''+row.comp_id+'\');"><i class="fa fa-check-square-o"></i> View Work Center</button>';
+                          return c;
+                        }
+                      },
+                      { data: "image_file_name" ,className: "text-left",
+                          render: function (data, type, row, meta) {
+                             if(row.image_file_name != ""){
+                                return '<div class="thumb"><img src="../common/img/plants/'+row.image_file_name+'"></div>';
+                              }else{
+                                return '<div class="thumb"><img src="../common/img/plants/default.png"></div>';
+                              }
+                          }
+                       },
+                      { data: "plant_code" },
+                      { data: "plant_desc" },
+                      { data: "address"},
+                      { data: "contact_person" },
+                      { data: "contact_number"},
+                      { data: "id" ,className: "text-left",
+                        render: function (data, type, row, meta) {
+                          var a='<button type="button" class="btn btn-primary btn-xs" onclick="tempData.oeeplant.editPlant('+row.id+',\''+row.comp_id+'\');"><i class="fa fa-pencil-square-o"></i> </button>';
+                           var b='<button type="button" class="btn btn-danger btn-xs" onclick="tempData.oeeplant.deletePlant('+row.id+',\''+row.image_file_name+'\');"><i class="fa fa-trash"></i> </button>';
+                          return a+' '+b;
+                        }
+                      },
+                       ]
+                     }); 
+            
+            } // else End here 
+
+            } // ajax success ends
         });  
 
     },
 
-    editPlant:function (id){
+    editPlant:function (id, comp_id){
         for(var i=0;i<globalPlantData.length;i++){
             if(id==globalPlantData[i].id){
-              alert(globalPlantData[i].id);
+              $("#showImg").show();
 
-              $('#plantCode').val(globalPlantData[i].role_name);
-              $('#plantDesc').val(globalPlantData[i].role_desc);
-              $('#address').val(globalPlantData[i].screens);
-              $('#contactPerson').val(globalPlantData[i].access_mode);
-              $('#contactNumber').val(globalPlantData[i].screens);
+              $('#plant_id').val(globalPlantData[i].id);
+              $('#plant_code').val(globalPlantData[i].plant_code);
+              $('#plant_desc').val(globalPlantData[i].plant_desc);
+              $('#address').val(globalPlantData[i].address);
+              $('#contact_person').val(globalPlantData[i].contact_person);
+              $('#contact_number').val(globalPlantData[i].contact_number);
+              $('#comp_id').val(globalPlantData[i].comp_id);
+              $('#img_id').val(globalPlantData[i].image_file_name);
+              if(globalPlantData[i].image_file_name!=''){
+                $('#showImg').html('<img style="width: 30%;" src="../common/img/plants/'+globalPlantData[i].image_file_name+'">');
+              }else{
+                $('#showImg').html('<img style="width: 30%;" src="../common/img/plants/d/default.png">');
+              }
+              $('#plant_code').prop('readonly', true);
               break;
             }
         }
         $("#fromPlant").fadeIn("fast");
         $("#addPlant").hide();
-        $("#updatePlant").show();
-           /*   globalPlantData.push({"id":obj.id,"role_name":obj.role_name,"role_desc":obj.role_desc, "company_name":obj.company_name, 
-              "plant_name":obj.plant_name, "screens":obj.screens, "access_mode":obj.access_mode});*/
-            
+        $("#updatePlant").show();            
     },
 
-  gotoWorkcenter:function(){
-	  window.location="workcenter.php";
-  }
+ savePlant:function(){
+    	  var url="getDataController.php";
+    	  var fromPlantData = new FormData($('#fromPlant')[0]);
+    	  fromPlantData.append("savePlant", "savePlant");
+    	  var plant_code=$('#plant_code').val();
+    	    if(plant_code == "") {
+    	        $('#plant_code').css('border-color', 'red');
+    	        return false;
+    	    }else{
+    	      $('#plant_code').css('border-color', '');
+    	  $.ajax({
+    	    type:"POST",
+    	    url:url,
+    	    async: false,
+    	    dataType: 'json',
+    	    cache: false,
+    	    processData: false,
+    	    contentType: false,
+    	    data:fromPlantData,
+    	    success: function(obj) {
+    	        debugger;
+    	      if(obj.data !=null){
+    	        if(obj.data.infoRes=='S'){
+    	           $("#commonMsg").show();
+    	           $('#commonMsg').html('<p class="commonMsgSuccess"> <i class="fa fa-check"></i> '+obj.data.info+'</p>');
+    	           $("#showImg").hide();
+    	         
+    	           $("#size").html('');
+    	           $("#addPlant").show();
+    	           $("#updatePlant").hide();
+    	           $('#plant_code').prop('readonly', false);
+    	           
+    	           $('#fromPlant')[0].reset();
+    	           tempData.oeeplant.loadPlants();
+
+    	        }else{
+    	          $("#commonMsg").show();
+    	           $('#commonMsg').html('<p class="commonMsgFail"> <i class="fa fa-warning"></i> '+obj.data.info+'</p>');
+    	        }  
+    	      } 
+
+    	      setTimeout(function(){  
+    	        $("#commonMsg").fadeToggle('slow');        
+    	      }, 1500);
+
+    	    }
+    	  });
+
+      }
+
+  },
+  
+  deletePlant:function (id,img){
+	  //alert(img);
+	  var url="getDataController.php";
+	  var plant_id=id;
+	  var myData={deletePlant:"deletePlant",plant_id:plant_id,img:img};
+
+	  $.ajax({
+	    type:"POST",
+	    url:url,
+	    async: false,
+	    dataType: 'json',
+	    data:myData,
+	    success: function(obj) {
+	        debugger;
+	      if(obj.data !=null){
+	        if(obj.data.infoRes=='S'){
+	           $("#delCommonMsg").show();
+	           $('#delCommonMsg').html('<p class="commonMsgSuccess"> <i class="fa fa-trash"></i> '+obj.data.info+'</p>');
+	           //$('#fromCompany')[0].reset();
+	          // $("#showImg").hide();
+	           //$("#size").html('');
+	          // $("#addCompany").show();
+	           //$("#updateCompany").hide();
+	           // location.reload(true);
+	           tempData.oeeplant.loadPlants();
+
+	        }else{
+	          $("#delCommonMsg").show();
+	           $('#delCommonMsg').html('<p class="commonMsgFail"> <i class="fa fa-warning"></i> '+obj.data.info+'</p>');
+	        }  
+	      } 
+
+	      setTimeout(function(){  $("#delCommonMsg").fadeToggle('slow'); }, 1500);
+
+	    }
+	  });
+},
+	
+gotoWorkcenter:function(){
+  window.location="workcenter.php";
+},
+reload:function(){
+	   location.reload(true);
+},
+AlertFilesizeType:function(name){   
+	  debugger;
+	   var imgPathName = window.URL.createObjectURL(name.files[0]);
+	   $('#showImg').show();
+	   $('#showImg').html('<img style="width: 30%;" src="'+imgPathName+'">');
+
+	    var sizeinbytes = document.getElementById('image_file_name').files[0].size;
+	    var fSExt = new Array('Bytes', 'KB', 'MB', 'GB');
+	    fSize = sizeinbytes; i=0;while(fSize>900){fSize/=1024;i++;}
+	    var size=((Math.round(fSize*100)/100));//+' '+fSExt[i]);
+	    if(fSExt[i] =='KB'){
+	      $('#size').html("File size :"+size+" "+fSExt[i]+"<b>");
+	    }
+	    else if(size < 3 && fSExt[i] =='MB'){
+	      $('#size').html("<b> File size :"+size+" "+fSExt[i]+"<b>");
+	    }
+	    else{
+	      $('#size').html("<b>File size : "+size+" "+fSExt[i]+" , ( File size must be excately 3 MB )<b>");
+	    }
+	      
+	    var allowedFiles = [".jpg", ".jpeg", ".png"];
+	    var fileUpload = document.getElementById("image_file_name");
+	    var lblError = document.getElementById("lblError");
+	    var regex = new RegExp("([a-zA-Z0-9\s_\\.\-:])+(" + allowedFiles.join('|') + ")$");
+	    if (!regex.test(fileUpload.value.toLowerCase())) {
+	        lblError.innerHTML = "Please upload files having extensions: <b>" + allowedFiles.join(', ') + "</b> only.";
+	        return false;
+	    }else{
+	      lblError.innerHTML = "";
+	      return true;
+	    }
+},
+getCompanyDesc:function(){	
+	  var url="getDataController.php";
+	  var comp_id=$('#comp_id').val();
+	  var myData={getCompDetails:"getCompDetails",comp_id:comp_id};
+	  $.ajax({
+	    type:"POST",
+	    url:url,
+	    async: false,
+	    dataType: 'json',
+	    data:myData,
+	    success: function(obj) {
+	      if(obj.compDetails !=null){
+	        //alert(obj.compDetails);
+	        $('#compName').html(obj.compDetails[0].comp_desc);
+	        //alert(obj.compDetails.comp_desc);
+	      } 
+	    }
+	  });
+}
 
 };
 
-$(document).ready(function() {
-debugger;
 
-$('.select2').select2();
-  tempData.oeeplant.loadTable();
-  $('#createPlant').click(function(){
-    $("#fromPlant").fadeToggle("slow");
-      $("#addPlant").show();
-      $("#updatePlant").hide();
-  });
-  $("#fromPlant").fadeOut("fast");
-  
+$(document).ready(function() {
+    debugger;
+
+    $('#comp_id').val(<?php echo $_GET['comp_id'];?>);
+    $('.select2').select2();
+    $("#fromPlant").hide();
+    $('#commonMsg').hide();
+    $("#showImg").hide();
+      $('#createPlant').click(function(){
+        $("#fromPlant").fadeToggle("slow");
+          $("#addPlant").show();
+          $("#updatePlant").hide();
+          $('#plant_code').prop('readonly', false);
+          $('#fromPlant')[0].reset();
+          $("#showImg").hide();
+          $("#size").html('');
+          $("#addPlant").show();
+          $("#updatePlant").hide();
+      });
+    
+      $('#plant_code').keyup(function(){
+         this.value = this.value.toUpperCase();
+         $('#plant_code').css('border-color', '');
+      });
+    
+      $("#contact_number").keyup(function() {
+          $("#contact_number").val(this.value.match(/[0-9]*/));
+      });
+
+   tempData.oeeplant.getCompanyDesc();   
+   tempData.oeeplant.loadPlants();
 });
 
 </script>
@@ -103,16 +301,20 @@ $('.select2').select2();
     <!-- Main content -->
     <section class="content">
       <div class="commonPageHead">
-        <div class="col-md-10 col-sm-12 col-xs-10 pull-left headerTitle" >
-        <h3 style="margin-top: 2px;">Plant<h3>
-        </div>
+       <div class="col-md-12 col-sm-12 col-xs-12 pull-left headerTitle">
+        <h4 style="margin-top: 3px;"><spam id="compName" ></spam> / Plants </h4>
+      </div>
       </div>
 
     <div class="panel panel-default">
       <div class="panel-heading "> 
         <div class="panel-title pull-left">
-        <a href="company.php" class="btn btn-info btn-xs"><i class="fa fa-reply"></i> Company</a>
+        <a href="index.php" class="btn btn-info btn-xs"><i class="fa fa-reply"></i> Back </a>
         </div>
+        
+        <button type="button" onclick="tempData.oeeplant.reload();" class="btn btn-sm btn-info pull-right" style="margin-top: -3px;margin-bottom: -2px;margin-left:15px;">   <i class="fa  fa-refresh"> </i>
+        </button>
+        
         <button type="button" id="createPlant" class="btn btn-sm btn-primary pull-right" style="margin-top: -3px;margin-bottom: -2px;">
               <i class="fa fa-pencil-square-o"></i>&nbsp; Create Plant
         </button>
@@ -124,23 +326,30 @@ $('.select2').select2();
           <div id="status" class="alert alert-success" style="color:green;text-align:center;font-weight:600;display:none;"></div>
           <div id="error" class="alert alert-danger" style="color:white;text-align:center;font-weight:600;display:none;"></div>
 
-        <form class="" id="fromPlant">     
+        <div id="delCommonMsg"> </div>  
+        <form class="" id="fromPlant" enctype="multipart/form-data"> 
+            
           <input type="hidden" name="comp_id" id="comp_id"/> 
+          <input type="hidden" name="comp_code" id="comp_code"/>
+          <input type="hidden" name="img_id" id="img_id"/> 
           <input type="hidden" name="plant_id" id="plant_id"/> 
+          
+            <div id="commonMsg"> </div> 
+          
             <div class="form-group">
              <div class="row">
                 <div class="col-md-6">
-                  <label class="control-label col-md-4 col-sm-6 col-xs-12">Plant Code</label>
+                  <label class="control-label col-md-4 col-sm-6 col-xs-12">Plant Code <span class="required">*</span> </label>
                   <div class="col-md-6 col-sm-6 col-xs-12">
-                    <input type="text" name="plantCode" id="plantCode" onkeyup=""
-                     placeholder="Plant Code" maxlength="10" class="form-control" required="true" autofocus/>
+                    <input type="text" name="plant_code" id="plant_code" onkeyup=""
+                     placeholder="Plant Code" maxlength="4" class="form-control" required="true" autofocus/>
                   </div>
                 </div>
                 
                 <div class="col-md-6">
                 <label class="control-label col-md-4 col-sm-6 col-xs-12">Plant Description</label>
                 <div class="col-md-6 col-sm-6 col-xs-12">
-                  <input type="text" name="plantDesc" id="plantDesc" onkeyup=""
+                  <input type="text" name="plant_desc" id="plant_desc" onkeyup=""
                    placeholder="Plant Description" class="form-control" required="true"/>
                 </div>
                 </div>
@@ -150,7 +359,7 @@ $('.select2').select2();
                 <div class="col-md-6">
                 <label class="control-label col-md-4 col-sm-6 col-xs-12">Contact Person</label>
                 <div class="col-md-6 col-sm-6 col-xs-12">
-                  <input type="text" name="contactPerson" id="contactPerson" onkeyup=""
+                  <input type="text" name="contact_person" id="contact_person" onkeyup=""
                    placeholder="Contact Person" class="form-control" required="true"/>
                 </div>
                 </div>
@@ -158,8 +367,8 @@ $('.select2').select2();
                <div class="col-md-6">
                 <label class="control-label col-md-4 col-sm-6 col-xs-12">Contact Number</label>
                 <div class="col-md-6 col-sm-6 col-xs-12">
-                  <input type="text" name="contactNumber" id="contactNumber" onkeyup=""
-                   placeholder="Contact Number" class="form-control" required="true"/>
+                  <input type="text" name="contact_number" id="contact_number" onkeyup=""
+                   placeholder="Contact Number"  maxlength="10" class="form-control" required="true"/>
                 </div>
                 </div>
 
@@ -174,26 +383,27 @@ $('.select2').select2();
                 </div>
                 
                 <div class="col-md-6">
-                <label class="control-label col-md-4 col-sm-6 col-xs-12">File Upload</label>
-                <div class="col-md-6 col-sm-6 col-xs-12">
-                   
-                  <input type="file" name="fileUpload" id="fileUpload" class="form-control col-md-12 col-xs-12" onchange=""/>
-                  <span class="pull-right">[ Upload only Image ]  </span>
-                  <div id="size"></div>
-                  <span id="lblError" style="color:red;font-size:13px;"></span>
-                  <span id="success"></span>
-                 
-                </div>
+                 <label class="control-label col-md-4 col-sm-6 col-xs-12">Logo Upload</label>
+                    <div class="col-md-6 col-sm-6 col-xs-12">
+                       
+                   <input type="file" name="image_file_name" id="image_file_name" accept="image/*" class="form-control col-md-12 col-xs-12" 
+                    onchange="tempData.oeeplant.AlertFilesizeType(this);" />
+                      <span class="pull-right">[ Upload only Image ]  </span>
+                      <span id="size" style="color:red;font-size:13px;"></span>
+                      <span id="lblError" style="color:red;font-size:13px;"></span>
+                    <span id="showImg"></span> 
+                     
+                    </div>
                 </div>
               </div> 
 
               <div class="row">
                    <div class="col-md-12 text-center">
-                    <button type="button" id="addPlant" onclick="" 
+                    <button type="button" id="addPlant" onclick="tempData.oeeplant.savePlant();" 
                       class="btn btn-sm btn-success">
                       <i class="fa fa-floppy-o"></i>&nbsp; Add Plant 
                     </button>
-                    <button type="button" id="updatePlant" onclick=""  class="btn btn-sm btn-success" style="display:none;">
+                    <button type="button" id="updatePlant" onclick="tempData.oeeplant.savePlant();"  class="btn btn-sm btn-success" style="display:none;">
                       <i class="fa fa-floppy-o"></i>&nbsp; Update Plant
                     </button>
                    </div>
@@ -202,11 +412,12 @@ $('.select2').select2();
            <hr class="hr-primary"/>  
           </form>
 
-      <div > 
-          <table id="plantTable" class="table table-hover table-bordered table-responsive nowrap" style="font-size: 12px;width:100%;">
+      <div class="table-responsive"> 
+          <table id="plantTable" class="table table-hover table-bordered nowrap" style="font-size: 12px;width:100%;">
            <thead>
              <tr>
               <th>Action</th>
+              <th>Plant Image</th>
               <th>Plant Code</th> 
               <th>Plant Descreption</th>
               <th>Address</th>

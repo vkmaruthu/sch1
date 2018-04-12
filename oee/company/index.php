@@ -50,7 +50,7 @@ loadAllComp:function(){
             "columns": [
               { data: "id" ,className: "text-left",
                 render: function (data, type, row, meta) {
-                  var c='<button type="button" class="btn btn-success btn-xs" onclick="tempData.oeecompany.gotoPlants();"><i class="fa fa-check-square-o"></i> View Plant</button>';
+                  var c='<button type="button" class="btn btn-success btn-xs" onclick="tempData.oeecompany.gotoPlants('+row.id+',\''+row.comp_code+'\',\''+row.comp_desc+'\');"><i class="fa fa-check-square-o"></i> View Plant</button>';
                   return c;
                 }
               },
@@ -153,6 +153,7 @@ deleteCompany:function (id,img){
   });
 
 },
+
 saveCompany:function(){
   var url="getDataController.php";
   var fromCompanyData = new FormData($('#fromCompany')[0]);
@@ -205,15 +206,14 @@ saveCompany:function(){
 
     }
 
-},  
-onSelectShowImg:function(){
 }, 
-gotoPlants:function(){
-    window.location="plant.php";
+gotoPlants:function(id, compCode,compDesc){
+    window.location="plant.php?comp_id="+id;
 },
 reload:function(){
    location.reload(true);
 },
+
 AlertFilesizeType:function(name){   
 debugger;
  var imgPathName = window.URL.createObjectURL(name.files[0]);
@@ -320,7 +320,7 @@ debugger;
           <div id="error" class="alert alert-danger" style="color:white;text-align:center;font-weight:600;display:none;"></div>
 
 
-            <div id="delCommonMsg"> </div>  
+        <div id="delCommonMsg"> </div>  
         <form class="" id="fromCompany" enctype="multipart/form-data">     
           <input type="hidden" name="comp_id" id="comp_id"/> 
           <input type="hidden" name="img_id" id="img_id"/> 
@@ -375,17 +375,17 @@ debugger;
                 </div>
                 
                 <div class="col-md-6">
-                <label class="control-label col-md-4 col-sm-6 col-xs-12">Logo Upload</label>
-                <div class="col-md-6 col-sm-6 col-xs-12">
-                   
-                <input type="file" name="image_file_name" id="image_file_name" accept="image/*" class="form-control col-md-12 col-xs-12" 
-                onchange="tempData.oeecompany.AlertFilesizeType(this);" />
-                  <span class="pull-right">[ Upload only Image ]  </span>
-                  <span id="size" style="color:red;font-size:13px;"></span>
-                  <span id="lblError" style="color:red;font-size:13px;"></span>
-                <span id="showImg"></span> 
-                 
-                </div>
+                 <label class="control-label col-md-4 col-sm-6 col-xs-12">Logo Upload</label>
+                    <div class="col-md-6 col-sm-6 col-xs-12">
+                       
+                   <input type="file" name="image_file_name" id="image_file_name" accept="image/*" class="form-control col-md-12 col-xs-12" 
+                    onchange="tempData.oeecompany.AlertFilesizeType(this);" />
+                      <span class="pull-right">[ Upload only Image ]  </span>
+                      <span id="size" style="color:red;font-size:13px;"></span>
+                      <span id="lblError" style="color:red;font-size:13px;"></span>
+                    <span id="showImg"></span> 
+                     
+                    </div>
                 </div>
               </div> 
 
