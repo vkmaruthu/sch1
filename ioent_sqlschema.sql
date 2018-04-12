@@ -7,6 +7,9 @@ SET @OLD_FOREIGN_KEY_CHECKS=@@FOREIGN_KEY_CHECKS, FOREIGN_KEY_CHECKS=0;
 SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='TRADITIONAL,ALLOW_INVALID_DATES';
 
 -- -----------------------------------------------------
+-- Schema mydb
+-- -----------------------------------------------------
+-- -----------------------------------------------------
 -- Schema ioentdb_sfs
 -- -----------------------------------------------------
 DROP SCHEMA IF EXISTS `ioentdb_sfs` ;
@@ -15,51 +18,7 @@ DROP SCHEMA IF EXISTS `ioentdb_sfs` ;
 -- Schema ioentdb_sfs
 -- -----------------------------------------------------
 CREATE SCHEMA IF NOT EXISTS `ioentdb_sfs` DEFAULT CHARACTER SET latin1 ;
-
 USE `ioentdb_sfs` ;
-
--- -----------------------------------------------------
--- Table `ioentdb_sfs`.`sfs_oee_limit`
--- -----------------------------------------------------
-DROP TABLE IF EXISTS `ioentdb_sfs`.`sfs_oee_limit` ;
-
-CREATE TABLE IF NOT EXISTS `ioentdb_sfs`.`sfs_oee_limit` (
-  `id` INT NOT NULL AUTO_INCREMENT,
-  `oee_high` INT NOT NULL DEFAULT 0,
-  `oee_low` INT NOT NULL DEFAULT 0,
-  `a_high` INT NOT NULL DEFAULT 0 COMMENT 'availability high limit',
-  `a_low` INT NOT NULL DEFAULT 0,
-  `p_high` INT NOT NULL DEFAULT 0 COMMENT 'performance high limit',
-  `p_low` INT NOT NULL DEFAULT 0,
-  `q_high` INT NOT NULL DEFAULT 0 COMMENT 'quality high limit',
-  `q_low` INT NOT NULL DEFAULT 0,
-  PRIMARY KEY (`id`),
-  UNIQUE INDEX `oee_high_UNIQUE` (`oee_high` ASC),
-  UNIQUE INDEX `oee_low_UNIQUE` (`oee_low` ASC),
-  UNIQUE INDEX `a_high_UNIQUE` (`a_high` ASC),
-  UNIQUE INDEX `a_low_UNIQUE` (`a_low` ASC),
-  UNIQUE INDEX `p_high_UNIQUE` (`p_high` ASC),
-  UNIQUE INDEX `p_low_UNIQUE` (`p_low` ASC),
-  UNIQUE INDEX `q_low_UNIQUE` (`q_low` ASC),
-  UNIQUE INDEX `q_high_UNIQUE` (`q_high` ASC))
-ENGINE = InnoDB;
-
-
--- -----------------------------------------------------
--- Table `ioentdb_sfs`.`sfs_contract_info`
--- -----------------------------------------------------
-DROP TABLE IF EXISTS `ioentdb_sfs`.`sfs_contract_info` ;
-
-CREATE TABLE IF NOT EXISTS `ioentdb_sfs`.`sfs_contract_info` (
-  `id` INT NOT NULL AUTO_INCREMENT,
-  `created_date` DATETIME NULL,
-  `start_date` DATETIME NULL,
-  `no_of_days` INT NULL,
-  `is_active` TINYINT NULL,
-  `message` TEXT NULL,
-  PRIMARY KEY (`id`))
-ENGINE = InnoDB;
-
 
 -- -----------------------------------------------------
 -- Table `ioentdb_sfs`.`sfs_company`
@@ -67,29 +26,15 @@ ENGINE = InnoDB;
 DROP TABLE IF EXISTS `ioentdb_sfs`.`sfs_company` ;
 
 CREATE TABLE IF NOT EXISTS `ioentdb_sfs`.`sfs_company` (
-  `id` INT(11) NOT NULL,
+  `id` INT(11) NOT NULL AUTO_INCREMENT,
   `comp_code` VARCHAR(4) NULL DEFAULT NULL,
   `comp_desc` VARCHAR(40) NULL DEFAULT NULL,
   `address` TEXT NULL DEFAULT NULL,
   `contact_person` VARCHAR(40) NULL DEFAULT NULL,
   `contact_number` VARCHAR(20) NULL DEFAULT NULL,
   `image_file_name` TEXT NOT NULL,
-  `oee_limit_id` INT NOT NULL,
-  `contract_info_id` INT NOT NULL,
-  PRIMARY KEY (`id`, `oee_limit_id`, `contract_info_id`),
-  UNIQUE INDEX `company` (`comp_code` ASC),
-  INDEX `fk_sfs_company_oee_limit1_idx` (`oee_limit_id` ASC),
-  INDEX `fk_sfs_company_sfs_contract_info1_idx` (`contract_info_id` ASC),
-  CONSTRAINT `fk_sfs_company_oee_limit1`
-    FOREIGN KEY (`oee_limit_id`)
-    REFERENCES `ioentdb_sfs`.`sfs_oee_limit` (`id`)
-    ON DELETE NO ACTION
-    ON UPDATE NO ACTION,
-  CONSTRAINT `fk_sfs_company_sfs_contract_info1`
-    FOREIGN KEY (`contract_info_id`)
-    REFERENCES `ioentdb_sfs`.`sfs_contract_info` (`id`)
-    ON DELETE NO ACTION
-    ON UPDATE NO ACTION)
+  PRIMARY KEY (`id`),
+  UNIQUE INDEX `company` (`comp_code` ASC))
 ENGINE = InnoDB
 DEFAULT CHARACTER SET = latin1;
 
@@ -186,7 +131,7 @@ ENGINE = InnoDB;
 DROP TABLE IF EXISTS `ioentdb_sfs`.`sfs_plant` ;
 
 CREATE TABLE IF NOT EXISTS `ioentdb_sfs`.`sfs_plant` (
-  `id` INT(11) NOT NULL,
+  `id` INT(11) NOT NULL AUTO_INCREMENT,
   `plant_code` VARCHAR(8) NOT NULL,
   `plant_desc` VARCHAR(30) NOT NULL,
   `address` TEXT NULL DEFAULT NULL,
@@ -196,19 +141,12 @@ CREATE TABLE IF NOT EXISTS `ioentdb_sfs`.`sfs_plant` (
   `longitude` DOUBLE NULL DEFAULT NULL,
   `image_file_name` TEXT NOT NULL,
   `comp_id` INT(11) NOT NULL,
-  `oee_limit_id` INT NOT NULL,
-  PRIMARY KEY (`id`, `comp_id`, `oee_limit_id`),
+  PRIMARY KEY (`id`, `comp_id`),
   UNIQUE INDEX `comp_id` (`plant_code` ASC),
   INDEX `fk_sfs_plant_details_sfs_comp_details1_idx` (`comp_id` ASC),
-  INDEX `fk_sfs_plant_oee_limit1_idx` (`oee_limit_id` ASC),
   CONSTRAINT `fk_sfs_plant_details_sfs_comp_details1`
     FOREIGN KEY (`comp_id`)
     REFERENCES `ioentdb_sfs`.`sfs_company` (`id`)
-    ON DELETE NO ACTION
-    ON UPDATE NO ACTION,
-  CONSTRAINT `fk_sfs_plant_oee_limit1`
-    FOREIGN KEY (`oee_limit_id`)
-    REFERENCES `ioentdb_sfs`.`sfs_oee_limit` (`id`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION)
 ENGINE = InnoDB
@@ -221,30 +159,40 @@ DEFAULT CHARACTER SET = latin1;
 DROP TABLE IF EXISTS `ioentdb_sfs`.`sfs_workcenter` ;
 
 CREATE TABLE IF NOT EXISTS `ioentdb_sfs`.`sfs_workcenter` (
-  `id` INT(11) NOT NULL,
+  `id` INT(11) NOT NULL AUTO_INCREMENT,
   `wc_code` VARCHAR(8) NULL DEFAULT NULL,
   `wc_desc` VARCHAR(40) NULL DEFAULT NULL,
   `contact_person` VARCHAR(40) NULL DEFAULT NULL,
   `contact_number` VARCHAR(20) NULL DEFAULT NULL,
   `image_file_name` TEXT NOT NULL,
   `plant_id` INT(11) NOT NULL,
-  `oee_limit_id` INT NOT NULL,
-  PRIMARY KEY (`id`, `plant_id`, `oee_limit_id`),
+  PRIMARY KEY (`id`, `plant_id`),
   UNIQUE INDEX `plant_id` (`wc_code` ASC),
   INDEX `fk_sfs_unit_details_sfs_plant_details1_idx` (`plant_id` ASC),
-  INDEX `fk_sfs_workcenter_oee_limit1_idx` (`oee_limit_id` ASC),
   CONSTRAINT `fk_sfs_unit_details_sfs_plant_details1`
     FOREIGN KEY (`plant_id`)
     REFERENCES `ioentdb_sfs`.`sfs_plant` (`id`)
     ON DELETE NO ACTION
-    ON UPDATE NO ACTION,
-  CONSTRAINT `fk_sfs_workcenter_oee_limit1`
-    FOREIGN KEY (`oee_limit_id`)
-    REFERENCES `ioentdb_sfs`.`sfs_oee_limit` (`id`)
-    ON DELETE NO ACTION
     ON UPDATE NO ACTION)
 ENGINE = InnoDB
 DEFAULT CHARACTER SET = latin1;
+
+
+-- -----------------------------------------------------
+-- Table `ioentdb_sfs`.`sfs_equipment_model`
+-- -----------------------------------------------------
+DROP TABLE IF EXISTS `ioentdb_sfs`.`sfs_equipment_model` ;
+
+CREATE TABLE IF NOT EXISTS `ioentdb_sfs`.`sfs_equipment_model` (
+  `id` INT NOT NULL AUTO_INCREMENT,
+  `name` VARCHAR(12) NULL,
+  `num_of_di` INT NULL,
+  `num_of_do` INT NULL,
+  `num_of_ai` INT NULL,
+  `num_of_ao` INT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE INDEX `name_UNIQUE` (`name` ASC))
+ENGINE = InnoDB;
 
 
 -- -----------------------------------------------------
@@ -253,12 +201,14 @@ DEFAULT CHARACTER SET = latin1;
 DROP TABLE IF EXISTS `ioentdb_sfs`.`sfs_equipment` ;
 
 CREATE TABLE IF NOT EXISTS `ioentdb_sfs`.`sfs_equipment` (
+  `id` INT NOT NULL AUTO_INCREMENT,
   `eq_code` VARCHAR(45) NOT NULL,
   `eq_desc` VARCHAR(30) NULL DEFAULT NULL,
   `eq_protocol` INT(11) NULL,
   `wc_id` INT(11) NOT NULL,
   `order_id` INT(11) NULL DEFAULT '0',
   `equipment_type_id` INT NOT NULL,
+  `equipment_model_id` INT NOT NULL,
   `conn_state` INT(11) NULL DEFAULT '0',
   `reason_code_id` INT NOT NULL,
   `reason_code_arr` VARCHAR(100) NULL DEFAULT '0',
@@ -275,13 +225,13 @@ CREATE TABLE IF NOT EXISTS `ioentdb_sfs`.`sfs_equipment` (
   `cur_date_time` DATETIME NULL DEFAULT NULL,
   `maint_alert_sent` TINYINT(1) NOT NULL DEFAULT '0',
   `image_file_name` TEXT NULL DEFAULT NULL,
-  `oee_limit_id` INT NOT NULL,
-  PRIMARY KEY (`wc_id`, `equipment_type_id`, `reason_code_id`, `oee_limit_id`, `eq_code`),
+  PRIMARY KEY (`eq_code`, `wc_id`, `equipment_type_id`, `equipment_model_id`, `reason_code_id`),
   INDEX `fk_sfs_equipment_sfs_equipment_type1_idx` (`equipment_type_id` ASC),
   INDEX `fk_sfs_equipment_sfs_reason_code1_idx` (`reason_code_id` ASC),
   INDEX `fk_sfs_equipment_sfs_workcenter1_idx` (`wc_id` ASC),
-  INDEX `fk_sfs_equipment_oee_limit1_idx` (`oee_limit_id` ASC),
   UNIQUE INDEX `eq_code_UNIQUE` (`eq_code` ASC),
+  INDEX `fk_sfs_equipment_sfs_equipment_model1_idx` (`equipment_model_id` ASC),
+  UNIQUE INDEX `id_UNIQUE` (`id` ASC),
   CONSTRAINT `fk_sfs_equipment_sfs_equipment_type1`
     FOREIGN KEY (`equipment_type_id`)
     REFERENCES `ioentdb_sfs`.`sfs_equipment_type` (`id`)
@@ -297,9 +247,9 @@ CREATE TABLE IF NOT EXISTS `ioentdb_sfs`.`sfs_equipment` (
     REFERENCES `ioentdb_sfs`.`sfs_workcenter` (`id`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION,
-  CONSTRAINT `fk_sfs_equipment_oee_limit1`
-    FOREIGN KEY (`oee_limit_id`)
-    REFERENCES `ioentdb_sfs`.`sfs_oee_limit` (`id`)
+  CONSTRAINT `fk_sfs_equipment_sfs_equipment_model1`
+    FOREIGN KEY (`equipment_model_id`)
+    REFERENCES `ioentdb_sfs`.`sfs_equipment_model` (`id`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION)
 ENGINE = InnoDB
@@ -628,7 +578,7 @@ ENGINE = InnoDB;
 DROP TABLE IF EXISTS `ioentdb_sfs`.`sfs_opr_department` ;
 
 CREATE TABLE IF NOT EXISTS `ioentdb_sfs`.`sfs_opr_department` (
-  `id` INT NOT NULL,
+  `id` INT NOT NULL AUTO_INCREMENT,
   `code` VARCHAR(8) NULL,
   `name` VARCHAR(45) NULL,
   `description` VARCHAR(100) NULL,
@@ -671,7 +621,6 @@ ENGINE = InnoDB;
 DROP TABLE IF EXISTS `ioentdb_sfs`.`sfs_operators` ;
 
 CREATE TABLE IF NOT EXISTS `ioentdb_sfs`.`sfs_operators` (
-  `tag_id` VARCHAR(45) NULL,
   `id` VARCHAR(8) NOT NULL,
   `name` VARCHAR(45) NULL,
   `type` VARCHAR(1) NULL,
@@ -683,7 +632,6 @@ CREATE TABLE IF NOT EXISTS `ioentdb_sfs`.`sfs_operators` (
   `skill_id` INT NOT NULL,
   PRIMARY KEY (`id`, `plant_id`, `workcenter_id`, `department_id`, `designation_id`, `skill_id`),
   UNIQUE INDEX `employee_id_UNIQUE` (`id` ASC),
-  UNIQUE INDEX `rfid_UNIQUE` (`tag_id` ASC),
   INDEX `fk_sfs_operators_sfs_plant1_idx` (`plant_id` ASC),
   INDEX `fk_sfs_operators_sfs_workcenter1_idx` (`workcenter_id` ASC),
   INDEX `fk_sfs_operators_sfs_opr_department1_idx` (`department_id` ASC),
@@ -900,6 +848,86 @@ CREATE TABLE IF NOT EXISTS `ioentdb_sfs`.`sfs_oee_input_data` (
 ENGINE = InnoDB;
 
 
+-- -----------------------------------------------------
+-- Table `ioentdb_sfs`.`sfs_oee_limit`
+-- -----------------------------------------------------
+DROP TABLE IF EXISTS `ioentdb_sfs`.`sfs_oee_limit` ;
+
+CREATE TABLE IF NOT EXISTS `ioentdb_sfs`.`sfs_oee_limit` (
+  `id` INT NOT NULL AUTO_INCREMENT,
+  `company_id` INT(11) NOT NULL,
+  `plant_id` INT(11) NOT NULL,
+  `workcenter_id` INT(11) NOT NULL,
+  `eq_code` VARCHAR(45) NOT NULL,
+  `oee_high` INT NOT NULL DEFAULT 0,
+  `oee_low` INT NOT NULL DEFAULT 0,
+  `a_high` INT NOT NULL DEFAULT 0 COMMENT 'availability high limit',
+  `a_low` INT NOT NULL DEFAULT 0,
+  `p_high` INT NOT NULL DEFAULT 0 COMMENT 'performance high limit',
+  `p_low` INT NOT NULL DEFAULT 0,
+  `q_high` INT NOT NULL DEFAULT 0 COMMENT 'quality high limit',
+  `q_low` INT NOT NULL DEFAULT 0,
+  PRIMARY KEY (`id`, `company_id`, `plant_id`, `workcenter_id`, `eq_code`),
+  UNIQUE INDEX `oee_high_UNIQUE` (`oee_high` ASC),
+  UNIQUE INDEX `oee_low_UNIQUE` (`oee_low` ASC),
+  UNIQUE INDEX `a_high_UNIQUE` (`a_high` ASC),
+  UNIQUE INDEX `a_low_UNIQUE` (`a_low` ASC),
+  UNIQUE INDEX `p_high_UNIQUE` (`p_high` ASC),
+  UNIQUE INDEX `p_low_UNIQUE` (`p_low` ASC),
+  UNIQUE INDEX `q_low_UNIQUE` (`q_low` ASC),
+  UNIQUE INDEX `q_high_UNIQUE` (`q_high` ASC),
+  INDEX `fk_sfs_oee_limit_sfs_company1_idx` (`company_id` ASC),
+  UNIQUE INDEX `id_UNIQUE` (`id` ASC),
+  INDEX `fk_sfs_oee_limit_sfs_workcenter1_idx` (`workcenter_id` ASC),
+  INDEX `fk_sfs_oee_limit_sfs_plant1_idx` (`plant_id` ASC),
+  INDEX `fk_sfs_oee_limit_sfs_equipment1_idx` (`eq_code` ASC),
+  CONSTRAINT `fk_sfs_oee_limit_sfs_company1`
+    FOREIGN KEY (`company_id`)
+    REFERENCES `ioentdb_sfs`.`sfs_company` (`id`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION,
+  CONSTRAINT `fk_sfs_oee_limit_sfs_workcenter1`
+    FOREIGN KEY (`workcenter_id`)
+    REFERENCES `ioentdb_sfs`.`sfs_workcenter` (`id`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION,
+  CONSTRAINT `fk_sfs_oee_limit_sfs_plant1`
+    FOREIGN KEY (`plant_id`)
+    REFERENCES `ioentdb_sfs`.`sfs_plant` (`id`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION,
+  CONSTRAINT `fk_sfs_oee_limit_sfs_equipment1`
+    FOREIGN KEY (`eq_code`)
+    REFERENCES `ioentdb_sfs`.`sfs_equipment` (`eq_code`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION)
+ENGINE = InnoDB;
+
+
+-- -----------------------------------------------------
+-- Table `ioentdb_sfs`.`sfs_contract_info`
+-- -----------------------------------------------------
+DROP TABLE IF EXISTS `ioentdb_sfs`.`sfs_contract_info` ;
+
+CREATE TABLE IF NOT EXISTS `ioentdb_sfs`.`sfs_contract_info` (
+  `id` INT NOT NULL AUTO_INCREMENT,
+  `created_date` DATETIME NULL,
+  `start_date` DATETIME NULL,
+  `no_of_days` INT NULL,
+  `is_active` TINYINT NULL,
+  `message` TEXT NULL,
+  `company_id` INT(11) NOT NULL,
+  PRIMARY KEY (`id`, `company_id`),
+  INDEX `fk_3_sfs_company1_idx` (`company_id` ASC),
+  UNIQUE INDEX `company_id_UNIQUE` (`company_id` ASC),
+  CONSTRAINT `fk_3_sfs_company1`
+    FOREIGN KEY (`company_id`)
+    REFERENCES `ioentdb_sfs`.`sfs_company` (`id`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION)
+ENGINE = InnoDB;
+
+
 SET SQL_MODE=@OLD_SQL_MODE;
 SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS;
 SET UNIQUE_CHECKS=@OLD_UNIQUE_CHECKS;
@@ -950,3 +978,4 @@ INSERT INTO `ioentdb_sfs`.`sfs_oee_colors` (`id`, `name`, `code`) VALUES (2, 'Me
 INSERT INTO `ioentdb_sfs`.`sfs_oee_colors` (`id`, `name`, `code`) VALUES (3, 'Low', '#E74C3C');
 
 COMMIT;
+
