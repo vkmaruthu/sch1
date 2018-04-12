@@ -332,8 +332,14 @@ if(isset($_POST['savePlant'])){
 
 if(isset($_POST['getPlantDetails'])){
     $comp_id=$_POST['comp_id'];
-    $plantQ="SELECT id,plant_code,plant_desc,address,contact_person,contact_number,image_file_name, comp_id FROM sfs_plant where comp_id=".$comp_id;
+    $plant_id=$_POST['plant_id'];
     
+    if($plant_id != ''){
+        $plantQ="SELECT id,plant_code,plant_desc,address,contact_person,contact_number,image_file_name, comp_id FROM sfs_plant where id=".$plant_id." and comp_id=".$comp_id;
+    }else{
+        $plantQ="SELECT id,plant_code,plant_desc,address,contact_person,contact_number,image_file_name, comp_id FROM sfs_plant where comp_id=".$comp_id;
+    }
+
     $plantDetails=mysqli_query($con,$plantQ) or die('Error:'.mysqli_error($con));
     
     while ($row=mysqli_fetch_array($plantDetails)){
@@ -395,6 +401,179 @@ if(isset($_POST['deletePlant'])){
     mysqli_close($con);
 }
 /* End Plant DB Operations */
+
+/* ------------WC DB Operation --------------------- */
+
+if(isset($_POST['saveWC'])){
+    
+    $plant_id=$_POST['plant_id'];
+    $img_id=$_POST['img_id'];
+    $wc_id=$_POST['wc_id'];
+    
+    $wc_code=$_POST['wc_code'];
+    $wc_desc=$_POST['wc_desc'];
+    $contact_person=$_POST['contact_person'];
+    $contact_number=$_POST['contact_number'];
+    
+    
+    $file_names = $_FILES['image_file_name']['name'];
+    $file_sizes =$_FILES['image_file_name']['size'];
+    $file_tmps =$_FILES['image_file_name']['tmp_name'];
+    $file_types=$_FILES['image_file_name']['type'];
+    
+    $path_parts = pathinfo($file_names);
+    $extension = $path_parts['extension'];
+    
+    if($file_names==""){
+        if($img_id==''){
+            $filePath="";
+            $filePathDB="";
+        }else{
+            $filePath="";
+            $filePathDB=$img_id;
+        }
+        
+    }else{
+        
+        $delPrevImg="../common/img/workcenter/".$img_id;
+        unlink($delPrevImg);
+        $filePathDB=$wc_code."_".rand().".".$extension;
+        
+        $filePath="../common/img/workcenter/".$filePathDB;
+        
+        
+    }
+    //unlink("../$img_name");
+    
+    $table = 'sfs_workcenter';
+    $DataMarge=array('wc_code'=>$wc_code,
+        'wc_desc'=>$wc_desc,
+        'contact_person'=>$contact_person,
+        'contact_number'=>$contact_number,
+        'image_file_name'=>$filePathDB,
+        'plant_id'=>$plant_id
+    );
+    
+    if($wc_id == ''){
+        $sqlQuery = mysqli_insert_array($table, $DataMarge, "submit"); // Function say generate complete query
+        $res=mysqli_query($con,$sqlQuery); //or die('Error: ' . mysqli_error($con));
+        
+        if(!$res) {
+            $error="WC Code Already Exists";
+            $response['info']=$error;
+            $response['infoRes']='E'; //Error
+        }else {
+            if(mysqli_errno() != 1062){
+                move_uploaded_file($file_tmps,$filePath);
+                $response['info']="WC Created Successfully";
+                $response['infoRes']="S"; // success
+                $response['mysqli_insert_id']=mysqli_insert_id($con);
+            }else{
+                $error="WC Code Already Exists";
+                $response['info']=$error;
+                $response['infoRes']='E'; //Error
+            }
+            
+        }
+        
+    }else{
+        $cond=' id='.$wc_id;
+        $sqlQuery = mysqli_update_array($table, $DataMarge, "submit",$cond); // Function say generate complete query
+        $res=mysqli_query($con,$sqlQuery); //or die('Error: ' . mysqli_error($con));
+        //echo $sqlQuery;
+        if(!$res) {
+            $error="WC Code Already Exists";
+            $response['info']=$error;
+            $response['infoRes']='E'; //Error
+        }else {
+            if(mysqli_errno() != 1062){
+                move_uploaded_file($file_tmps,$filePath);
+                $response['info']="Record Updated Successfully";
+                $response['infoRes']="S"; // success
+                $response['mysqli_insert_id']=mysqli_insert_id($con);
+            }else{
+                $error="WC Code Already Exists";
+                $response['info']=$error;
+                $response['infoRes']='E'; //Error
+            }
+            
+        }
+        
+    }
+    
+    $status['data'] = $response;
+    echo json_encode($status);
+    mysqli_close($con);
+}
+
+if(isset($_POST['getWCDetails'])){
+    $wc_id=$_POST['wc_id'];
+    $plant_id=$_POST['plant_id'];
+    if( $wc_id != ''){
+        $plantQ="SELECT id,wc_code,wc_desc,contact_person,contact_number,image_file_name, plant_id FROM sfs_workcenter where id=".$wc_id." and plant_id=".$plant_id;
+    }else{
+        $plantQ="SELECT id,wc_code,wc_desc,contact_person,contact_number,image_file_name, plant_id FROM sfs_workcenter where plant_id=".$plant_id;
+    }
+    $wcDetails=mysqli_query($con,$plantQ) or die('Error:'.mysqli_error($con));
+    
+    while ($row=mysqli_fetch_array($wcDetails)){
+        $id=$row['id'];
+        $wc_code=$row['wc_code'];
+        $wc_desc=$row['wc_desc'];
+        $contact_person=$row['contact_person'];
+        $contact_number=$row['contact_number'];
+        $image_file_name=$row['image_file_name'];
+        $plant_id=$row['plant_id'];
+        
+        $getWCData[]=array('id' =>"$id",
+            'wc_code' =>"$wc_code",
+            'wc_desc' =>"$wc_desc",
+            'contact_person' =>"$contact_person",
+            'contact_number' =>"$contact_number",
+            'image_file_name' =>"$image_file_name",
+            'plant_id' => "$plant_id"
+        );
+        
+    }
+    
+    $status['wcDetails'] = $getWCData;
+    echo json_encode($status);
+    mysqli_close($con);
+}
+
+if(isset($_POST['deleteWC'])){
+    $wc_id=$_POST['wc_id'];
+    $img=$_POST['img'];
+    
+    
+    $delQ="DELETE FROM sfs_workcenter WHERE id=".$wc_id;
+    $result=mysqli_query($con,$delQ); //or die('Error:'.mysqli_error($con));
+    
+    if(!$result) {
+        $error="Please Try again later";
+        $response['info']=$error;
+        $response['infoRes']='E'; //Error
+    }else {
+        if(mysqli_errno() != 1062){
+            
+            $delPrevImg="../common/img/workcenter/".$img;
+            unlink($delPrevImg);
+            
+            $response['info']="Record Deleted Successfully";
+            $response['infoRes']="S"; // success
+        }else{
+            $error="Please Try again later";
+            $response['info']=$error;
+            $response['infoRes']='E'; //Error
+        }
+        
+    }
+    $status['data'] = $response;
+    echo json_encode($status);
+    mysqli_close($con);
+}
+/* End of WC DB Operations */
+
 
 
 ?>

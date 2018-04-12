@@ -101,7 +101,7 @@ loadPlants:function(){
               if(globalPlantData[i].image_file_name!=''){
                 $('#showImg').html('<img style="width: 30%;" src="../common/img/plants/'+globalPlantData[i].image_file_name+'">');
               }else{
-                $('#showImg').html('<img style="width: 30%;" src="../common/img/plants/d/default.png">');
+                $('#showImg').html('<img style="width: 30%;" src="../common/img/plants/default.png">');
               }
               $('#plant_code').prop('readonly', true);
               break;
@@ -202,9 +202,10 @@ loadPlants:function(){
 	  });
 },
 	
-gotoWorkcenter:function(){
-  window.location="workcenter.php";
+gotoWorkcenter:function(plantId, compId){
+  window.location="workcenter.php?comp_id="+compId+"&plant_id="+plantId;
 },
+
 reload:function(){
 	   location.reload(true);
 },
@@ -240,6 +241,7 @@ AlertFilesizeType:function(name){
 	      return true;
 	    }
 },
+
 getCompanyDesc:function(){	
 	  var url="getDataController.php";
 	  var comp_id=$('#comp_id').val();
@@ -309,7 +311,7 @@ $(document).ready(function() {
     <div class="panel panel-default">
       <div class="panel-heading "> 
         <div class="panel-title pull-left">
-        <a href="index.php" class="btn btn-info btn-xs"><i class="fa fa-reply"></i> Back </a>
+          <a href="index.php" class="btn btn-info btn-xs"><i class="fa fa-reply"></i> Back </a>
         </div>
         
         <button type="button" onclick="tempData.oeeplant.reload();" class="btn btn-sm btn-info pull-right" style="margin-top: -3px;margin-bottom: -2px;margin-left:15px;">   <i class="fa  fa-refresh"> </i>
@@ -326,11 +328,10 @@ $(document).ready(function() {
           <div id="status" class="alert alert-success" style="color:green;text-align:center;font-weight:600;display:none;"></div>
           <div id="error" class="alert alert-danger" style="color:white;text-align:center;font-weight:600;display:none;"></div>
 
-        <div id="delCommonMsg"> </div>  
+         <div id="delCommonMsg"> </div>  
         <form class="" id="fromPlant" enctype="multipart/form-data"> 
             
-          <input type="hidden" name="comp_id" id="comp_id"/> 
-          <input type="hidden" name="comp_code" id="comp_code"/>
+          <input type="hidden" name="comp_id" id="comp_id"/>
           <input type="hidden" name="img_id" id="img_id"/> 
           <input type="hidden" name="plant_id" id="plant_id"/> 
           
