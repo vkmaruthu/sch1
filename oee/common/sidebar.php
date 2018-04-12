@@ -52,7 +52,7 @@
               <li><a href="pages/layout/boxed.html"><i class="fa fa-th"></i> OEE Configuration</a></li>
               <li><a href="../user/role.php"><i class="fa fa-users"></i> Role Configuration</a></li>
               <li><a href="../user/user.php"><i class="fa fa-users"></i> User Configuration</a></li>
-             <li><a href="../Company/Company.php"><i class="fa fa-users"></i> Company</a></li>
+             <li><a href="../Company"><i class="fa fa-users"></i> Company</a></li>
           </ul>
         </li>
         

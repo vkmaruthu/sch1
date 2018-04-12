@@ -196,7 +196,7 @@
       <span class="logo-mini"><img src="../common/img/SCHLogo_Blue.png" class="SCHLogo" style="width: 100%;"></span>
       <!-- logo for regular state and mobile devices -->
       <span class="logo-lg"><img src="../common/img/SCHLogo_full.png" class="FullSCHLogo"></span>
-      <span class="logo-lg"><img src="../common/img/logo.png" class="CustMobileLogo"></span>
+      <span class="logo-lg"><img src="../common/img/comp_logo/d/eimsdefault.png" class="CustMobileLogo"></span>
       <span class="logo-lg"><img src="../common/img/SCHLogo_Blue.png" class="SCHLogoMobile"></span>
     </a>
     <!-- Header Navbar: style can be found in header.less -->
@@ -214,7 +214,7 @@
 
     <div class="col-md-2" style=" margin-left: -4%;">  
       <span class="logo-mini">
-        <img src="../common/img/logo.png" class="cust_logo">
+        <img src="../common/img/comp_logo/d/eimsdefault.png" class="cust_logo">
       </span>
     </div>  
            

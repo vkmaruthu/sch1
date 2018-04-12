@@ -157,7 +157,37 @@ label{
 }
 
 p{
-      font-size: 15px;
+   font-size: 15px;
+}
+
+.commonMsgSuccess{
+    padding: 6px;
+    font-size: 20px;
+    color: #00a65a;
+    font-weight: 600;
+    background-color: #81b5ff94;
+    border-radius: 5px;
+}
+
+.commonMsgFail{
+    padding: 6px;
+    font-size: 20px;
+    color: #ef0000;
+    font-weight: 600;
+    background-color: #81b5ff94;
+    border-radius: 5px;
+}
+.thumb {
+  display: flex;
+  justify-content: center;
+}
+.thumb img {
+  height: 100%;
+  width: auto;
+}
+.thumb img {
+    width: 75px !important;
+    height: 45px !important;
 }
 
 

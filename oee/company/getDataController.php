@@ -15,7 +15,7 @@ function mysqli_insert_array($table, $data, $exclude = array()) {
     $fields = implode(",", $fields);
     $values = implode(",", $values);
 
-    $sql="INSERT INTO `$table` ($fields) VALUES ($values)";
+    $sql="INSERT INTO `$table` ($fields) VALUES ($values) ";
     return $sql;
 }   
 
@@ -48,6 +48,177 @@ function addZero($num) {
     }
     return $num;
   }
+
+
+
+if(isset($_POST['saveCompany'])){
+
+$comp_id=$_POST['comp_id'];
+$img_id=$_POST['img_id'];
+
+$comp_code=$_POST['comp_code'];
+$comp_desc=$_POST['comp_desc'];
+$contact_person=$_POST['contact_person'];
+$contact_number=$_POST['contact_number'];
+$address=$_POST['address'];
+
+
+    $file_names = $_FILES['image_file_name']['name'];
+    $file_sizes =$_FILES['image_file_name']['size'];
+    $file_tmps =$_FILES['image_file_name']['tmp_name'];
+    $file_types=$_FILES['image_file_name']['type'];
+
+    $path_parts = pathinfo($file_names);
+    $extension = $path_parts['extension'];
+
+    if($file_names==""){
+       if($img_id==''){
+         $filePath="";   
+         $filePathDB="";  
+       }else{  
+         $filePath="";
+         $filePathDB=$img_id;   
+       }
+       
+    }else{ 
+
+      $delPrevImg="../common/img/comp_logo/".$img_id; 
+      unlink($delPrevImg); 
+      $filePathDB=$comp_code."_".rand().".".$extension;
+      
+      $filePath="../common/img/comp_logo/".$filePathDB;    
+         
+
+    }
+            //unlink("../$img_name");         
+            
+    $table = 'sfs_company';  
+    $DataMarge=array('comp_code'=>$comp_code,
+                  'comp_desc'=>$comp_desc,
+                  'contact_person'=>$contact_person,
+                  'contact_number'=>$contact_number,
+                  'address'=>$address,
+                  'image_file_name'=>$filePathDB
+                );
+
+      if($comp_id == ''){
+
+        $sqlQuery = mysqli_insert_array($table, $DataMarge, "submit"); // Function say generate complete query
+        $res=mysqli_query($con,$sqlQuery); //or die('Error: ' . mysqli_error($con));  
+
+        if(!$res) {
+            $error="Company Code Already Exists";
+                $response['info']=$error;
+                $response['infoRes']='E'; //Error
+        }else {
+            if(mysqli_errno() != 1062){
+              move_uploaded_file($file_tmps,$filePath);
+              $response['info']="Company Created Successfully";
+              $response['infoRes']="S"; // success
+              $response['mysqli_insert_id']=mysqli_insert_id($con);     
+            }else{
+                $error="Company Code Already Exists";
+                $response['info']=$error;
+                $response['infoRes']='E'; //Error
+            }
+         
+        }
+
+      }else{
+        $cond=' id='.$comp_id;
+        $sqlQuery = mysqli_update_array($table, $DataMarge, "submit",$cond); // Function say generate complete query
+        $res=mysqli_query($con,$sqlQuery); //or die('Error: ' . mysqli_error($con));  
+        //echo $sqlQuery;
+        if(!$res) {
+            $error="Company Code Already Exists";
+                $response['info']=$error;
+                $response['infoRes']='E'; //Error
+        }else {
+            if(mysqli_errno() != 1062){
+              move_uploaded_file($file_tmps,$filePath);
+              $response['info']="Record Updated Successfully";
+              $response['infoRes']="S"; // success
+              $response['mysqli_insert_id']=mysqli_insert_id($con);     
+            }else{
+                $error="Company Code Already Exists";
+                $response['info']=$error;
+                $response['infoRes']='E'; //Error
+            }
+         
+        }
+
+      } 
+
+    $status['data'] = $response;     
+    echo json_encode($status);
+    mysqli_close($con);
+}
+
+if(isset($_POST['getCompDetails'])){
+    
+    $comQ="SELECT id,comp_code,comp_desc,address,contact_person,contact_number,image_file_name FROM sfs_company";
+
+    $comDetails=mysqli_query($con,$comQ) or die('Error:'.mysqli_error($con));
+
+    while ($row=mysqli_fetch_array($comDetails)){ 
+         $id=$row['id']; 
+         $comp_code=$row['comp_code']; 
+         $comp_desc=$row['comp_desc']; 
+         $address=$row['address']; 
+         $contact_person=$row['contact_person']; 
+         $contact_number=$row['contact_number']; 
+         $image_file_name=$row['image_file_name']; 
+
+
+          $getCompData[]=array('id' =>"$id",
+                              'comp_code' =>"$comp_code",
+                              'comp_desc' =>"$comp_desc",
+                              'address' =>"$address",
+                              'contact_person' =>"$contact_person",
+                              'contact_number' =>"$contact_number",
+                              'image_file_name' =>"$image_file_name"
+                              );
+
+        }
+
+            $status['compDetails'] = $getCompData;     
+            echo json_encode($status); 
+            mysqli_close($con);
+}
+
+if(isset($_POST['deleteCompany'])){
+  $comp_id=$_POST['comp_id'];
+  $img=$_POST['img'];
+
+
+  $comQ="DELETE FROM sfs_company WHERE id=".$comp_id;
+  $delComp=mysqli_query($con,$comQ); //or die('Error:'.mysqli_error($con));
+
+        if(!$delComp) {
+            $error="Please Try again later";
+            $response['info']=$error;
+            $response['infoRes']='E'; //Error
+        }else {
+            if(mysqli_errno() != 1062){
+
+      $delPrevImg="../common/img/comp_logo/".$img; 
+      unlink($delPrevImg); 
+
+              $response['info']="Record Deleted Successfully";
+              $response['infoRes']="S"; // success   
+            }else{
+                $error="Please Try again later";
+                $response['info']=$error;
+                $response['infoRes']='E'; //Error
+            }
+         
+        }
+    $status['data'] = $response;     
+    echo json_encode($status);
+    mysqli_close($con);
+}
+    
+
 
 
 ?>
