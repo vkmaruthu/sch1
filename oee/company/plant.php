@@ -88,7 +88,6 @@ loadPlants:function(){
     editPlant:function (id, comp_id){
         for(var i=0;i<globalPlantData.length;i++){
             if(id==globalPlantData[i].id){
-              alert(globalPlantData[i].id);
               $("#showImg").show();
 
               $('#plant_id').val(globalPlantData[i].id);
@@ -134,7 +133,6 @@ loadPlants:function(){
     	    data:fromPlantData,
     	    success: function(obj) {
     	        debugger;
-    	        alert(obj.data.info);
     	      if(obj.data !=null){
     	        if(obj.data.infoRes=='S'){
     	           $("#commonMsg").show();
