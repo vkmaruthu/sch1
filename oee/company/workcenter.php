@@ -49,7 +49,7 @@ tempData.oeewc=
                         "columns": [
                           { data: "id" ,className: "text-left",
                             render: function (data, type, row, meta) {
-                              var c='<button type="button" class="btn btn-success btn-xs" onclick="tempData.oeewc.gotoEquipment('+row.id+',\''+row.plant_id+'\',\''+row.comp_id+'\');"><i class="fa fa-check-square-o"></i> View Equipment</button>';
+                              var c='<button type="button" class="btn btn-success btn-xs" onclick="tempData.oeewc.gotoEquipment('+row.id+',\''+row.plant_id+'\',\''+comp_id+'\');"><i class="fa fa-check-square-o"></i> View Equipment</button>';
                               return c;
                             }
                           },
@@ -84,8 +84,8 @@ tempData.oeewc=
         },
 
         
-  gotoEquipment:function(){
-	  window.location="equipment.php";
+  gotoEquipment:function(id, plantId, compId){
+	  window.location="equipment.php?comp_id="+compId+"&plant_id="+plantId+"&wc_id="+id;
   },
 
   getCompanyDesc:function(){	
@@ -244,6 +244,11 @@ saveWC:function(){
     }
 },
 
+gotoBack:function(){
+	 var id = $('#comp_id').val();
+	 window.location="plant.php?comp_id="+id;
+},
+
 editWC:function (id, plant_id, comp_id){
     for(var i=0;i<globalWCData.length;i++){
         
@@ -286,8 +291,6 @@ debugger;
   $("#showImg").hide();
     $('#createWC').click(function(){
       $("#fromWC").fadeToggle("slow");
-        $("#addWC").show();
-        $("#updateWC").hide();
         $('#wc_code').prop('readonly', false);
         $('#fromWC')[0].reset();
         $("#showImg").hide();
@@ -317,14 +320,14 @@ debugger;
     <section class="content">
       <div class="commonPageHead">
         <div class="col-md-10 col-sm-12 col-xs-10 pull-left headerTitle" >
-             <h4 style="margin-top: 3px;"><spam id="compName" ></spam>/ <spam id="plantName" ></spam> / Plants </h4>
+             <h4 style="margin-top: 3px;"><spam id="compName" ></spam>/ <spam id="plantName" ></spam><b> / Work Centers </b></h4>
         </div>
       </div>
 
     <div class="panel panel-default">
       <div class="panel-heading "> 
         <div class="panel-title pull-left">
-           <a href="plant.php" class="btn btn-info btn-xs"><i class="fa fa-reply"></i> Back </a>
+           <a onclick="tempData.oeewc.gotoBack();" class="btn btn-info btn-xs"><i class="fa fa-reply"></i> Back </a>
         </div>
         
         <button type="button" onclick="tempData.oeewc.reload();" class="btn btn-sm btn-info pull-right" style="margin-top: -3px;margin-bottom: -2px;margin-left:15px;">   <i class="fa  fa-refresh"> </i>
@@ -352,7 +355,7 @@ debugger;
             <div class="form-group">
              <div class="row">
                 <div class="col-md-6">
-                  <label class="control-label col-md-4 col-sm-6 col-xs-12">Work Center Code<span class="required">*</span></label>
+                  <label class="control-label col-md-4 col-sm-6 col-xs-12">Code<span class="required">*</span></label>
                   <div class="col-md-6 col-sm-6 col-xs-12">
                     <input type="text" name="wc_code" id="wc_code" onkeyup=""
                      placeholder="Work Center Code" maxlength="4" class="form-control" required="true" autofocus/>
@@ -360,7 +363,7 @@ debugger;
                 </div>
                 
                 <div class="col-md-6">
-                <label class="control-label col-md-4 col-sm-6 col-xs-12">Work Center Description</label>
+                <label class="control-label col-md-4 col-sm-6 col-xs-12">Description</label>
                 <div class="col-md-6 col-sm-6 col-xs-12">
                   <input type="text" name="wc_desc" id="wc_desc" onkeyup=""
                    placeholder="Work Center Description" class="form-control" required="true"/>
@@ -422,8 +425,8 @@ debugger;
              <tr>
               <th>Action</th>
               <th>Work Center Image</th>
-              <th>Work Center Code</th> 
-              <th>Work Center Descreption</th>
+              <th>Code</th> 
+              <th>Descreption</th>
               <th>Contact Person</th>
               <th>Contact Number</th>
               <th>Action</th>

@@ -339,7 +339,7 @@ debugger;
                 </div>
                 
                 <div class="col-md-6">
-                <label class="control-label col-md-4 col-sm-6 col-xs-12">Company Description</label>
+                <label class="control-label col-md-4 col-sm-6 col-xs-12">Description</label>
                 <div class="col-md-6 col-sm-6 col-xs-12">
                   <input type="text" name="comp_desc" id="comp_desc" onkeyup=""
                    placeholder="Company Description" class="form-control" required="true"/>
@@ -413,7 +413,7 @@ debugger;
               <th>Action</th>
               <th>Comapany Logo</th> 
               <th>Comapany Code</th> 
-              <th>Company Descreption</th>
+              <th>Descreption</th>
               <th>address</th>
               <th>Contact Person</th>
               <th>Contact Number</th>
