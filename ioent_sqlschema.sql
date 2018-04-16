@@ -210,7 +210,7 @@ CREATE TABLE IF NOT EXISTS `ioentdb_sfs`.`sfs_equipment` (
   `eq_type_id` INT NOT NULL,
   `eq_model_id` INT NOT NULL,
   `conn_state` INT(11) NULL DEFAULT '0',
-  `reason_code_id` INT NOT NULL,
+  `reason_code_id` INT NULL DEFAULT NULL,
   `reason_code_arr` VARCHAR(100) NULL DEFAULT '0',
   `is_eq_details_updated` INT(1) NULL DEFAULT '1',
   `is_prod_list_updated` INT(1) NULL DEFAULT '1',
@@ -226,7 +226,7 @@ CREATE TABLE IF NOT EXISTS `ioentdb_sfs`.`sfs_equipment` (
   `maint_alert_sent` TINYINT(1) NOT NULL DEFAULT '0',
   `image_file_name` TEXT NULL DEFAULT NULL,
   `mac_id` VARCHAR(20) NULL,
-  PRIMARY KEY (`eq_code`, `wc_id`, `eq_type_id`, `eq_model_id`, `reason_code_id`),
+  PRIMARY KEY (`eq_code`, `wc_id`),
   INDEX `fk_sfs_equipment_sfs_equipment_type1_idx` (`eq_type_id` ASC),
   INDEX `fk_sfs_equipment_sfs_reason_code1_idx` (`reason_code_id` ASC),
   INDEX `fk_sfs_equipment_sfs_workcenter1_idx` (`wc_id` ASC),
@@ -678,6 +678,7 @@ CREATE TABLE IF NOT EXISTS `ioentdb_sfs`.`sfs_events` (
   `is_updated` INT(1) NULL,
   `data_info_id` INT(11) NOT NULL,
   `reason_code_id` INT NOT NULL,
+  `is_edited` TINYINT NOT NULL DEFAULT 0,
   PRIMARY KEY (`id`, `data_info_id`, `reason_code_id`),
   INDEX `fk_sfs_events_sfs_data_info1_idx` (`data_info_id` ASC),
   INDEX `fk_sfs_events_sfs_reason_code1_idx` (`reason_code_id` ASC),
@@ -703,13 +704,13 @@ CREATE TABLE IF NOT EXISTS `ioentdb_sfs`.`sfs_roles` (
   `id` INT NOT NULL AUTO_INCREMENT,
   `name` VARCHAR(45) NULL COMMENT 'Roles to be created before users creation',
   `description` VARCHAR(45) NULL,
-  `company_id` INT(11) NOT NULL,
-  `plant_id` INT(11) NOT NULL,
+  `company_id` INT(11) NULL DEFAULT NULL,
+  `plant_id` INT(11) NULL DEFAULT NULL,
   `created_at` TIMESTAMP NULL,
   `updated_at` TIMESTAMP NULL,
   `screen_access` TEXT NULL,
   `access_rights` TINYINT NULL COMMENT '0 - Read, 1 -  Read/Write',
-  PRIMARY KEY (`id`, `company_id`, `plant_id`),
+  PRIMARY KEY (`id`),
   INDEX `fk_sfs_roles_sfs_company1_idx` (`company_id` ASC),
   INDEX `fk_sfs_roles_sfs_plant1_idx` (`plant_id` ASC),
   CONSTRAINT `fk_sfs_roles_sfs_company1`
@@ -929,6 +930,75 @@ CREATE TABLE IF NOT EXISTS `ioentdb_sfs`.`sfs_contract_info` (
 ENGINE = InnoDB;
 
 
+-- -----------------------------------------------------
+-- Table `ioentdb_sfs`.`sfs_dc_poc_queue`
+-- -----------------------------------------------------
+DROP TABLE IF EXISTS `ioentdb_sfs`.`sfs_dc_poc_queue` ;
+
+CREATE TABLE IF NOT EXISTS `ioentdb_sfs`.`sfs_dc_poc_queue` (
+  `id` INT(11) NOT NULL AUTO_INCREMENT,
+  `dc_po_id` INT(11) NOT NULL,
+  `eq_id` VARCHAR(20) NOT NULL,
+  `yield_qty` INT(11) NOT NULL DEFAULT 0,
+  `scrap_qty` INT(11) NOT NULL DEFAULT 0,
+  `final_confirm` TINYINT NOT NULL DEFAULT 0,
+  `activity1_unit` VARCHAR(20) NOT NULL,
+  `activity1_qty` INT(11) NOT NULL DEFAULT 0,
+  `activity2_unit` VARCHAR(20) NOT NULL,
+  `activity2_qty` INT(11) NOT NULL DEFAULT 0,
+  `activity3_unit` VARCHAR(20) NOT NULL,
+  `activity3_qty` INT(11) NOT NULL DEFAULT 0,
+  `activity4_unit` VARCHAR(20) NOT NULL,
+  `activity4_qty` INT(11) NOT NULL DEFAULT 0,
+  `activity5_unit` VARCHAR(20) NOT NULL,
+  `activity5_qty` INT(11) NOT NULL DEFAULT 0,
+  `activity6_unit` VARCHAR(20) NOT NULL,
+  `activity6_qty` INT(11) NOT NULL DEFAULT 0,
+  PRIMARY KEY (`id`, `dc_po_id`),
+  INDEX `fk_sfs_dc_poc_queue_sfs_dc_po1_idx` (`dc_po_id` ASC),
+  CONSTRAINT `fk_sfs_dc_poc_queue_sfs_dc_po1`
+    FOREIGN KEY (`dc_po_id`)
+    REFERENCES `ioentdb_sfs`.`sfs_dc_po` (`id`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION)
+ENGINE = InnoDB;
+
+
+-- -----------------------------------------------------
+-- Table `ioentdb_sfs`.`sfs_event_log`
+-- -----------------------------------------------------
+DROP TABLE IF EXISTS `ioentdb_sfs`.`sfs_event_log` ;
+
+CREATE TABLE IF NOT EXISTS `ioentdb_sfs`.`sfs_event_log` (
+  `id` INT NOT NULL AUTO_INCREMENT,
+  `created_time` DATETIME NULL,
+  `start_time` DATETIME NULL,
+  `end_time` DATETIME NULL,
+  `cur_reason_code` INT NOT NULL,
+  `prev_reason_code` INT NOT NULL,
+  `edited_by` INT NOT NULL COMMENT 'used id who created log',
+  PRIMARY KEY (`id`, `cur_reason_code`, `prev_reason_code`, `edited_by`),
+  INDEX `fk_sfs_event_log_sfs_reason_code1_idx` (`cur_reason_code` ASC),
+  INDEX `fk_sfs_event_log_sfs_reason_code2_idx` (`prev_reason_code` ASC),
+  INDEX `fk_sfs_event_log_sfs_user1_idx` (`edited_by` ASC),
+  CONSTRAINT `fk_sfs_event_log_sfs_reason_code1`
+    FOREIGN KEY (`cur_reason_code`)
+    REFERENCES `ioentdb_sfs`.`sfs_reason_code` (`id`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION,
+  CONSTRAINT `fk_sfs_event_log_sfs_reason_code2`
+    FOREIGN KEY (`prev_reason_code`)
+    REFERENCES `ioentdb_sfs`.`sfs_reason_code` (`id`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION,
+  CONSTRAINT `fk_sfs_event_log_sfs_user1`
+    FOREIGN KEY (`edited_by`)
+    REFERENCES `ioentdb_sfs`.`sfs_user` (`id`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION)
+ENGINE = InnoDB;
+
+
 SET SQL_MODE=@OLD_SQL_MODE;
 SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS;
 SET UNIQUE_CHECKS=@OLD_UNIQUE_CHECKS;
@@ -979,4 +1049,3 @@ INSERT INTO `ioentdb_sfs`.`sfs_oee_colors` (`id`, `name`, `code`) VALUES (2, 'Me
 INSERT INTO `ioentdb_sfs`.`sfs_oee_colors` (`id`, `name`, `code`) VALUES (3, 'Low', '#E74C3C');
 
 COMMIT;
-
