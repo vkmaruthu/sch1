@@ -101,7 +101,7 @@ loadPlants:function(){
               if(globalPlantData[i].image_file_name!=''){
                 $('#showImg').html('<img style="width: 30%;" src="../common/img/plants/'+globalPlantData[i].image_file_name+'">');
               }else{
-                $('#showImg').html('<img style="width: 30%;" src="../common/img/plants/d/default.png">');
+                $('#showImg').html('<img style="width: 30%;" src="../common/img/plants/default.png">');
               }
               $('#plant_code').prop('readonly', true);
               break;
@@ -202,9 +202,10 @@ loadPlants:function(){
 	  });
 },
 	
-gotoWorkcenter:function(){
-  window.location="workcenter.php";
+gotoWorkcenter:function(plantId, compId){
+  window.location="workcenter.php?comp_id="+compId+"&plant_id="+plantId;
 },
+
 reload:function(){
 	   location.reload(true);
 },
@@ -240,6 +241,7 @@ AlertFilesizeType:function(name){
 	      return true;
 	    }
 },
+
 getCompanyDesc:function(){	
 	  var url="getDataController.php";
 	  var comp_id=$('#comp_id').val();
@@ -273,8 +275,6 @@ $(document).ready(function() {
     $("#showImg").hide();
       $('#createPlant').click(function(){
         $("#fromPlant").fadeToggle("slow");
-          $("#addPlant").show();
-          $("#updatePlant").hide();
           $('#plant_code').prop('readonly', false);
           $('#fromPlant')[0].reset();
           $("#showImg").hide();
@@ -302,14 +302,14 @@ $(document).ready(function() {
     <section class="content">
       <div class="commonPageHead">
        <div class="col-md-12 col-sm-12 col-xs-12 pull-left headerTitle">
-        <h4 style="margin-top: 3px;"><spam id="compName" ></spam> / Plants </h4>
+        <h4 style="margin-top: 3px;"><spam id="compName" ></spam> <b>/ Plants </b></h4>
       </div>
       </div>
 
     <div class="panel panel-default">
       <div class="panel-heading "> 
         <div class="panel-title pull-left">
-        <a href="index.php" class="btn btn-info btn-xs"><i class="fa fa-reply"></i> Back </a>
+          <a href="index.php" class="btn btn-info btn-xs"><i class="fa fa-reply"></i> Back </a>
         </div>
         
         <button type="button" onclick="tempData.oeeplant.reload();" class="btn btn-sm btn-info pull-right" style="margin-top: -3px;margin-bottom: -2px;margin-left:15px;">   <i class="fa  fa-refresh"> </i>
@@ -326,11 +326,10 @@ $(document).ready(function() {
           <div id="status" class="alert alert-success" style="color:green;text-align:center;font-weight:600;display:none;"></div>
           <div id="error" class="alert alert-danger" style="color:white;text-align:center;font-weight:600;display:none;"></div>
 
-        <div id="delCommonMsg"> </div>  
+         <div id="delCommonMsg"> </div>  
         <form class="" id="fromPlant" enctype="multipart/form-data"> 
             
-          <input type="hidden" name="comp_id" id="comp_id"/> 
-          <input type="hidden" name="comp_code" id="comp_code"/>
+          <input type="hidden" name="comp_id" id="comp_id"/>
           <input type="hidden" name="img_id" id="img_id"/> 
           <input type="hidden" name="plant_id" id="plant_id"/> 
           
@@ -339,7 +338,7 @@ $(document).ready(function() {
             <div class="form-group">
              <div class="row">
                 <div class="col-md-6">
-                  <label class="control-label col-md-4 col-sm-6 col-xs-12">Plant Code <span class="required">*</span> </label>
+                  <label class="control-label col-md-4 col-sm-6 col-xs-12">Code <span class="required">*</span> </label>
                   <div class="col-md-6 col-sm-6 col-xs-12">
                     <input type="text" name="plant_code" id="plant_code" onkeyup=""
                      placeholder="Plant Code" maxlength="4" class="form-control" required="true" autofocus/>
@@ -347,7 +346,7 @@ $(document).ready(function() {
                 </div>
                 
                 <div class="col-md-6">
-                <label class="control-label col-md-4 col-sm-6 col-xs-12">Plant Description</label>
+                <label class="control-label col-md-4 col-sm-6 col-xs-12">Description</label>
                 <div class="col-md-6 col-sm-6 col-xs-12">
                   <input type="text" name="plant_desc" id="plant_desc" onkeyup=""
                    placeholder="Plant Description" class="form-control" required="true"/>
@@ -418,8 +417,8 @@ $(document).ready(function() {
              <tr>
               <th>Action</th>
               <th>Plant Image</th>
-              <th>Plant Code</th> 
-              <th>Plant Descreption</th>
+              <th>Code</th> 
+              <th>Descreption</th>
               <th>Address</th>
               <th>Contact Person</th>
               <th>Contact Number</th>
