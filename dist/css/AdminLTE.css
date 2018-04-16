@@ -190,7 +190,7 @@ a:focus {
   max-height: 100px;
   z-index: 1030;
   border-radius: 0;
-      background: linear-gradient(#f1f1f1eb, #8a535300, #e2e0e0);
+      background: linear-gradient(#f1f1f1eb, #fffbfb, #e2e0e0);
 }
 .main-header .navbar {
   -webkit-transition: margin-left 0.3s ease-in-out;
@@ -201,7 +201,7 @@ a:focus {
   border: none;
   min-height: 50px;
   border-radius: 0;
-      background: linear-gradient(#f1f1f1eb, #8a535300, #e2e0e0);
+      background: linear-gradient(#f1f1f1eb, #fffbfb, #e2e0e0);
     border-bottom: 1px solid #adadad;
 }
 .layout-top-nav .main-header .navbar {
@@ -251,7 +251,7 @@ a:focus {
 }
 .main-header .sidebar-toggle {
   float: left;
-   background: linear-gradient(#f1f1f1eb, #8a535300, #e2e0e0);
+   background: linear-gradient(#f1f1f1eb, #fffbfb, #e2e0e0);
   background-image: none;
   padding: 15px 15px;
   font-family: fontAwesome;
@@ -424,7 +424,7 @@ a:focus {
   -moz-transition: -moz-transform 0.3s ease-in-out, width 0.3s ease-in-out;
   -o-transition: -o-transform 0.3s ease-in-out, width 0.3s ease-in-out;
   transition: transform 0.3s ease-in-out, width 0.3s ease-in-out;
-  background: linear-gradient(#f1f1f1eb, #8a535300, #e2e0e0);
+  background: linear-gradient(#f1f1f1eb, #fffbfb, #e2e0e0);
 }
 @media (max-width: 767px) {
   .main-sidebar {
