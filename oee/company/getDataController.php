@@ -49,7 +49,17 @@ function addZero($num) {
     return $num;
   }
 
- 
+function getAllReasonCodeNames($reasonCodeId) {   
+    $q="select message from sfs_reason_code where id IN(".$reasonCodeId.")";
+    $res=mysqli_query($con,$q) or die('Error:'.mysqli_error($con));
+    while ($row=mysqli_fetch_array($res)){
+        $message=$row['message'];
+        $strMsg.=$message.',';
+    }
+    echo $strMsg."asdasdsad";
+    die();
+    return $strMsg;    
+} 
 
 
 if(isset($_POST['saveCompany'])){
@@ -589,6 +599,8 @@ if(isset($_POST['saveEquipment'])){
     $eq_code=$_POST['eq_code'];
     $eq_desc=$_POST['eq_desc'];
     $eq_protocol=$_POST['eq_protocol'];
+    $reason_codes = implode(',',$_POST['reason_codes']);
+   // $reason_codes = print_r($_POST['reason_codes'], true);
     
     $file_names = $_FILES['image_file_name']['name'];
     $file_sizes =$_FILES['image_file_name']['size'];
@@ -624,7 +636,8 @@ if(isset($_POST['saveEquipment'])){
                     'wc_id'=>$wc_id,
                     'eq_type_id'=>$eq_type_id,
                     'eq_model_id'=>$eq_model_id,
-                    'image_file_name'=>$filePathDB
+                    'image_file_name'=>$filePathDB,
+                    'reason_code_arr' => $reason_codes
     );
   //  print_r($DataMarge);
     if($eq_id == ''){
@@ -684,9 +697,9 @@ if(isset($_POST['getEquipmentDetails'])){
     $wc_id=$_POST['wc_id'];
     $eq_id=$_POST['eq_id'];
     if( $eq_id != ''){
-        $eqQ="SELECT eq.id,eq.eq_code,eq.eq_desc,eq.image_file_name, eq.eq_protocol, eq.eq_type_id, eq.eq_model_id, eq.wc_id, eqm.name,eqt.eq_type_desc FROM sfs_equipment eq, sfs_equipment_model eqm, sfs_equipment_type eqt where eq.eq_model_id=eqm.id and eq.eq_type_id=eqt.id and id=".$eq_id." and wc_id=".$wc_id;
+        $eqQ="SELECT eq.id,eq.eq_code,eq.eq_desc,eq.image_file_name, eq.eq_protocol, eq.eq_type_id, eq.eq_model_id, eq.wc_id, eqm.name,eqt.eq_type_desc, eq.reason_code_arr FROM sfs_equipment eq, sfs_equipment_model eqm, sfs_equipment_type eqt where eq.eq_model_id=eqm.id and eq.eq_type_id=eqt.id and id=".$eq_id." and wc_id=".$wc_id;
     }else{
-        $eqQ="SELECT eq.id,eq.eq_code,eq.eq_desc,eq.image_file_name, eq.eq_protocol, eq.eq_type_id, eq.eq_model_id, eq.wc_id, eqm.name,eqt.eq_type_desc FROM sfs_equipment eq, sfs_equipment_model eqm, sfs_equipment_type eqt where eq.eq_model_id=eqm.id and eq.eq_type_id=eqt.id and  wc_id=".$wc_id;
+        $eqQ="SELECT eq.id,eq.eq_code,eq.eq_desc,eq.image_file_name, eq.eq_protocol, eq.eq_type_id, eq.eq_model_id, eq.wc_id, eqm.name,eqt.eq_type_desc, eq.reason_code_arr FROM sfs_equipment eq, sfs_equipment_model eqm, sfs_equipment_type eqt where eq.eq_model_id=eqm.id and eq.eq_type_id=eqt.id and  wc_id=".$wc_id;
     }
     
     $eqDetails=mysqli_query($con,$eqQ) or die('Error:'.mysqli_error($con));
@@ -702,6 +715,17 @@ if(isset($_POST['getEquipmentDetails'])){
         $wc_id=$row['wc_id'];
         $model_name=$row['name'];
         $eq_type_name=$row['eq_type_desc'];
+        $reason_code_arr=$row['reason_code_arr'];
+      
+        //$reasonCodeName = getAllReasonCodeNames($reason_code_arr);
+        $q="select message from sfs_reason_code where id IN(".$reason_code_arr.")";
+        $res=mysqli_query($con,$q) or die('Error:'.mysqli_error($con));
+        while ($row=mysqli_fetch_array($res)){
+            $message=$row['message'];
+            $strMsg.=$message.', ';
+        }
+         
+        //die();
         
         $getEQData[]=array('id' =>"$id",
             'eq_code' =>"$eq_code",
@@ -712,11 +736,13 @@ if(isset($_POST['getEquipmentDetails'])){
             'image_file_name' =>"$image_file_name",
             'wc_id' => "$wc_id",
             'model_name' => "$model_name",
-            'eq_type_name' => "$eq_type_name"
+            'eq_type_name' => "$eq_type_name",
+            'reason_code_arr' => "$reason_code_arr",
+            'reason_code_name' => "$strMsg"
         );
-        
+        $strMsg='';
     }
-    
+    //print_r($getEQData);
     $status['equipmentDetails'] = $getEQData;
     echo json_encode($status);
     mysqli_close($con);
@@ -886,5 +912,20 @@ if(isset($_POST['getEquipmentType'])){
     mysqli_close($con);
 }
 
+if(isset($_POST['getReasons'])){
+    $eqQ="SELECT id,message FROM sfs_reason_code";
+    $eqDetails=mysqli_query($con,$eqQ) or die('Error:'.mysqli_error($con));
+    while ($row=mysqli_fetch_array($eqDetails)){
+        $id=$row['id'];
+        $message=$row['message'];
+        $getEQData[]=array('id' =>"$id",
+            'message' =>"$message"
+        );
+        
+    }
+    $status['reasons'] = $getEQData;
+    echo json_encode($status);
+    mysqli_close($con);
+}
 
 ?>

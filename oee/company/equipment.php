@@ -10,6 +10,7 @@ if(tempData===null||tempData===undefined){
 var globalEquipmentData=new Array();
 var modelArray = new Array();
 var eqTypeArray = Array();
+var reasonsArray = Array();
 
 tempData.oeeEquipment=
 {
@@ -65,13 +66,20 @@ var myData={getEquipmentDetails:"getEquipmentDetails", "wc_id":wc_id, "comp_id":
                   { data: "eq_protocol" },
                   { data: "eq_type_name" },
                   { data: "model_name" },
-                  { data: "id" ,className: "text-left",
+                  { data: "reason_code_name" ,className: "text-left",
                     render: function (data, type, row, meta) {
-                      var a='<button type="button" class="btn btn-primary btn-xs" onclick="tempData.oeeEquipment.editEquipment('+row.id+',\''+row.wc_id+'\',\''+row.eq_type_id+'\',\''+row.eq_model_id+'\');"><i class="fa fa-pencil-square-o"></i> </button>';
-                       var b='<button type="button" class="btn btn-danger btn-xs" onclick="tempData.oeeEquipment.deleteEquipment('+row.id+',\''+row.image_file_name+'\');"><i class="fa fa-trash"></i> </button>';
-                      return a+' '+b;
+                      var a=row.reason_code_name;
+                      var text='<div style="white-space:normal;width:200px;">'+a.slice(0, -2)+'</div>';
+                       return text;
                     }
                   },
+                  { data: "id" ,className: "text-left",
+                      render: function (data, type, row, meta) {
+                        var a='<button type="button" class="btn btn-primary btn-xs" onclick="tempData.oeeEquipment.editEquipment('+row.id+',\''+row.wc_id+'\',\''+row.eq_type_id+'\',\''+row.eq_model_id+'\');"><i class="fa fa-pencil-square-o"></i> </button>';
+                         var b='<button type="button" class="btn btn-danger btn-xs" onclick="tempData.oeeEquipment.deleteEquipment('+row.id+',\''+row.image_file_name+'\');"><i class="fa fa-trash"></i> </button>';
+                        return a+' '+b;
+                      }
+                    },
                    ]
                  }); 
         
@@ -255,14 +263,12 @@ saveEquipment:function(){
 	           $("#showImg").hide();
 	         
 	           $("#size").html('');
-	           $("#addEquipmentuipment").show();
-	           $("#updateEquipmentuipment").hide();
 	           $('#eq_code').prop('readonly', false);
 	           $('#fromEquipment')[0].reset();
 
 	           $("#addEquipment").show();
-	           $("#updateEquipment").hide();          
-	           
+	           $("#updateEquipment").hide(); 
+	           $("#reason_codes").val('').change();         
 	           tempData.oeeEquipment.loadAllEquipment();
 	           tempData.oeeEquipment.resetModelOnAction();
 	           tempData.oeeEquipment.resetEQTyOnAction();
@@ -301,6 +307,12 @@ editEquipment:function (id, wcId, eqTypeId, modelId){
          
          $('#model').val(modelId).change();
          $('#eq_type').val(eqTypeId).change();
+         alert(globalEquipmentData[i].reason_code_arr);
+         var str = globalEquipmentData[i].reason_code_arr;
+         var reason = new Array();
+         reason = str.split(",");
+         $('#reason_codes').val(reason).change();
+         
          
          $('#wc_id').val(globalEquipmentData[i].wc_id);
          $('#img_id').val(globalEquipmentData[i].image_file_name);
@@ -435,8 +447,8 @@ getModelNameForDropdown:function(){
 	        }
 	      } 
 	  });
-  },
-getEQTypeForDropdown:function(){
+ },
+getEQTypeForDropdown:function(){//reasonsArray
 	  var url="getDataController.php";
 	  var myData = {getEquipmentType:'getEquipmentType'};
 	  $.ajax({
@@ -460,7 +472,30 @@ getEQTypeForDropdown:function(){
 	        }
 	      } 
 	  });
-  },
+ },
+ getReasonsForDropdown:function(){
+ 	  var url="getDataController.php";
+ 	  var myData = {getReasons:'getReasons'};
+ 	  $.ajax({
+ 	    type:"POST",
+ 	    url:url,
+ 	    async: false,
+ 	    dataType: 'json',
+ 	    cache: false,
+ 	    data:myData,
+ 	    success: function(obj) {
+ 	        debugger;
+ 	      if(obj.reasons !=null){
+ 	    	 reasonsArray = obj.reasons;
+              	if(reasonsArray != null){
+             		for(var i=0; i< reasonsArray.length; i++){
+         			   $("#reason_codes").append('<option value="'+reasonsArray[i].id+'">'+reasonsArray[i].message+'</option>'); 
+             		}
+             	}
+ 	        }
+ 	      } 
+ 	  });
+   },
 resetEQTyOnAction:function(){
  $("#eq_type").html('');
  $("#eq_type").append('<option value="0"> Select Equipment Type </option>');
@@ -537,6 +572,7 @@ debugger;
     tempData.oeeEquipment.getWCDesc();
     tempData.oeeEquipment.getModelNameForDropdown();
     tempData.oeeEquipment.getEQTypeForDropdown();
+    tempData.oeeEquipment.getReasonsForDropdown();
   
 });
 
@@ -546,7 +582,7 @@ debugger;
     <section class="content">
       <div class="commonPageHead">
         <div class="col-md-10 col-sm-12 col-xs-10 pull-left headerTitle" >
-         <h4 style="margin-top: 3px;"><spam id="compName" ></spam>/ <spam id="plantName" ></spam>/ <spam id="wcName" ></spam><b> / Equipment </b></h4>
+         <h4 style="margin-top: 3px;"><a id="compName" ></a> <b>/</b> <a id="plantName" ></a> <b>/</b> <a id="wcName" ></a> <b>/</b> Equipment </h4>
         </div>
       </div>
 
@@ -602,7 +638,7 @@ debugger;
                   <label class="control-label col-md-4 col-sm-6 col-xs-12">Equipment Type <span class="required">*</span></label>
                     <div class="col-md-5 col-sm-5 col-xs-10" style="padding-right: 0px;">
                       <div class="form-group">
-                        <select class="form-control select2"  id="eq_type" name="eq_type">
+                        <select class="form-control select2"  id="eq_type" name="eq_type" style="width:100%;">
                         </select>
                       </div>
                     </div>
@@ -617,7 +653,7 @@ debugger;
                   <label class="control-label col-md-4 col-sm-6 col-xs-12">Model<span class="required">*</span></label>
                     <div class="col-md-5 col-sm-5 col-xs-10" style="padding-right: 0px;">
                       <div class="form-group">
-                        <select class="form-control select2"  id="model" name="model" >
+                        <select class="form-control select2"  id="model" name="model" style="width:100%;">
                         </select>
                       </div>
                     </div>
@@ -631,28 +667,46 @@ debugger;
                 </div>
               </div>
               
-              <div class="row">
-                <div class="col-md-6">
-                    <label class="control-label col-md-4 col-sm-6 col-xs-12">Protocol<span class="required">*</span></label>
-                    <div class="col-md-6 col-sm-6 col-xs-12">
-                      <input type="text" name="eq_protocol" id="eq_protocol" onkeyup=""
-                       placeholder="Equipment Protocol" class="form-control" required="true"/>
+              <div class="row" style="margin-top: 0px;">
+                   <div class="col-md-6">
+                        <label class="control-label col-md-4 col-sm-6 col-xs-12">Protocol<span class="required">*</span></label>
+                        <div class="col-md-6 col-sm-6 col-xs-12">
+                          <input type="text" name="eq_protocol" id="eq_protocol" onkeyup=""
+                           placeholder="Equipment Protocol" class="form-control" required="true"/>
+                        </div>   
                     </div>
-                </div>
-
-              <div class="col-md-6">
-                  <label class="control-label col-md-4 col-sm-6 col-xs-12">Image Upload</label>
-                  <div class="col-md-6 col-sm-6 col-xs-12">    
-                   <input type="file" name="image_file_name" id="image_file_name" accept="image/*" class="form-control col-md-12 col-xs-12" 
-                    onchange="tempData.oeeEquipment.AlertFilesizeType(this);" />
-                      <span class="pull-right">[ Upload only Image ]  </span>
-                      <span id="size" style="color:red;font-size:13px;"></span>
-                      <span id="lblError" style="color:red;font-size:13px;"></span>
-                    <span id="showImg"></span> 
-                   </div>
-                </div>
+                   
+              </div>
+              
+              <div class="row" style="margin-top: 10px;">
+                  <div class="col-md-6">
+                      <label class="control-label col-md-4 col-sm-6 col-xs-12">Image Upload</label>
+                      <div class="col-md-6 col-sm-6 col-xs-12">    
+                       <input type="file" name="image_file_name" id="image_file_name" accept="image/*" class="form-control col-md-12 col-xs-12" 
+                        onchange="tempData.oeeEquipment.AlertFilesizeType(this);" />
+                          <span class="pull-right">[ Upload only Image ]  </span>
+                          <span id="size" style="color:red;font-size:13px;"></span>
+                          <span id="lblError" style="color:red;font-size:13px;"></span>
+                        <span id="showImg"></span> 
+                       </div>
+                    </div>
+                    <div class="col-md-6">               
+                        <label class="control-label col-md-4 col-sm-6 col-xs-12">Reason Codes <span class="required">*</span></label>
+                            <div class="col-md-5 col-sm-5 col-xs-10" style="padding-right: 0px;">
+                              <div class="form-group">
+                                <select class="form-control select2"  id="reason_codes" name="reason_codes[]" multiple="reason_codes" data-placeholder="Select Reason Codes" style="width:100%;">
+                                </select>
+                              </div>
+                            </div>
+                            <div class="col-md-1 col-sm-1 col-xs-2" style="padding-left: 3px;padding-top: 1px; ">
+                              <button type="button" class="btn btn-sm btn-info" onclick="">
+                                Add
+                              </button>
+                          </div>
+                    </div>
 
               </div>
+              
 
               <div class="row">
                <div id="msg" style="padding-left: 28px;color: red;"></div>
@@ -680,6 +734,7 @@ debugger;
               <th>Protocol</th>
               <th>Equipment Type</th>
               <th>Model</th>
+              <th>Reason Code</th>
               <th>Action</th>
              </tr>
            </thead>

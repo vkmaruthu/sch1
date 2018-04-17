@@ -320,7 +320,7 @@ debugger;
     <section class="content">
       <div class="commonPageHead">
         <div class="col-md-10 col-sm-12 col-xs-10 pull-left headerTitle" >
-             <h4 style="margin-top: 3px;"><spam id="compName" ></spam>/ <spam id="plantName" ></spam><b> / Work Centers </b></h4>
+             <h4 style="margin-top: 3px;"><a id="compName" ></a> <b>/</b> <a id="plantName" ></a><b> / Work Centers </b></h4>
         </div>
       </div>
 

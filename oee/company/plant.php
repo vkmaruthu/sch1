@@ -302,7 +302,7 @@ $(document).ready(function() {
     <section class="content">
       <div class="commonPageHead">
        <div class="col-md-12 col-sm-12 col-xs-12 pull-left headerTitle">
-        <h4 style="margin-top: 3px;"><spam id="compName" ></spam> <b>/ Plants </b></h4>
+        <h4 style="margin-top: 3px;"><a id="compName" ></a> <b> / Plants </b></h4>
       </div>
       </div>
 
