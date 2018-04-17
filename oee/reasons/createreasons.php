@@ -263,8 +263,9 @@ gotoBack:function(){
 	 var comp_id = $('#comp_id').val();
 	 var plant_id = $('#plant_id').val();
 	 var wc_id = $('#wc_id').val();
-	 window.location="equipment.php?comp_id="+comp_id+"&plant_id="+plant_id+"&wc_id="+wc_id;
+	 window.location="../company/equipment.php?comp_id="+comp_id+"&plant_id="+plant_id+"&wc_id="+wc_id;
 },
+
 
 
 };
@@ -335,7 +336,7 @@ debugger;
     <div class="panel panel-default">
       <div class="panel-heading "> 
         <div class="panel-title pull-left">
-               <a onclick="tempData.oeecr.gotoBack();" class="btn btn-info btn-xs" id="back"><i class="fa fa-reply"></i>Back</a>
+               <a onclick="tempData.oeecr.gotoBack();" class="btn btn-info btn-xs" id="back"><i class="fa fa-reply"></i> Back</a>
         </div>
         <button type="button" onclick="tempData.oeecr.reload();" class="btn btn-sm btn-info pull-right" style="margin-top: -3px;margin-bottom: -2px;margin-left:15px;">   <i class="fa  fa-refresh"> </i>
         </button>

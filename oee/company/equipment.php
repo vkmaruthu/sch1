@@ -292,6 +292,12 @@ gotoBack:function(){
 	 var plant_id = $('#plant_id').val();
 	 window.location="workcenter.php?comp_id="+comp_id+"&plant_id="+plant_id;
 },
+gotoReasons:function(){
+	 var comp_id = $('#comp_id').val();
+	 var plant_id = $('#plant_id').val();
+	 var wc_id = $('#wc_id').val();
+	 window.location="../reasons/createreasons.php?comp_id="+comp_id+"&plant_id="+plant_id+"&wc_id="+wc_id;
+},
 editEquipment:function (id, wcId, eqTypeId, modelId){
 	debugger;
    for(var i=0;i<globalEquipmentData.length;i++){ 
@@ -307,7 +313,6 @@ editEquipment:function (id, wcId, eqTypeId, modelId){
          
          $('#model').val(modelId).change();
          $('#eq_type').val(eqTypeId).change();
-         alert(globalEquipmentData[i].reason_code_arr);
          var str = globalEquipmentData[i].reason_code_arr;
          var reason = new Array();
          reason = str.split(",");
@@ -699,8 +704,8 @@ debugger;
                               </div>
                             </div>
                             <div class="col-md-1 col-sm-1 col-xs-2" style="padding-left: 3px;padding-top: 1px; ">
-                              <button type="button" class="btn btn-sm btn-info" onclick="">
-                                Add
+                              <button type="button" class="btn btn-sm btn-info" onclick="tempData.oeeEquipment.gotoReasons();">
+                                <i class="fa  fa-plus"></i>
                               </button>
                           </div>
                     </div>
