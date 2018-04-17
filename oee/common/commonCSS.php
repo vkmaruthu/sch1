@@ -22,15 +22,17 @@
 <!-- select -->
 <link rel="stylesheet" href="../../bower_components/select2/dist/css/select2.min.css">
 
+<!-- Theme style -->
+<link rel="stylesheet" href="../../dist/css/AdminLTE.css">
+<!-- AdminLTE Skins. Choose a skin from the css/skins
+     folder instead of downloading all of them to reduce the load. -->
+<link rel="stylesheet" href="../../dist/css/skins/_all-skins.css">
 
-  <!-- Theme style -->
-  <link rel="stylesheet" href="../../dist/css/AdminLTE.css">
-  <!-- AdminLTE Skins. Choose a skin from the css/skins
-       folder instead of downloading all of them to reduce the load. -->
-  <link rel="stylesheet" href="../../dist/css/skins/_all-skins.css">
-  
-   <!-- Choose color  -->
-  <link rel="stylesheet" href="../common/css/spectrum.css">
+<!-- Choose color  -->
+<link rel="stylesheet" href="../common/css/spectrum.css">
+
+<!-- iCheck for checkboxes and radio inputs -->
+<link rel="stylesheet" href="../../plugins/iCheck/all.css">
 
 <style type="text/css">
   /* Let's get this party started */
@@ -192,8 +194,15 @@ p{
     width: 75px !important;
     height: 45px !important;
 }
+.fa-expand:hover{
+  background-color: #dcd6d6;
+}
 
-
+.shiftDetailsTime{
+    font-size: 28px;
+    color: #013785;
+    margin-top: -17px;
+}
 
 /* **************************************************************************************************** */
 /*==========  Mobile First Method  ==========*/

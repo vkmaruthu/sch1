@@ -40,7 +40,7 @@ tempData.oeeDash=
 
 $(document).ready(function() {
 debugger; 
-  $('.knob').knob();
+
 
 tempData.oeeDash.getImg();
 tempData.oeeDash.oeeCirclePerc('oeePerc',75,'#E29C21');
@@ -57,6 +57,7 @@ $('#compProfile').click(function(e){
     $('#compProfileScreen').find('.panel-heading').toggleClass('topNavheight');
      // tempData.cpsData.loadOnExpand();
 });
+
 
 
 });
@@ -252,11 +253,6 @@ $('#compProfile').click(function(e){
               <div class="col-md-12 col-xs-12 text-center">
                 <input type="text" class="knob" id="qualityPerc" data-skin="tron" data-thickness="0.2" data-width="80" data-height="80" readonly>
               </div>
-               
-          <!--   <div class="col-md-12 col-xs-12" style="padding: 0px;margin-top:5%;">
-                <p class="text-right timeFontStyle">04:12:01</p>
-                <p class="text-right">Ideal Cycle Time</p>
-            </div> -->
 
             <div class="col-md-12 col-xs-12" style="padding: 0px;margin-bottom: -7%;">
                 <p class="col-md-4 col-xs-4 availTextRight">
@@ -292,7 +288,125 @@ $('#compProfile').click(function(e){
       </div>
 <!-- Quality Ends --> 
 
+<!-- Hourly Production -->
+    <div class="col-md-9 col-sm-12 col-xs-12">  
+        <div class="panel panel-default dashFirstRow">
+          <div class="panel-heading panelHeader">
+            <div class="panel-title pull-left">
+              <i class="fa fa-sliders fa-fw"></i> Hourly Production
+            </div>
+              <div class="panel-title pull-right">
+                <label> <input type="radio" name="order" class="minimal" checked> Machine </label>&nbsp;&nbsp;
+                <label> <input type="radio" name="order" class="minimal"> Production </label>&nbsp;&nbsp;
+                <label> <input type="radio" name="order" class="minimal"> Tool </label>
 
+               <i id="compProfile" class="btn btn-xs fa fa-expand" aria-hidden="true"></i>
+              </div> 
+            <div class="clearfix"></div>
+          </div>
+          <div class="panel-body">  
+            <div class="row">
+                <!-- Load Machine & Production Order Chart --> <!-- class="widthClass"  -->
+                <div id="hourlyProduction" style="width:100%;height:270px;border: 1px solid;"></div>           
+
+            </div>      
+          </div>
+        </div>
+      </div>
+<!-- Hourly Production Ends --> 
+
+
+<!-- Shift Details -->
+    <div class="col-md-3 col-sm-6 col-xs-12">  
+        <div class="panel panel-default dashFirstRow">
+          <div class="panel-heading panelHeader">
+            <div class="panel-title pull-left">
+              <i class="fa fa-sliders fa-fw"></i> Shift Details
+            </div>
+            <div class="panel-title pull-right">
+              <div id="statusImg"></div>
+            </div>
+              <div class="panel-title pull-right">
+               <i id="compProfile" class="btn btn-xs fa fa-expand" aria-hidden="true"></i>
+              </div> 
+            <div class="clearfix"></div>
+          </div>
+          <div class="panel-body">  
+            <div class="row">              
+              <div class="col-md-12 col-xs-12" style="padding: 0px;">              
+                  <p class="text-center">Total Production Period</p>
+                  <p class="text-center shiftDetailsTime">06:00 - 14:00</p>
+              </div>
+              <div class="col-md-12 col-xs-12" style="padding: 0px;">              
+                  <p class="text-center">Long Break</p>
+                  <p class="text-center shiftDetailsTime">10:00 - 10:30</p>
+              </div>
+              <div class="col-md-12 col-xs-12" style="padding: 0px;">              
+                  <p class="text-center">Short Break - 01</p>
+                  <p class="text-center shiftDetailsTime">08:00 - 08:15</p>
+              </div>
+              <div class="col-md-12 col-xs-12" style="padding: 0px;">              
+                  <p class="text-center">Short Break - 02</p>
+                  <p class="text-center shiftDetailsTime">12:00 - 12:15</p>
+              </div>
+            </div> 
+
+          </div>
+        </div>
+      </div>
+<!-- Shift Details Ends -->  
+
+
+<!-- Activity Progress -->
+    <div class="col-md-9 col-sm-12 col-xs-12">  
+        <div class="panel panel-default dashFirstRow">
+          <div class="panel-heading panelHeader">
+            <div class="panel-title pull-left">
+              <i class="fa fa-sliders fa-fw"></i> Activity Progress
+            </div>
+              <div class="panel-title pull-right">
+              <!--  <i id="compProfile" class="btn btn-xs fa fa-expand" aria-hidden="true"></i> -->
+              <button class="btn btn-xs bg-purple btn-flat"><i class="fa fa-file-text-o" aria-hidden="true"></i> &nbsp; Report</button>
+              </div>
+            <div class="clearfix"></div>
+          </div>
+          <div class="panel-body">  
+            <div class="row">
+                <!-- Load Machine & Production Order Chart --> <!-- class="widthClass"  -->
+                <div id="hourlyProduction" style="width:100%;height:270px;border: 1px solid;"></div>           
+
+            </div>      
+          </div>
+        </div>
+      </div>
+<!-- Activity Progress Ends --> 
+
+
+<!-- Activity Analysis -->
+    <div class="col-md-3 col-sm-6 col-xs-12">  
+        <div class="panel panel-default dashFirstRow">
+          <div class="panel-heading panelHeader">
+            <div class="panel-title pull-left">
+              <i class="fa fa-sliders fa-fw"></i> Activity Analysis
+            </div>
+            <div class="panel-title pull-right">
+              <div id="statusImg"></div>
+            </div>
+              <div class="panel-title pull-right">
+               <i id="compProfile" class="btn btn-xs fa fa-expand" aria-hidden="true"></i>
+              </div> 
+            <div class="clearfix"></div>
+          </div>
+          <div class="panel-body">  
+            <div class="row">              
+                <!-- Load Activity Analysis pie Chart --> 
+                <div id="activityAnalysis" style="width:100%;height:270px;border: 1px solid;"></div>   
+            </div> 
+
+          </div>
+        </div>
+      </div>
+<!-- Activity Analysis Ends -->  
 
     </section>
     <!-- /.content -->

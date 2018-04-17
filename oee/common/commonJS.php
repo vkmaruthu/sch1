@@ -50,3 +50,23 @@
 <!-- Color Picker -->
 <script src="../common/js/spectrum.js"></script>
 
+<!-- iCheck 1.0.1 -->
+<script src="../../plugins/iCheck/icheck.min.js"></script>
+
+
+<script type="text/javascript">
+$(document).ready(function() {
+debugger; 
+
+	$('.knob').knob();
+
+	//iCheck for checkbox and radio inputs
+	$('input[type="checkbox"].minimal, input[type="radio"].minimal').iCheck({
+	  checkboxClass: 'icheckbox_minimal-blue',
+	  radioClass   : 'iradio_minimal-blue'
+	});
+
+});
+
+</script>
+
