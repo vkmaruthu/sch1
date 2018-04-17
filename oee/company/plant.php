@@ -316,7 +316,7 @@ $(document).ready(function() {
         </button>
         
         <button type="button" id="createPlant" class="btn btn-sm btn-primary pull-right" style="margin-top: -3px;margin-bottom: -2px;">
-              <i class="fa fa-pencil-square-o"></i>&nbsp; Create Plant
+              <i class="fa fa-pencil-square-o"></i>&nbsp; Add Plant
         </button>
           <div class="clearfix"></div>
       </div>   
@@ -382,7 +382,7 @@ $(document).ready(function() {
                 </div>
                 
                 <div class="col-md-6">
-                 <label class="control-label col-md-4 col-sm-6 col-xs-12">Logo Upload</label>
+                 <label class="control-label col-md-4 col-sm-6 col-xs-12">Upload Image</label>
                     <div class="col-md-6 col-sm-6 col-xs-12">
                        
                    <input type="file" name="image_file_name" id="image_file_name" accept="image/*" class="form-control col-md-12 col-xs-12" 

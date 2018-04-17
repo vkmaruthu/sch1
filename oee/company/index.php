@@ -304,7 +304,7 @@ debugger;
 
 
         <button type="button" id="createCompany" class="btn btn-sm btn-primary pull-right" style="margin-top: -3px;margin-bottom: -2px;">
-              <i class="fa fa-pencil-square-o"></i>&nbsp; Create Company
+              <i class="fa fa-pencil-square-o"></i>&nbsp; Add Company
         </button>
 
        

@@ -583,11 +583,12 @@ if(isset($_POST['saveEquipment'])){
     $img_id=$_POST['img_id'];
     $wc_id=$_POST['wc_id'];
     
-    $eq_type_id=$_POST['eq_type_id'];
-    $eq_model_id=$_POST['eq_model_id'];
+    $eq_type_id=$_POST['eq_type'];
+    $eq_model_id=$_POST['model'];
     
     $eq_code=$_POST['eq_code'];
     $eq_desc=$_POST['eq_desc'];
+    $eq_protocol=$_POST['eq_protocol'];
     
     $file_names = $_FILES['image_file_name']['name'];
     $file_sizes =$_FILES['image_file_name']['size'];
@@ -613,25 +614,22 @@ if(isset($_POST['saveEquipment'])){
         $filePathDB=$eq_code."_".rand().".".$extension;
         
         $filePath="../common/img/machine/".$filePathDB;
-        
-        
     }
     //unlink("../$img_name");
     
     $table = 'sfs_equipment';
-    $DataMarge=array('code'=>$eq_code,
-                    'descp'=>$eq_desc,
+    $DataMarge=array('eq_code'=>$eq_code,
+                    'eq_desc'=>$eq_desc,
                     'eq_protocol'=>$eq_protocol,
                     'wc_id'=>$wc_id,
-                    'eq_type_id'=>1,
-                    'eq_model_id'=>1,
-                    'image_file_name'=>$filePathDB,
-                    'reason_code_id'=>-1
+                    'eq_type_id'=>$eq_type_id,
+                    'eq_model_id'=>$eq_model_id,
+                    'image_file_name'=>$filePathDB
     );
-    
+  //  print_r($DataMarge);
     if($eq_id == ''){
         $sqlQuery = mysqli_insert_array($table, $DataMarge, "submit"); // Function say generate complete query
-       
+       // echo $sqlQuery;
         $res=mysqli_query($con,$sqlQuery); //or die('Error: ' . mysqli_error($con));
         
         if(!$res) {
@@ -653,7 +651,7 @@ if(isset($_POST['saveEquipment'])){
         }
         
     }else{
-        $cond=' id='.$wc_id;
+        $cond=' id='.$eq_id;
         $sqlQuery = mysqli_update_array($table, $DataMarge, "submit",$cond); // Function say generate complete query
         $res=mysqli_query($con,$sqlQuery); //or die('Error: ' . mysqli_error($con));
         //echo $sqlQuery;
@@ -686,22 +684,24 @@ if(isset($_POST['getEquipmentDetails'])){
     $wc_id=$_POST['wc_id'];
     $eq_id=$_POST['eq_id'];
     if( $eq_id != ''){
-        $eqQ="SELECT id,code,descp,image_file_name, eq_protocol, eq_type_id, eq_model_id, wc_id FROM sfs_equipment where id=".$eq_id." and wc_id=".$wc_id;
+        $eqQ="SELECT eq.id,eq.eq_code,eq.eq_desc,eq.image_file_name, eq.eq_protocol, eq.eq_type_id, eq.eq_model_id, eq.wc_id, eqm.name,eqt.eq_type_desc FROM sfs_equipment eq, sfs_equipment_model eqm, sfs_equipment_type eqt where eq.eq_model_id=eqm.id and eq.eq_type_id=eqt.id and id=".$eq_id." and wc_id=".$wc_id;
     }else{
-        $eqQ="SELECT id,code,descp,image_file_name, eq_protocol, eq_type_id, eq_model_id, wc_id FROM sfs_equipment where wc_id=".$wc_id;
+        $eqQ="SELECT eq.id,eq.eq_code,eq.eq_desc,eq.image_file_name, eq.eq_protocol, eq.eq_type_id, eq.eq_model_id, eq.wc_id, eqm.name,eqt.eq_type_desc FROM sfs_equipment eq, sfs_equipment_model eqm, sfs_equipment_type eqt where eq.eq_model_id=eqm.id and eq.eq_type_id=eqt.id and  wc_id=".$wc_id;
     }
     
     $eqDetails=mysqli_query($con,$eqQ) or die('Error:'.mysqli_error($con));
     
     while ($row=mysqli_fetch_array($eqDetails)){
         $id=$row['id'];
-        $eq_code=$row['code'];
-        $eq_desc=$row['descp'];
+        $eq_code=$row['eq_code'];
+        $eq_desc=$row['eq_desc'];
         $eq_protocol=$row['eq_protocol'];
         $eq_type_id=$row['eq_type_id'];
         $eq_model_id=$row['eq_model_id'];
         $image_file_name=$row['image_file_name'];
         $wc_id=$row['wc_id'];
+        $model_name=$row['name'];
+        $eq_type_name=$row['eq_type_desc'];
         
         $getEQData[]=array('id' =>"$id",
             'eq_code' =>"$eq_code",
@@ -710,7 +710,9 @@ if(isset($_POST['getEquipmentDetails'])){
             'eq_type_id' => "$eq_type_id",
             'eq_model_id' => "$eq_model_id",
             'image_file_name' =>"$image_file_name",
-            'wc_id' => "$wc_id"
+            'wc_id' => "$wc_id",
+            'model_name' => "$model_name",
+            'eq_type_name' => "$eq_type_name"
         );
         
     }
@@ -752,7 +754,137 @@ if(isset($_POST['deleteEquipment'])){
     mysqli_close($con);
 }
 
-/* End of WC DB Operations */
+/* End of Equipment DB Operations */
+
+
+if(isset($_POST['saveEquipmentModel'])){
+    
+    $name=$_POST['model_name'];
+    $num_of_di=$_POST['num_of_di'];
+    $num_of_do=$_POST['num_of_do'];
+    $num_of_ai=$_POST['num_of_ai'];
+    $num_of_ao=$_POST['num_of_ao'];
+    $model_id=$_POST['model_id'];
+   
+    $table = 'sfs_equipment_model';
+    $DataMarge=array('name'=>$name,
+                'num_of_di'=>$num_of_di,
+                'num_of_do'=>$num_of_do,
+                'num_of_ai'=>$num_of_ai,
+                'num_of_ao'=>$num_of_ao
+    );
+
+    if($model_id == ''){
+        $sqlQuery = mysqli_insert_array($table, $DataMarge, "submit"); // Function say generate complete query
+        $res=mysqli_query($con,$sqlQuery); //or die('Error: ' . mysqli_error($con));
+        
+        if(!$res) {
+            $error="Equipment Model Already Exists";
+            $response['info']=$error;
+            $response['infoRes']='E'; //Error
+        }else {
+            if(mysqli_errno() != 1062){
+                move_uploaded_file($file_tmps,$filePath);
+                $response['info']="Equipment Model Created Successfully";
+                $response['infoRes']="S"; // success
+                $response['mysqli_insert_id']=mysqli_insert_id($con);
+            }else{
+                $error="Equipment Model Already Exists";
+                $response['info']=$error;
+                $response['infoRes']='E'; //Error
+            }
+            
+        }
+        
+    }else{
+        
+    }
+    
+    $status['data'] = $response;
+    echo json_encode($status);
+    mysqli_close($con);
+}
+
+if(isset($_POST['saveEquipmentType'])){
+    
+    $eq_type_desc=$_POST['eq_type_desc'];
+    $is_machine=$_POST['is_machine'];
+    $is_afs_size_id=$_POST['is_afs_size_id'];
+    $is_dc_po=$_POST['is_dc_po'];
+    $is_tool=$_POST['is_tool'];
+    
+    $table = 'sfs_equipment_type';
+    $DataMarge=array('eq_type_desc'=>$eq_type_desc,
+                      'is_machine'=>$is_machine,
+                      'is_afs_size_id'=>$is_afs_size_id,
+                      'is_dc_po'=>$is_dc_po,
+                      'is_tool'=>$is_tool
+    );
+    
+    if($model_id == ''){
+        $sqlQuery = mysqli_insert_array($table, $DataMarge, "submit"); // Function say generate complete query
+        $res=mysqli_query($con,$sqlQuery); //or die('Error: ' . mysqli_error($con));
+        
+        if(!$res) {
+            $error="Equipment Type Already Exists";
+            $response['info']=$error;
+            $response['infoRes']='E'; //Error
+        }else {
+            if(mysqli_errno() != 1062){
+                move_uploaded_file($file_tmps,$filePath);
+                $response['info']="Equipment Type Created Successfully";
+                $response['infoRes']="S"; // success
+                $response['mysqli_insert_id']=mysqli_insert_id($con);
+            }else{
+                $error="Equipment Type Already Exists";
+                $response['info']=$error;
+                $response['infoRes']='E'; //Error
+            }
+            
+        }
+        
+    }else{
+        
+    }
+    
+    $status['data'] = $response;
+    echo json_encode($status);
+    mysqli_close($con);
+}
+
+if(isset($_POST['getEquipmentModel'])){
+    $eqQ="SELECT id,name FROM sfs_equipment_model";
+    $eqDetails=mysqli_query($con,$eqQ) or die('Error:'.mysqli_error($con));
+    
+    while ($row=mysqli_fetch_array($eqDetails)){
+           $id=$row['id'];
+           $model_name=$row['name'];
+           $getEQData[]=array('id' =>"$id",
+              'model_name' =>"$model_name"
+           );
+        
+    }
+    $status['models'] = $getEQData;
+    echo json_encode($status);
+    mysqli_close($con);
+}
+
+if(isset($_POST['getEquipmentType'])){
+    $eqQ="SELECT id,eq_type_desc FROM sfs_equipment_type";
+    $eqDetails=mysqli_query($con,$eqQ) or die('Error:'.mysqli_error($con));
+    
+    while ($row=mysqli_fetch_array($eqDetails)){
+        $id=$row['id'];
+        $eq_type_desc=$row['eq_type_desc'];
+        $getEQData[]=array('id' =>"$id",
+            'eq_type_desc' =>"$eq_type_desc"
+        );
+        
+    }
+    $status['eqTypes'] = $getEQData;
+    echo json_encode($status);
+    mysqli_close($con);
+}
 
 
 ?>

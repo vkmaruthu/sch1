@@ -333,7 +333,7 @@ debugger;
         <button type="button" onclick="tempData.oeewc.reload();" class="btn btn-sm btn-info pull-right" style="margin-top: -3px;margin-bottom: -2px;margin-left:15px;">   <i class="fa  fa-refresh"> </i>
         </button>
         <button type="button" id="createWC" class="btn btn-sm btn-primary pull-right" style="margin-top: -3px;margin-bottom: -2px;">
-              <i class="fa fa-pencil-square-o"></i>&nbsp; Create Work Center
+              <i class="fa fa-pencil-square-o"></i>&nbsp; Add Work Center
         </button>
           <div class="clearfix"></div>
       </div>   
@@ -392,7 +392,7 @@ debugger;
 
               <div class="row" style="margin-top: 1px;">                 
                   <div class="col-md-6">
-                      <label class="control-label col-md-4 col-sm-6 col-xs-12">Logo Upload</label>
+                      <label class="control-label col-md-4 col-sm-6 col-xs-12">Upload Image</label>
                       <div class="col-md-6 col-sm-6 col-xs-12">    
                        <input type="file" name="image_file_name" id="image_file_name" accept="image/*" class="form-control col-md-12 col-xs-12" 
                         onchange="tempData.oeewc.AlertFilesizeType(this);" />
