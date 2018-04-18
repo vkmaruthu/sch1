@@ -352,8 +352,7 @@ debugger;
           <div id="status" class="alert alert-success" style="color:green;text-align:center;font-weight:600;display:none;"></div>
           <div id="error" class="alert alert-danger" style="color:white;text-align:center;font-weight:600;display:none;"></div>
           
-          <div id="delCommonMsg"> </div>  
-
+        <div id="delCommonMsg"> </div>  
         <form class="" id="fromReasons">  
            
           <input type="hidden" name="comp_id" id="comp_id"/> 
@@ -380,7 +379,7 @@ debugger;
                 </div>
                 
                 <div class="col-md-6">
-                    <label class="control-label col-md-4 col-sm-6 col-xs-12">Color Code</label>
+                    <label class="control-label col-md-4 col-sm-6 col-xs-12">Color Code<span class="required">*</span></label>
                     <div class="col-md-6 col-sm-6 col-xs-12">
                     	 <div class="col-md-8" style="padding-left: 0px; padding-right: 0px;">
                     		 <input type="text" class="form-control" id="color" name="color" readonly>
@@ -395,7 +394,7 @@ debugger;
               
              <div class="row">
                 <div class="col-md-6">
-                  <label class="control-label col-md-4 col-sm-6 col-xs-12">Reason message</label>
+                  <label class="control-label col-md-4 col-sm-6 col-xs-12">Reason message<span class="required">*</span></label>
                     <div class="col-md-6 col-sm-6 col-xs-12">
                       <input type="text" name="message" id="message" onkeyup=""
                        placeholder="Reason message" class="form-control" required="true"/>

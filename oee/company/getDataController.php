@@ -724,9 +724,7 @@ if(isset($_POST['getEquipmentDetails'])){
             $message=$row['message'];
             $strMsg.=$message.', ';
         }
-         
-        //die();
-        
+           
         $getEQData[]=array('id' =>"$id",
             'eq_code' =>"$eq_code",
             'eq_desc' =>"$eq_desc",
@@ -742,7 +740,7 @@ if(isset($_POST['getEquipmentDetails'])){
         );
         $strMsg='';
     }
-    //print_r($getEQData);
+    
     $status['equipmentDetails'] = $getEQData;
     echo json_encode($status);
     mysqli_close($con);

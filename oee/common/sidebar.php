@@ -54,6 +54,7 @@
               <li><a href="../user/user.php"><i class="fa fa-users"></i> User Configuration</a></li>
               <li><a href="../company"><i class="fa fa-users"></i> Company</a></li>
               <li><a href="../reasons/createreasons.php"><i class="fa fa-users"></i> reasons</a></li>
+              <li><a href="../ProdOrder/index.php"><i class="fa fa-th"></i> Production Order</a></li>
           </ul>
         </li>
         

@@ -220,6 +220,7 @@ saveEquipment:function(){
 	  var eq_protocol = $('#eq_protocol').val();
 	  var eqType = $('#eq_type').val();
 	  var model = $('#model').val();
+	  var reasons = $('#reason_codes').val();
 	  
 	    if(eq_code == "") {
 	        $('#eq_code').css('border-color', 'red');
@@ -244,6 +245,13 @@ saveEquipment:function(){
     		  }else {
     			  $('#eq_protocol').css('border-color', '');
     		  }
+
+    	    if(reasons == ""){
+    	    	$('#msg').html('*Select Reason Codes');
+      		     return false;
+      		  }else {
+      			$('#msg').html('');
+      		  }
   		  
 	  $.ajax({
 	    type:"POST",
@@ -410,9 +418,15 @@ saveEquipmentType:function(){
 	           $('#commonMsg').html('<p class="commonMsgSuccess"> <i class="fa fa-check"></i> '+obj.data.info+'</p>');
 	           $("#showImg").hide();
 	           $("#size").html('');
-	           $('#fromEquipmentType')[0].reset();
-	           $('#addEQTypeModal').modal('hide');
+	           
+	     	   $('#is_machine').iCheck('uncheck');
+	     	  $('#is_tool').iCheck('uncheck');
+	     	   $('#is_afs_size_id').iCheck('uncheck');
+	        	$('#is_dc_po').iCheck('uncheck');	
+	     	        
+	     	  $('#fromEquipmentType')[0].reset();
 	           tempData.oeeEquipment.getEQTypeForDropdown();
+	           $('#addEQTypeModal').modal('hide');
 
 	        }else{
 	          $("#commonMsg").show();
@@ -571,6 +585,10 @@ debugger;
      $('#eq_type').change(function(){
         $('#msg').html('');
      });
+     
+     $('#reason_codes').change(function(){
+         $('#msg').html('');
+      });
     tempData.oeeEquipment.getCompanyDesc();
     tempData.oeeEquipment.loadAllEquipment();
     tempData.oeeEquipment.getPlantDesc();
@@ -776,7 +794,7 @@ debugger;
           <div class="modal-body">          
                <div class="row">
                     <div class="col-md-12">
-                      <label class="control-label col-md-4 col-sm-6 col-xs-12">Description</label>
+                      <label class="control-label col-md-4 col-sm-6 col-xs-12">Description<span class="required">*</span></label>
                         <div class="col-md-6 col-sm-6 col-xs-12">
                           <input type="text" name="eq_type_desc" id="eq_type_desc" onkeyup=""
                            placeholder="Equipment Type Desc" class="form-control" required="true"/>
@@ -784,20 +802,22 @@ debugger;
                     </div>
                     
                     <div class="col-md-12" style="padding-top: 1px;">
-                      <div class="col-md-6 col-sm-6 col-xs-12">
+                      <div class="col-md-6 col-sm-6 col-xs-6" >
                           <div class="checkbox">
                             <label><input type="checkbox" name="is_machine" value="0" id="is_machine" class="minimal"> Is Machine</label>
                           </div>
                           <div class="checkbox">
                             <label><input type="checkbox" name="is_dc_po" value="0" id="is_dc_po" class="minimal"> Is dc po</label>
                           </div>
+                      </div>
+                       <div class="col-md-6 col-sm-6 col-xs-6">
                           <div class="checkbox">
                             <label><input type="checkbox" name="is_tool" value="0" id="is_tool" class="minimal"> Is Tool</label>
                           </div>
                           <div class="checkbox">
                             <label><input type="checkbox" name="is_afs_size_id" value="0" id="is_afs_size_id" class="minimal"> Is afs size id</label>
                           </div>
-                      </div>
+                       </div>
                     </div>
                 </div>
           </div>
@@ -827,7 +847,7 @@ debugger;
           <div class="modal-body">          
                <div class="row">
                     <div class="col-md-12">
-                      <label class="control-label col-md-4 col-sm-6 col-xs-12">Model Name</label>
+                      <label class="control-label col-md-4 col-sm-6 col-xs-12">Model Name<span class="required">*</span></label>
                         <div class="col-md-6 col-sm-6 col-xs-12">
                           <input type="text" name="model_name" id="model_name" onkeyup=""
                            placeholder="Enter Model Name" class="form-control" required="true"/>
