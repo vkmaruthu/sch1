@@ -1,10 +1,9 @@
-<!-- Bootstrap 3.3.7 -->
+  <!-- Bootstrap 3.3.7 -->
   <link rel="stylesheet" href="../../bower_components/bootstrap/dist/css/bootstrap.min.css">
   <!-- Font Awesome -->
   <link rel="stylesheet" href="../../bower_components/font-awesome/css/font-awesome.min.css">
   <!-- Ionicons -->
   <link rel="stylesheet" href="../../bower_components/Ionicons/css/ionicons.min.css">
-
   <!-- Morris chart -->
   <link rel="stylesheet" href="../../bower_components/morris.js/morris.css">
   <!-- jvectormap -->
@@ -15,7 +14,9 @@
   <link rel="stylesheet" href="../../bower_components/bootstrap-daterangepicker/daterangepicker.css">
   <!-- bootstrap wysihtml5 - text editor -->
   <link rel="stylesheet" href="../../plugins/bootstrap-wysihtml5/bootstrap3-wysihtml5.min.css">
-    <link rel="stylesheet" href="../../bower_components/datatables.net-bs/css/dataTables.bootstrap.min.css">
+  <link rel="stylesheet" href="../../bower_components/datatables.net-bs/css/dataTables.bootstrap.min.css">
+
+
 
 <!-- Added CSS -->
 
@@ -203,6 +204,9 @@ p{
     color: #013785;
     margin-top: -17px;
 }
+
+a {cursor: pointer;}
+
 
 /* **************************************************************************************************** */
 /*==========  Mobile First Method  ==========*/

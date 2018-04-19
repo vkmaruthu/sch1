@@ -22,17 +22,26 @@ tempData.oeeDash=
         }
     );      
     $('#'+id).val(val).trigger('change');
-  }, 
-  getImg:function() {  
-    debugger;
- var dataSet;
-     dataSet='<label class="pointer toggle-reason-bar pull-right" style="margin-right:10px;"> Productive <i style="background-color: green; width:10px;height: 10px; display:inline-block;"></i></label>';
+}, 
+getImg:function() {  
+debugger;
+    var dataSet;
+    dataSet='<label class="pointer toggle-reason-bar pull-right" style="margin-right:10px;"> Productive <i style="background-color: green; width:10px;height: 10px; display:inline-block;"></i></label>';
 
         $("#imgTitleInfo").html(dataSet);
         $("#showIobotImg").html('<img src="../common/img/machine/default.png" class="img-thumbnail dashMachineImg"/>');
         $("#statusImg").html('<img src="../common/img/online.png" class="img-responsive statusImg"/>');
-   
-  }, 
+},
+visitPlants:function(){
+  window.location.href="../plants/index.php?selDate="+$('#userDateSel').val();
+},
+visitWorkcenter:function(){
+  window.location.href="../workcenter/index.php?selDate="+$('#userDateSel').val();
+},
+visitMachine:function(){
+  window.location.href="../machine/index.php?selDate="+$('#userDateSel').val();
+},   
+
 
 };
 
@@ -40,7 +49,8 @@ tempData.oeeDash=
 
 $(document).ready(function() {
 debugger; 
-
+var today="<?php echo $_GET['selDate']; ?>";
+$('.datepicker-me').datepicker('setDate', today);
 
 tempData.oeeDash.getImg();
 tempData.oeeDash.oeeCirclePerc('oeePerc',75,'#E29C21');
@@ -65,7 +75,6 @@ $('#compProfile').click(function(e){
 </script>
 
 
- 
   <!-- Content Wrapper. Contains page content -->
   <div class="content-wrapper">
 
@@ -74,7 +83,8 @@ $('#compProfile').click(function(e){
 
     <div class="btnsStyle btnsStyleDashboard" id="btns">
       <div class="col-md-5 col-sm-12 col-xs-12 pull-left headerTitle">
-        <a href="../plants">Plants</a> / <a href="../workcenter">WorkCenter</a> / <a href="../machine">Machine</a> / Name of Machine<br> 
+        <a onclick="tempData.oeeDash.visitPlants();">Plants</a> / <a onclick="tempData.oeeDash.visitWorkcenter();">WorkCenter</a> / 
+        <a onclick="tempData.oeeDash.visitMachine();">Machine</a> / Name of Machine<br> 
       <p style="font-size: 11px;">As on 24/04/2018 18:00:00 </p>
       </div>
 

@@ -25,15 +25,20 @@ tempData.oeework=
       $('#viewTile').html(allTile);
   },
   visitMachine:function(){
-    window.location.href="../machine";
-  },
-
+    window.location.href="../machine/index.php?selDate="+$('#userDateSel').val();
+  },  
+  visitPlants:function(){
+    window.location.href="../plants/index.php?selDate="+$('#userDateSel').val();
+  }  
 };
 
 
 
 $(document).ready(function() {
 debugger; 
+var today="<?php echo $_GET['selDate']; ?>";
+$('.datepicker-me').datepicker('setDate', today);
+
 
 tempData.oeework.generateTile();
 
@@ -52,7 +57,7 @@ tempData.oeework.generateTile();
     <div class="btnsStyle" id="btns">
       
       <div class="col-md-5 col-sm-12 col-xs-12 pull-left headerTitle">
-      <a href="../plants">Plants</a> / Work Center
+      <a onclick="tempData.oeework.visitPlants();">Plants</a> / Work Center
       </div>
 
       <div class="col-md-5 col-sm-12 col-xs-12 pull-right" style="margin-top:5px;">

@@ -228,22 +228,16 @@
 $(document).ready(function() {
     debugger; 
     /* Global Variable Page Level */
-    var selDate=null;
+/*    var selDate=null;
     var selMonth=null;
     var selYear=null;
-    var finalDateFormat=null;
+    var finalDateFormat=null;*/
 
-
-    /* Date is defined to DatePicker */
-      var date = new Date();
-      var today = new Date(date.getFullYear(), date.getMonth(), date.getDate());
       var setDateFormat="dd/mm/yyyy";
-
       $('.datepicker-me').datepicker({
           format: setDateFormat,
           autoclose: true
       });
-      $('.datepicker-me').datepicker('setDate', today);
 
 });
 

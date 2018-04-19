@@ -267,6 +267,8 @@ getCompanyDesc:function(){
 
 $(document).ready(function() {
     debugger;
+   $("#addCompany").parent().addClass('active');
+   $("#addCompany").parent().parent().closest('.treeview').addClass('active menu-open');
 
     $('#comp_id').val(<?php echo $_GET['comp_id'];?>);
     $('.select2').select2();

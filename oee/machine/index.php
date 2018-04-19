@@ -27,8 +27,14 @@ tempData.oeemachine=
       $('#viewTile').html(allTile);
   },
   visitDashboard:function(){
-    window.location.href="../machine_dashboard"
+    window.location.href="../machine_dashboard/index.php?selDate="+$('#userDateSel').val();
   },
+  visitPlants:function(){
+    window.location.href="../plants/index.php?selDate="+$('#userDateSel').val();
+  },
+  visitWorkcenter:function(){
+    window.location.href="../workcenter/index.php?selDate="+$('#userDateSel').val();
+  }
 
 };
 
@@ -36,6 +42,8 @@ tempData.oeemachine=
 
 $(document).ready(function() {
 debugger; 
+var today="<?php echo $_GET['selDate']; ?>";
+$('.datepicker-me').datepicker('setDate', today);
 
 tempData.oeemachine.generateTile();
 
@@ -54,7 +62,7 @@ tempData.oeemachine.generateTile();
     <div class="btnsStyle" id="btns">
       
       <div class="col-md-5 col-sm-12 col-xs-12 pull-left headerTitle">
-      <a href="../plants">Plants</a> / <a href="../workcenter">WorkCenter</a> / Machine
+      <a onclick="tempData.oeemachine.visitPlants();">Plants</a> / <a onclick="tempData.oeemachine.visitWorkcenter();">WorkCenter</a> / Machine
       </div>
 
       <div class="col-md-5 col-sm-12 col-xs-12 pull-right" style="margin-top:5px;">

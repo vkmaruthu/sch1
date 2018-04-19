@@ -25,9 +25,8 @@ tempData.oeeplant=
       $('#viewTile').html(allTile);
   },
   visitWorkcenter:function(){
-    window.location.href="../workcenter"
-  },
-
+    window.location.href="../workcenter/index.php?selDate="+$('#userDateSel').val();
+  }
 };
 
 
@@ -35,7 +34,11 @@ tempData.oeeplant=
 $(document).ready(function() {
 debugger; 
 
-tempData.oeeplant.generateTile();
+
+  var today="<?php echo $_GET['selDate']; ?>";
+  $('.datepicker-me').datepicker('setDate', today);
+
+  tempData.oeeplant.generateTile();
 
 });
 
