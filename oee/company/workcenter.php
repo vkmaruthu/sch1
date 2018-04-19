@@ -411,10 +411,10 @@ $("#addCompany").parent().parent().closest('.treeview').addClass('active menu-op
                    <div class="col-md-12 text-center">
                     <button type="button" id="addWC" onclick="tempData.oeewc.saveWC();" 
                       class="btn btn-sm btn-success">
-                      <i class="fa fa-floppy-o"></i>&nbsp; Add Work Center 
+                      <i class="fa fa-floppy-o"></i>&nbsp; Save 
                     </button>
                     <button type="button" id="updateWC" onclick="tempData.oeewc.saveWC();"  class="btn btn-sm btn-success" style="display:none;">
-                      <i class="fa fa-floppy-o"></i>&nbsp; Update Work Center
+                      <i class="fa fa-floppy-o"></i>&nbsp; Update
                     </button>
                    </div>
               </div>
@@ -429,7 +429,7 @@ $("#addCompany").parent().parent().closest('.treeview').addClass('active menu-op
               <th>Action</th>
               <th>Work Center Image</th>
               <th>Code</th> 
-              <th>Descreption</th>
+              <th>Description</th>
               <th>Contact Person</th>
               <th>Contact Number</th>
               <th>Action</th>

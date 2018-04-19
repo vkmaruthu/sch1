@@ -395,11 +395,11 @@ debugger;
                    <div class="col-md-12 text-center">
                     <button type="button" id="addCompBtn" onclick="tempData.oeecompany.saveCompany();" 
                       class="btn btn-sm btn-success">
-                      <i class="fa fa-floppy-o"></i>&nbsp; Add Company 
+                      <i class="fa fa-floppy-o"></i>&nbsp; Save 
                     </button>
                     
                     <button type="button" id="updateCompany" onclick="tempData.oeecompany.saveCompany();" class="btn btn-sm btn-success" style="display:none;">
-                      <i class="fa fa-floppy-o"></i>&nbsp; Update Company
+                      <i class="fa fa-floppy-o"></i>&nbsp; Update
                     </button>
                    </div>
               </div>
@@ -414,7 +414,7 @@ debugger;
               <th>Action</th>
               <th>Comapany Logo</th> 
               <th>Comapany Code</th> 
-              <th>Descreption</th>
+              <th>Description</th>
               <th>address</th>
               <th>Contact Person</th>
               <th>Contact Number</th>

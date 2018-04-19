@@ -402,10 +402,10 @@ $(document).ready(function() {
                    <div class="col-md-12 text-center">
                     <button type="button" id="addPlant" onclick="tempData.oeeplant.savePlant();" 
                       class="btn btn-sm btn-success">
-                      <i class="fa fa-floppy-o"></i>&nbsp; Add Plant 
+                      <i class="fa fa-floppy-o"></i>&nbsp; Save
                     </button>
                     <button type="button" id="updatePlant" onclick="tempData.oeeplant.savePlant();"  class="btn btn-sm btn-success" style="display:none;">
-                      <i class="fa fa-floppy-o"></i>&nbsp; Update Plant
+                      <i class="fa fa-floppy-o"></i>&nbsp; Update
                     </button>
                    </div>
               </div>
@@ -420,7 +420,7 @@ $(document).ready(function() {
               <th>Action</th>
               <th>Plant Image</th>
               <th>Code</th> 
-              <th>Descreption</th>
+              <th>Description</th>
               <th>Address</th>
               <th>Contact Person</th>
               <th>Contact Number</th>

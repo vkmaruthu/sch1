@@ -738,10 +738,10 @@ debugger;
                    <div class="col-md-12 text-center">
                     <button type="button" id="addEquipment" onclick="tempData.oeeEquipment.saveEquipment()" 
                       class="btn btn-sm btn-success">
-                      <i class="fa fa-floppy-o"></i>&nbsp; Add Equipment
+                      <i class="fa fa-floppy-o"></i>&nbsp; Save
                     </button>
                     <button type="button" id="updateEquipment" onclick="tempData.oeeEquipment.saveEquipment()"  class="btn btn-sm btn-success" style="display:none;">
-                      <i class="fa fa-floppy-o"></i>&nbsp; Update Equipment
+                      <i class="fa fa-floppy-o"></i>&nbsp; Update
                     </button>
                    </div>
               </div>
@@ -755,7 +755,7 @@ debugger;
              <tr>
               <th>Image</th>
               <th>Code</th> 
-              <th>Descreption</th>
+              <th>Description</th>
               <th>Protocol</th>
               <th>Equipment Type</th>
               <th>Model</th>

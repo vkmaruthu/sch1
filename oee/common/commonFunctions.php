@@ -49,17 +49,17 @@ function addZero($num) {
     return $num;
 }
 
-if(isset($_POST['getCompanyDetails'])){
-    $comp_id=$_POST['comp_id'];  
-
-    if($comp_id!=''){
-        $plantQ="SELECT id,code,descp,address,contact_person,contact_number,image_file_name, comp_id FROM sfs_plant where comp_id=".$comp_id;
-    }else{
-        $plantQ="SELECT id,code,descp,address,contact_person,contact_number,image_file_name, comp_id FROM sfs_plant";
-    }
-    $plantDetails=mysqli_query($con,$plantQ) or die('Error:'.mysqli_error($con));
+if(isset($_POST['getCompDetails'])){
+    $comp_id=$_POST['comp_id'];  // It will use when its calling from Plants, Workcenter, Machine.
     
-    while ($row=mysqli_fetch_array($plantDetails)){
+    if($comp_id != ''){
+        $comQ="SELECT id,code,descp,address,contact_person,contact_number,image_file_name FROM sfs_company where id=".$comp_id;
+    }else{
+        $comQ="SELECT id,code,descp,address,contact_person,contact_number,image_file_name FROM sfs_company";
+    }
+    $comDetails=mysqli_query($con,$comQ) or die('Error:'.mysqli_error($con));
+    
+    while ($row=mysqli_fetch_array($comDetails)){
         $id=$row['id'];
         $comp_code=$row['code'];
         $comp_desc=$row['descp'];
@@ -67,7 +67,7 @@ if(isset($_POST['getCompanyDetails'])){
         $contact_person=$row['contact_person'];
         $contact_number=$row['contact_number'];
         $image_file_name=$row['image_file_name'];
-        $comp_id=$row['comp_id'];
+        
         
         $getCompData[]=array('id' =>"$id",
             'comp_code' =>"$comp_code",
@@ -75,13 +75,12 @@ if(isset($_POST['getCompanyDetails'])){
             'address' =>"$address",
             'contact_person' =>"$contact_person",
             'contact_number' =>"$contact_number",
-            'image_file_name' =>"$image_file_name",
-            'comp_id' => "$comp_id"
+            'image_file_name' =>"$image_file_name"
         );
         
     }
     
-    $status['companyDetails'] = $getCompData;
+    $status['compDetails'] = $getCompData;
     echo json_encode($status);
     mysqli_close($con);
 }
@@ -121,8 +120,12 @@ if(isset($_POST['getPlantDetails'])){
 
 if(isset($_POST['getWCDetails'])){
     $plant_id=$_POST['plant_id'];
+    if ($plant_id == "") {
+        $plantQ="SELECT id,code,descp,contact_person,contact_number,image_file_name, plant_id FROM sfs_workcenter";
+    }else {
+        $plantQ="SELECT id,code,descp,contact_person,contact_number,image_file_name, plant_id FROM sfs_workcenter where plant_id=".$plant_id;
+    }
 
-    $plantQ="SELECT id,code,descp,contact_person,contact_number,image_file_name, plant_id FROM sfs_workcenter where plant_id=".$plant_id;
     $wcDetails=mysqli_query($con,$plantQ) or die('Error:'.mysqli_error($con));
     
     while ($row=mysqli_fetch_array($wcDetails)){
