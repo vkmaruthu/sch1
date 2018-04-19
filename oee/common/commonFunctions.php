@@ -49,11 +49,15 @@ function addZero($num) {
     return $num;
 }
 
-if(isset($_POST['getPlantDetails'])){
-    $comp_id=$_POST['comp_id'];   
+if(isset($_POST['getCompanyDetails'])){
+    $comp_id=$_POST['comp_id'];  
 
-   $plantQ="SELECT id,code,descp,address,contact_person,contact_number,image_file_name, comp_id FROM sfs_plant where comp_id=".$comp_id;
-   $plantDetails=mysqli_query($con,$plantQ) or die('Error:'.mysqli_error($con));
+    if($comp_id!=''){
+        $plantQ="SELECT id,code,descp,address,contact_person,contact_number,image_file_name, comp_id FROM sfs_plant where comp_id=".$comp_id;
+    }else{
+        $plantQ="SELECT id,code,descp,address,contact_person,contact_number,image_file_name, comp_id FROM sfs_plant";
+    }
+    $plantDetails=mysqli_query($con,$plantQ) or die('Error:'.mysqli_error($con));
     
     while ($row=mysqli_fetch_array($plantDetails)){
         $id=$row['id'];
@@ -66,8 +70,41 @@ if(isset($_POST['getPlantDetails'])){
         $comp_id=$row['comp_id'];
         
         $getCompData[]=array('id' =>"$id",
-            'plant_code' =>"$comp_code",
-            'plant_desc' =>"$comp_desc",
+            'comp_code' =>"$comp_code",
+            'comp_desc' =>"$comp_desc",
+            'address' =>"$address",
+            'contact_person' =>"$contact_person",
+            'contact_number' =>"$contact_number",
+            'image_file_name' =>"$image_file_name",
+            'comp_id' => "$comp_id"
+        );
+        
+    }
+    
+    $status['companyDetails'] = $getCompData;
+    echo json_encode($status);
+    mysqli_close($con);
+}
+
+if(isset($_POST['getPlantDetails'])){
+    $comp_id=$_POST['comp_id'];   
+
+   $plantQ="SELECT id,code,descp,address,contact_person,contact_number,image_file_name, comp_id FROM sfs_plant where comp_id=".$comp_id;
+   $plantDetails=mysqli_query($con,$plantQ) or die('Error:'.mysqli_error($con));
+    
+    while ($row=mysqli_fetch_array($plantDetails)){
+        $id=$row['id'];
+        $plant_code=$row['code'];
+        $plant_desc=$row['descp'];
+        $address=$row['address'];
+        $contact_person=$row['contact_person'];
+        $contact_number=$row['contact_number'];
+        $image_file_name=$row['image_file_name'];
+        $comp_id=$row['comp_id'];
+        
+        $getCompData[]=array('id' =>"$id",
+            'plant_code' =>"$plant_code",
+            'plant_desc' =>"$plant_desc",
             'address' =>"$address",
             'contact_person' =>"$contact_person",
             'contact_number' =>"$contact_number",
