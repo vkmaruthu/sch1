@@ -538,7 +538,9 @@ resetModelOnAction:function(){
 
 $(document).ready(function() {
 debugger;
-
+   $("#addCompany").parent().addClass('active');
+   $("#addCompany").parent().parent().closest('.treeview').addClass('active menu-open');
+   
   $('#comp_id').val(<?php echo $_GET['comp_id'];?>);
   $('#plant_id').val(<?php echo $_GET['plant_id'];?>);
   $('#wc_id').val(<?php echo $_GET['wc_id'];?>);

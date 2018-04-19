@@ -26,7 +26,7 @@
       <!-- sidebar menu: : style can be found in sidebar.less -->
       <ul class="sidebar-menu" data-widget="tree" id="myUL">
        <!--  <li class="header">MAIN NAVIGATION</li> -->
-        <li class="active treeview">
+        <li class="treeview">
           <a href="#">
             <i class="fa fa-dashboard"></i> <span>Dashboard</span>
             <span class="pull-right-container">
@@ -34,7 +34,7 @@
             </span>
           </a>
           <ul class="treeview-menu">
-            <li class="active"><a href="../home"><i class="fa fa-circle-o"></i> Company</a></li>
+            <li><a href="../home/index.php"><i class="fa fa-circle-o"></i> Company</a></li>
             <li><a href="index2.html"><i class="fa fa-circle-o"></i> History</a></li>
             <li><a href="index2.html"><i class="fa fa-circle-o"></i> Pridiction</a></li>
           </ul>
@@ -48,28 +48,15 @@
               </span>
           </a>
           <ul class="treeview-menu">
-            <li><a href="pages/layout/top-nav.html"><i class="fa fa-files-o"></i> Shift Configuration</a></li>
-              <li><a href="pages/layout/boxed.html"><i class="fa fa-th"></i> OEE Configuration</a></li>
-              <li><a href="../user/role.php"><i class="fa fa-users"></i> Role Configuration</a></li>
-              <li><a href="../user/user.php"><i class="fa fa-users"></i> User Configuration</a></li>
-              <li><a href="../company"><i class="fa fa-users"></i> Company</a></li>
-              <li><a href="../reasons/createreasons.php"><i class="fa fa-users"></i> reasons</a></li>
+              <li><a href="pages/layout/top-nav.html" id="shiftConfiguration"><i class="fa fa-files-o"></i> Shift Configuration</a></li>
+              <li><a href="pages/layout/boxed.html" id="oeeConfiguration"><i class="fa fa-th"></i> OEE Configuration</a></li>
+              <li><a href="../user/role.php" id="roleConfiguration"><i class="fa fa-users"></i> Role Configuration</a></li>
+              <li><a href="../user/user.php" id="userConfiguration"><i class="fa fa-users"></i> User Configuration</a></li>
+              <li><a href="../company/index.php" id="addCompany"><i class="fa fa-users"></i> Add Company</a></li>
+              <!-- <li><a href="../reasons/createreasons.php"><i class="fa fa-users"></i> reasons</a></li> -->
               <li><a href="../ProdOrder/index.php"><i class="fa fa-th"></i> Production Order</a></li>
           </ul>
-        </li>
-        
-       <!--  <li class="treeview">
-          <a href="#">
-            <i class="fa fa-file"></i> <span>Reports</span>
-            
-          </a>
-          <ul class="treeview-menu">
-            <li><a href="pages/forms/general.html"><i class="fa fa-circle-o"></i> General Elements</a></li>
-            <li><a href="pages/forms/advanced.html"><i class="fa fa-circle-o"></i> Advanced Elements</a></li>
-            <li><a href="pages/forms/editors.html"><i class="fa fa-circle-o"></i> Editors</a></li>
-          </ul>
-        </li> 
-        
+        </li>        
       </ul>
     </section>
     <!-- /.sidebar -->
@@ -78,6 +65,20 @@
 
 <script>
 
+    /** add active class and stay opened when selected */
+    var url = window.location;
+    // for sidebar menu entirely but not cover treeview
+    $('ul.sidebar-menu a').filter(function() {
+       return this.href == url;
+    }).parent().addClass('active');
+
+    // for treeview
+    $('ul.treeview-menu a').filter(function() {
+       return this.href == url;
+    }).parentsUntil(".sidebar-menu > .treeview-menu").addClass('active');
+
+
+    /* Search Menus*/
     $('#myInput').keyup( function() {
         var matches = $( 'ul#myUL' ).find( 'li:contains('+ $( this ).val() +') ' );
         $( 'li', 'ul#myUL' ).not( matches ).slideUp();
