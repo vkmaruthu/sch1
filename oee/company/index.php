@@ -112,7 +112,7 @@ editCompany:function (id){
         }
     }
     $("#fromCompany").fadeIn("fast");
-    $("#addCompany").hide();
+    $("#addCompBtn").hide();
     $("#updateCompany").show();            
 },
 deleteCompany:function (id,img){
@@ -136,7 +136,7 @@ deleteCompany:function (id,img){
            //$('#fromCompany')[0].reset();
           // $("#showImg").hide();
            //$("#size").html('');
-          // $("#addCompany").show();
+          // $("#addCompBtn").show();
            //$("#updateCompany").hide();
            // location.reload(true);
            tempData.oeecompany.loadAllComp();
@@ -185,7 +185,7 @@ saveCompany:function(){
            $('#fromCompany')[0].reset();
            $("#showImg").hide();
            $("#size").html('');
-           $("#addCompany").show();
+           $("#addCompBtn").show();
            $("#updateCompany").hide();
            $('#comp_code').prop('readonly', false);
            
@@ -266,7 +266,7 @@ debugger;
       $("#size").html('');
     
       $("#fromCompany").fadeToggle("slow");
-      $("#addCompany").show();
+      $("#addCompBtn").show();
       $("#updateCompany").hide();
   });
 
@@ -393,10 +393,11 @@ debugger;
 
               <div class="row">
                    <div class="col-md-12 text-center">
-                    <button type="button" id="addCompany" onclick="tempData.oeecompany.saveCompany();" 
+                    <button type="button" id="addCompBtn" onclick="tempData.oeecompany.saveCompany();" 
                       class="btn btn-sm btn-success">
                       <i class="fa fa-floppy-o"></i>&nbsp; Add Company 
                     </button>
+                    
                     <button type="button" id="updateCompany" onclick="tempData.oeecompany.saveCompany();" class="btn btn-sm btn-success" style="display:none;">
                       <i class="fa fa-floppy-o"></i>&nbsp; Update Company
                     </button>

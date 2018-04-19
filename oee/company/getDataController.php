@@ -1,7 +1,8 @@
 <?php 
     require '../common/db.php';
+    require '../common/commonFunctions.php';
     //require '../common/session.php';
-
+/* 
 function mysqli_insert_array($table, $data, $exclude = array()) {
     $fields = $values = array();
     if( !is_array($exclude) ) $exclude = array($exclude);
@@ -47,20 +48,7 @@ function addZero($num) {
         $num = "0".$num;
     }
     return $num;
-  }
-
-function getAllReasonCodeNames($reasonCodeId) {   
-    $q="select message from sfs_reason_code where id IN(".$reasonCodeId.")";
-    $res=mysqli_query($con,$q) or die('Error:'.mysqli_error($con));
-    while ($row=mysqli_fetch_array($res)){
-        $message=$row['message'];
-        $strMsg.=$message.',';
-    }
-    echo $strMsg."asdasdsad";
-    die();
-    return $strMsg;    
-} 
-
+  } */
 
 if(isset($_POST['saveCompany'])){
 
@@ -340,44 +328,6 @@ if(isset($_POST['savePlant'])){
     mysqli_close($con);
 }
 
-if(isset($_POST['getPlantDetails'])){
-    $comp_id=$_POST['comp_id'];
-    $plant_id=$_POST['plant_id'];
-    
-    if($plant_id != ''){
-        $plantQ="SELECT id,code,descp,address,contact_person,contact_number,image_file_name, comp_id FROM sfs_plant where id=".$plant_id." and comp_id=".$comp_id;
-    }else{
-        $plantQ="SELECT id,code,descp,address,contact_person,contact_number,image_file_name, comp_id FROM sfs_plant where comp_id=".$comp_id;
-    }
-
-    $plantDetails=mysqli_query($con,$plantQ) or die('Error:'.mysqli_error($con));
-    
-    while ($row=mysqli_fetch_array($plantDetails)){
-        $id=$row['id'];
-        $comp_code=$row['code'];
-        $comp_desc=$row['descp'];
-        $address=$row['address'];
-        $contact_person=$row['contact_person'];
-        $contact_number=$row['contact_number'];
-        $image_file_name=$row['image_file_name'];
-        $comp_id=$row['comp_id'];
-        
-        $getCompData[]=array('id' =>"$id",
-            'plant_code' =>"$comp_code",
-            'plant_desc' =>"$comp_desc",
-            'address' =>"$address",
-            'contact_person' =>"$contact_person",
-            'contact_number' =>"$contact_number",
-            'image_file_name' =>"$image_file_name",
-            'comp_id' => "$comp_id"
-        );
-        
-    }
-    
-    $status['plantDetails'] = $getCompData;
-    echo json_encode($status);
-    mysqli_close($con);
-}
     
 if(isset($_POST['deletePlant'])){
     $plant_id=$_POST['plant_id'];
@@ -512,41 +462,6 @@ if(isset($_POST['saveWC'])){
     }
     
     $status['data'] = $response;
-    echo json_encode($status);
-    mysqli_close($con);
-}
-
-if(isset($_POST['getWCDetails'])){
-    $wc_id=$_POST['wc_id'];
-    $plant_id=$_POST['plant_id'];
-    if( $wc_id != ''){
-        $plantQ="SELECT id,code,descp,contact_person,contact_number,image_file_name, plant_id FROM sfs_workcenter where id=".$wc_id." and plant_id=".$plant_id;
-    }else{
-        $plantQ="SELECT id,code,descp,contact_person,contact_number,image_file_name, plant_id FROM sfs_workcenter where plant_id=".$plant_id;
-    }
-    $wcDetails=mysqli_query($con,$plantQ) or die('Error:'.mysqli_error($con));
-    
-    while ($row=mysqli_fetch_array($wcDetails)){
-        $id=$row['id'];
-        $wc_code=$row['code'];
-        $wc_desc=$row['descp'];
-        $contact_person=$row['contact_person'];
-        $contact_number=$row['contact_number'];
-        $image_file_name=$row['image_file_name'];
-        $plant_id=$row['plant_id'];
-        
-        $getWCData[]=array('id' =>"$id",
-            'wc_code' =>"$wc_code",
-            'wc_desc' =>"$wc_desc",
-            'contact_person' =>"$contact_person",
-            'contact_number' =>"$contact_number",
-            'image_file_name' =>"$image_file_name",
-            'plant_id' => "$plant_id"
-        );
-        
-    }
-    
-    $status['wcDetails'] = $getWCData;
     echo json_encode($status);
     mysqli_close($con);
 }
@@ -689,59 +604,6 @@ if(isset($_POST['saveEquipment'])){
     }
     
     $status['data'] = $response;
-    echo json_encode($status);
-    mysqli_close($con);
-}
-
-if(isset($_POST['getEquipmentDetails'])){
-    $wc_id=$_POST['wc_id'];
-    $eq_id=$_POST['eq_id'];
-    if( $eq_id != ''){
-        $eqQ="SELECT eq.id,eq.eq_code,eq.eq_desc,eq.image_file_name, eq.eq_protocol, eq.eq_type_id, eq.eq_model_id, eq.wc_id, eqm.name,eqt.eq_type_desc, eq.reason_code_arr FROM sfs_equipment eq, sfs_equipment_model eqm, sfs_equipment_type eqt where eq.eq_model_id=eqm.id and eq.eq_type_id=eqt.id and id=".$eq_id." and wc_id=".$wc_id;
-    }else{
-        $eqQ="SELECT eq.id,eq.eq_code,eq.eq_desc,eq.image_file_name, eq.eq_protocol, eq.eq_type_id, eq.eq_model_id, eq.wc_id, eqm.name,eqt.eq_type_desc, eq.reason_code_arr FROM sfs_equipment eq, sfs_equipment_model eqm, sfs_equipment_type eqt where eq.eq_model_id=eqm.id and eq.eq_type_id=eqt.id and  wc_id=".$wc_id;
-    }
-    
-    $eqDetails=mysqli_query($con,$eqQ) or die('Error:'.mysqli_error($con));
-    
-    while ($row=mysqli_fetch_array($eqDetails)){
-        $id=$row['id'];
-        $eq_code=$row['eq_code'];
-        $eq_desc=$row['eq_desc'];
-        $eq_protocol=$row['eq_protocol'];
-        $eq_type_id=$row['eq_type_id'];
-        $eq_model_id=$row['eq_model_id'];
-        $image_file_name=$row['image_file_name'];
-        $wc_id=$row['wc_id'];
-        $model_name=$row['name'];
-        $eq_type_name=$row['eq_type_desc'];
-        $reason_code_arr=$row['reason_code_arr'];
-      
-        //$reasonCodeName = getAllReasonCodeNames($reason_code_arr);
-        $q="select message from sfs_reason_code where id IN(".$reason_code_arr.")";
-        $res=mysqli_query($con,$q) or die('Error:'.mysqli_error($con));
-        while ($row=mysqli_fetch_array($res)){
-            $message=$row['message'];
-            $strMsg.=$message.', ';
-        }
-           
-        $getEQData[]=array('id' =>"$id",
-            'eq_code' =>"$eq_code",
-            'eq_desc' =>"$eq_desc",
-            'eq_protocol' => "$eq_protocol",
-            'eq_type_id' => "$eq_type_id",
-            'eq_model_id' => "$eq_model_id",
-            'image_file_name' =>"$image_file_name",
-            'wc_id' => "$wc_id",
-            'model_name' => "$model_name",
-            'eq_type_name' => "$eq_type_name",
-            'reason_code_arr' => "$reason_code_arr",
-            'reason_code_name' => "$strMsg"
-        );
-        $strMsg='';
-    }
-    
-    $status['equipmentDetails'] = $getEQData;
     echo json_encode($status);
     mysqli_close($con);
 }
