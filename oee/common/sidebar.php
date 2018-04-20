@@ -55,6 +55,7 @@
               <li><a href="../company/index.php" id="addCompany"><i class="fa fa-users"></i> Add Company</a></li>
               <!-- <li><a href="../reasons/createreasons.php"><i class="fa fa-users"></i> reasons</a></li> -->
               <li><a href="../productionorder/index.php"><i class="fa fa-th"></i> Production Order</a></li>
+              <li><a href="../company/plant.php"><i class="fa fa-th"></i>Parts and Tools</a></li>
           </ul>
         </li>        
       </ul>

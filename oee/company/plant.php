@@ -1,5 +1,6 @@
 <?php include('../common/header.php'); ?>
 <?php include('../common/sidebar.php'); ?>
+<?php error_reporting(0); ?>
 
 <script type="text/javascript">
 var tempData;
@@ -51,7 +52,8 @@ loadPlants:function(){
                       { data: "id" ,className: "text-left",
                         render: function (data, type, row, meta) {
                           var c='<button type="button" class="btn btn-success btn-xs" onclick="tempData.oeeplant.gotoWorkcenter('+row.id+',\''+row.comp_id+'\');"><i class="fa fa-check-square-o"></i> View Work Center</button>';
-                          return c;
+                          var d='<button type="button" class="btn btn-warning btn-xs" onclick="tempData.oeeplant.gotoParts('+row.id+',\''+row.comp_id+'\');"><i class="fa fa-check-square-o"></i>Parts</button>';
+                          return c+' '+d;
                         }
                       },
                       { data: "image_file_name" ,className: "text-left",
@@ -204,6 +206,9 @@ loadPlants:function(){
 	
 gotoWorkcenter:function(plantId, compId){
   window.location="workcenter.php?comp_id="+compId+"&plant_id="+plantId;
+},
+gotoParts:function(plantId, compId){
+	  window.location="../partsandtools/parts.php?comp_id="+compId+"&plant_id="+plantId;
 },
 
 reload:function(){

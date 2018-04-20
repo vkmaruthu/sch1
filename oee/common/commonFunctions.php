@@ -86,9 +86,13 @@ if(isset($_POST['getCompDetails'])){
 }
 
 if(isset($_POST['getPlantDetails'])){
-    $comp_id=$_POST['comp_id'];   
-
-   $plantQ="SELECT id,code,descp,address,contact_person,contact_number,image_file_name, comp_id FROM sfs_plant where comp_id=".$comp_id;
+    $comp_id=$_POST['comp_id'];
+    $plant_id =$_POST['plant_id'];
+    if ($plant_id != "") {
+        $plantQ="SELECT id,code,descp,address,contact_person,contact_number,image_file_name, comp_id FROM sfs_plant where id=".$plant_id." and comp_id=".$comp_id;
+    }else{
+      $plantQ="SELECT id,code,descp,address,contact_person,contact_number,image_file_name, comp_id FROM sfs_plant where comp_id=".$comp_id;
+    }
    $plantDetails=mysqli_query($con,$plantQ) or die('Error:'.mysqli_error($con));
     
     while ($row=mysqli_fetch_array($plantDetails)){
@@ -120,12 +124,13 @@ if(isset($_POST['getPlantDetails'])){
 
 if(isset($_POST['getWCDetails'])){
     $plant_id=$_POST['plant_id'];
-    if ($plant_id == "") {
-        $plantQ="SELECT id,code,descp,contact_person,contact_number,image_file_name, plant_id FROM sfs_workcenter";
+    $wc_id = $_POST['wc_id'];
+    if ($wc_id != "") {
+        $plantQ="SELECT id,code,descp,contact_person,contact_number,image_file_name, plant_id FROM sfs_workcenter where id=".$wc_id;
     }else {
         $plantQ="SELECT id,code,descp,contact_person,contact_number,image_file_name, plant_id FROM sfs_workcenter where plant_id=".$plant_id;
     }
-
+    
     $wcDetails=mysqli_query($con,$plantQ) or die('Error:'.mysqli_error($con));
     
     while ($row=mysqli_fetch_array($wcDetails)){
@@ -157,9 +162,17 @@ if(isset($_POST['getWCDetails'])){
 
 if(isset($_POST['getEquipmentDetails'])){
     $wc_id=$_POST['wc_id'];
-
-    $eqQ="SELECT eq.id,eq.eq_code,eq.eq_desc,eq.image_file_name, eq.eq_protocol, eq.eq_type_id, eq.eq_model_id, eq.wc_id, eqm.name,eqt.eq_type_desc, eq.reason_code_arr FROM sfs_equipment eq, sfs_equipment_model eqm, sfs_equipment_type eqt where eq.eq_model_id=eqm.id and eq.eq_type_id=eqt.id and  wc_id=".$wc_id;
-
+    $eq_id = $_POST['eq_id'];
+    
+    if ($eq_id != '') {
+        $eqQ="SELECT eq.id,eq.eq_code,eq.eq_desc,eq.image_file_name, eq.eq_protocol, eq.eq_type_id, eq.eq_model_id, eq.wc_id, 
+             eqm.name,eqt.eq_type_desc, eq.reason_code_arr FROM sfs_equipment eq, sfs_equipment_model eqm, sfs_equipment_type eqt 
+             where eq.eq_model_id=eqm.id and eq.eq_type_id=eqt.id and  wc_id=".$wc_id." and eq.id=".$eq_id;
+    }else{
+      $eqQ="SELECT eq.id,eq.eq_code,eq.eq_desc,eq.image_file_name, eq.eq_protocol, eq.eq_type_id, eq.eq_model_id, eq.wc_id,
+            eqm.name,eqt.eq_type_desc, eq.reason_code_arr FROM sfs_equipment eq, sfs_equipment_model eqm, sfs_equipment_type eqt
+            where eq.eq_model_id=eqm.id and eq.eq_type_id=eqt.id and  wc_id=".$wc_id;
+    }
     
     $eqDetails=mysqli_query($con,$eqQ) or die('Error:'.mysqli_error($con));
     
@@ -201,6 +214,32 @@ if(isset($_POST['getEquipmentDetails'])){
     }
     
     $status['equipmentDetails'] = $getEQData;
+    echo json_encode($status);
+    mysqli_close($con);
+}
+
+if(isset($_POST['getPartsDetails'])){
+    
+    $plant_id=$_POST['plant_id'];
+    $part_id=$_POST['part_id'];
+    if ($part_id != '') {
+        $eqQ="SELECT id, number, descp from sfs_part_fg where id=".$part_id;
+    }else{
+        $eqQ="SELECT id, number, descp from sfs_part_fg where plant_id=".$plant_id;
+    }
+    
+    $partsDetails=mysqli_query($con,$eqQ) or die('Error:'.mysqli_error($con));
+    while ($row=mysqli_fetch_array($partsDetails)){
+        $id=$row['id'];
+        $part_num=$row['number'];
+        $part_desc=$row['descp'];
+        
+        $getEQData[]=array('id' =>"$id",
+            'part_num' =>"$part_num",
+            'part_desc' =>"$part_desc"
+        );
+    }
+    $status['partsDetails'] = $getEQData;
     echo json_encode($status);
     mysqli_close($con);
 }
