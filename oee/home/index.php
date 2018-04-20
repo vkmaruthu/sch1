@@ -24,7 +24,7 @@ tempData.oeehome=
     $('#'+id).val(val).trigger('change');
   },
   visitPlants:function(){
-    window.location.href="../plants"
+    window.location.href="../plants/index.php?selDate="+$('#userDateSel').val();
   },
   getSelDate:function(){
     var date= $('#userDateSel').val();
@@ -37,8 +37,10 @@ tempData.oeehome=
 
 $(document).ready(function() {
 debugger; 
-  /* jQueryKnob */
-  $('.knob').knob();
+/* Date is defined to DatePicker */
+var date = new Date();
+var today = new Date(date.getFullYear(), date.getMonth(), date.getDate());
+$('.datepicker-me').datepicker('setDate', today);
 
 tempData.oeehome.oeeCirclePerc('oeePerc',90,'#E29C21');
 tempData.oeehome.oeeCirclePerc('availPerc',40,'#FDCA6C');

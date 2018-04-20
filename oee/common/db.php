@@ -10,8 +10,6 @@ session_start();
 
 	}
 
-
 $userSession=$_SESSION['schAdminSession'];
 //$role=$_SESSION['cps_role'];
-
 ?>

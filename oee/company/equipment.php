@@ -549,6 +549,7 @@ debugger;
   $("#fromEquipment").hide();
   $('#commonMsg').hide();
   $("#showImg").hide();
+  
     $('#createEquipment').click(function(){
       $("#fromEquipment").fadeToggle("slow");
         $('#eq_code').prop('readonly', false);
