@@ -48,14 +48,13 @@
               </span>
           </a>
           <ul class="treeview-menu">
-              <li><a href="pages/layout/top-nav.html" id="shiftConfiguration"><i class="fa fa-files-o"></i> Shift Configuration</a></li>
-              <li><a href="pages/layout/boxed.html" id="oeeConfiguration"><i class="fa fa-th"></i> OEE Configuration</a></li>
-              <li><a href="../user/role.php" id="roleConfiguration"><i class="fa fa-users"></i> Role Configuration</a></li>
-              <li><a href="../user/user.php" id="userConfiguration"><i class="fa fa-users"></i> User Configuration</a></li>
-              <li><a href="../company/index.php" id="addCompany"><i class="fa fa-users"></i> Add Company</a></li>
-              <!-- <li><a href="../reasons/createreasons.php"><i class="fa fa-users"></i> reasons</a></li> -->
-              <li><a href="../productionorder/index.php"><i class="fa fa-th"></i> Production Order</a></li>
-              <li><a href="../company/plant.php"><i class="fa fa-th"></i>Plants</a></li>
+              <li><a href="pages/layout/top-nav.html" id="menuShiftConfiguration"><i class="fa fa-files-o"></i> Shift Configuration</a></li>
+              <li><a href="pages/layout/boxed.html" id="menuOeeConfiguration"><i class="fa fa-th"></i> OEE Configuration</a></li>
+              <li><a href="../user/role.php" id="menuRoleConfiguration"><i class="fa fa-users"></i> Role Configuration</a></li>
+              <li><a href="../user/user.php" id="menuUserConfiguration"><i class="fa fa-users"></i> User Configuration</a></li>
+              <li><a href="../company/index.php" id="menuCompany"><i class="fa fa-users"></i> Add Company</a></li>
+              <li><a href="../productionorder/index.php" id="menuProductionOrder"><i class="fa fa-th"></i> Production Order</a></li>
+              <li><a href="../company/plant.php" id="menuPlants"><i class="fa fa-th"></i>Plants</a></li>
               <li><a href="../user/screens.php" id="menuScreens"><i class="fa fa-files-o"></i> Screens</a></li>
           </ul>
         </li>        
