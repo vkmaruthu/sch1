@@ -127,8 +127,10 @@ if(isset($_POST['getWCDetails'])){
     $wc_id = $_POST['wc_id'];
     if ($wc_id != "") {
         $plantQ="SELECT id,code,descp,contact_person,contact_number,image_file_name, plant_id FROM sfs_workcenter where id=".$wc_id;
-    }else {
+    }elseif ($plant_id != "") {
         $plantQ="SELECT id,code,descp,contact_person,contact_number,image_file_name, plant_id FROM sfs_workcenter where plant_id=".$plant_id;
+    }else{
+        return "No data";
     }
     
     $wcDetails=mysqli_query($con,$plantQ) or die('Error:'.mysqli_error($con));

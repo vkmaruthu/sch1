@@ -219,15 +219,8 @@ saveWC:function(){
 	        if(obj.data.infoRes=='S'){
 	           $("#commonMsg").show();
 	           $('#commonMsg').html('<p class="commonMsgSuccess"> <i class="fa fa-check"></i> '+obj.data.info+'</p>');
-	           $("#showImg").hide();
-	         
-	           $("#size").html('');
-	           $("#addWC").show();
-	           $("#updateWC").hide();
-	           $('#wc_code').prop('readonly', false);
-	           $('#fromWC')[0].reset();
-	           
 	           tempData.oeewc.loadAllWC();
+	           tempData.oeewc.clearForm();
 
 	        }else{
 	          $("#commonMsg").show();
@@ -274,6 +267,15 @@ editWC:function (id, plant_id, comp_id){
     $("#fromWC").fadeIn("fast");
     $("#addWC").hide();
     $("#updateWC").show();            
+},
+clearForm:function(){
+	$("#fromWC").fadeToggle("slow");
+    $("#showImg").hide();
+    $("#size").html('');
+    $("#addWC").show();
+    $("#updateWC").hide();
+    $('#wc_code').prop('readonly', false);
+    $('#fromWC')[0].reset();
 }
 
 
@@ -282,8 +284,8 @@ editWC:function (id, plant_id, comp_id){
 $(document).ready(function() {
 debugger;
 
-$("#addCompany").parent().addClass('active');
-$("#addCompany").parent().parent().closest('.treeview').addClass('active menu-open');
+  $("#menuCompany").parent().addClass('active');
+  $("#menuCompany").parent().parent().closest('.treeview').addClass('active menu-open');
 
   $('#comp_id').val(<?php echo $_GET['comp_id'];?>);
   $('#plant_id').val(<?php echo $_GET['plant_id'];?>);
@@ -293,13 +295,10 @@ $("#addCompany").parent().parent().closest('.treeview').addClass('active menu-op
   $('#commonMsg').hide();
   $("#showImg").hide();
     $('#createWC').click(function(){
-      $("#fromWC").fadeToggle("slow");
-        $('#wc_code').prop('readonly', false);
-        $('#fromWC')[0].reset();
-        $("#showImg").hide();
-        $("#size").html('');
-        $("#addWC").show();
-        $("#updateWC").hide();
+    	tempData.oeewc.clearForm();
+    });
+    $('#cancel').click(function(){
+    	tempData.oeewc.clearForm();
     });
   
     $('#wc_code').keyup(function(){
@@ -346,15 +345,15 @@ $("#addCompany").parent().parent().closest('.treeview').addClass('active menu-op
           <div id="status" class="alert alert-success" style="color:green;text-align:center;font-weight:600;display:none;"></div>
           <div id="error" class="alert alert-danger" style="color:white;text-align:center;font-weight:600;display:none;"></div>
 
-        <div id="delCommonMsg"> </div>  
+        <div id="delCommonMsg"> </div>        
+        <div id="commonMsg"> </div> 
         <form class="" id="fromWC" enctype="multipart/form-data"> 
             
           <input type="hidden" name="comp_id" id="comp_id"/> 
           <input type="hidden" name="img_id" id="img_id"/> 
           <input type="hidden" name="plant_id" id="plant_id"/>
           <input type="hidden" name="wc_id" id="wc_id"/> 
-          
-            <div id="commonMsg"> </div> 
+
             <div class="form-group">
              <div class="row">
                 <div class="col-md-6">
@@ -415,6 +414,8 @@ $("#addCompany").parent().parent().closest('.treeview').addClass('active menu-op
                     </button>
                     <button type="button" id="updateWC" onclick="tempData.oeewc.saveWC();"  class="btn btn-sm btn-success" style="display:none;">
                       <i class="fa fa-floppy-o"></i>&nbsp; Update
+                    </button>
+                     <button type="button" id="cancel" onclick="" class="btn btn-sm btn-danger"><i class="fa fa-close"></i>&nbsp; Cancel
                     </button>
                    </div>
               </div>

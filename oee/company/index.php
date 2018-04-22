@@ -133,12 +133,6 @@ deleteCompany:function (id,img){
         if(obj.data.infoRes=='S'){
            $("#delCommonMsg").show();
            $('#delCommonMsg').html('<p class="commonMsgSuccess"> <i class="fa fa-trash"></i> '+obj.data.info+'</p>');
-           //$('#fromCompany')[0].reset();
-          // $("#showImg").hide();
-           //$("#size").html('');
-          // $("#addCompBtn").show();
-           //$("#updateCompany").hide();
-           // location.reload(true);
            tempData.oeecompany.loadAllComp();
 
         }else{
@@ -181,16 +175,9 @@ saveCompany:function(){
       if(obj.data !=null){
         if(obj.data.infoRes=='S'){
            $("#commonMsg").show();
-           $('#commonMsg').html('<p class="commonMsgSuccess"> <i class="fa fa-check"></i> '+obj.data.info+'</p>');
-           $('#fromCompany')[0].reset();
-           $("#showImg").hide();
-           $("#size").html('');
-           $("#addCompBtn").show();
-           $("#updateCompany").hide();
-           $('#comp_code').prop('readonly', false);
-           
+           $('#commonMsg').html('<p class="commonMsgSuccess"> <i class="fa fa-check"></i> '+obj.data.info+'</p>');  
            tempData.oeecompany.loadAllComp();
-
+           tempData.oeecompany.clearForm();
         }else{
           $("#commonMsg").show();
            $('#commonMsg').html('<p class="commonMsgFail"> <i class="fa fa-warning"></i> '+obj.data.info+'</p>');
@@ -207,6 +194,7 @@ saveCompany:function(){
     }
 
 }, 
+
 gotoPlants:function(id, compCode,compDesc){
     window.location="plant.php?comp_id="+id;
 },
@@ -247,6 +235,15 @@ debugger;
   }
       
       
+},
+clearForm:function(){
+	$("#fromCompany").fadeToggle("slow");
+    $('#fromCompany')[0].reset();
+    $("#showImg").hide();
+    $("#size").html('');
+    $("#addCompBtn").show();
+    $("#updateCompany").hide();
+    $('#comp_code').prop('readonly', false);
 }
 
 };
@@ -260,14 +257,11 @@ debugger;
   $("#showImg").hide();
 
   $('#createCompany').click(function(){
-      $('#comp_code').prop('readonly', false);
-      $('#fromCompany')[0].reset();
-      $("#showImg").hide();
-      $("#size").html('');
-    
-      $("#fromCompany").fadeToggle("slow");
-      $("#addCompBtn").show();
-      $("#updateCompany").hide();
+	  tempData.oeecompany.clearForm();
+  });
+  
+  $('#cancel').click(function(){
+	  tempData.oeecompany.clearForm();
   });
 
   $('#comp_code').keyup(function(){
@@ -319,15 +313,13 @@ debugger;
           <div id="status" class="alert alert-success" style="color:green;text-align:center;font-weight:600;display:none;"></div>
           <div id="error" class="alert alert-danger" style="color:white;text-align:center;font-weight:600;display:none;"></div>
 
-
+         
+        <div id="commonMsg"> </div>  
         <div id="delCommonMsg"> </div>  
         <form class="" id="fromCompany" enctype="multipart/form-data">     
           <input type="hidden" name="comp_id" id="comp_id"/> 
           <input type="hidden" name="img_id" id="img_id"/> 
           <!-- <input type="hidden" name="plant_id" id="plant_id"/>  -->
-
-            <div id="commonMsg"> </div>  
-
             <div class="form-group">
              <div class="row">
                 <div class="col-md-6">
@@ -400,6 +392,8 @@ debugger;
                     
                     <button type="button" id="updateCompany" onclick="tempData.oeecompany.saveCompany();" class="btn btn-sm btn-success" style="display:none;">
                       <i class="fa fa-floppy-o"></i>&nbsp; Update
+                    </button>
+                    <button type="button" id="cancel" onclick="" class="btn btn-sm btn-danger"><i class="fa fa-close"></i>&nbsp; Cancel
                     </button>
                    </div>
               </div>

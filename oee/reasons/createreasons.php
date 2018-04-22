@@ -103,12 +103,9 @@ loadAllReason:function(){
 		        if(obj.data.infoRes=='S'){
 		           $("#commonMsg").show();
 		           $('#commonMsg').html('<p class="commonMsgSuccess"> <i class="fa fa-check"></i> '+obj.data.info+'</p>');
-		           $('#fromReasons')[0].reset();
-
-		           $("#addReason").show();
-		           $("#updateReason").hide();          
 		           tempData.oeecr.loadAllReason();
 		           tempData.oeecr.resetRTyOnAction();
+		           tempData.oeecr.clearForm();
 
 		        }else{
 		          $("#commonMsg").show();
@@ -123,6 +120,7 @@ loadAllReason:function(){
 		  });
 	  }
 },
+
 deleteReason:function (id){
 	  var url="getDataController.php";
 	  var myData={deleteReason:"deleteReason",reason_id:id};
@@ -166,16 +164,6 @@ editReasons:function (id, type_id){
          
          $('#color').css('background-color',globalCRData[i].color_code);
          $('#color').val(globalCRData[i].color_code);
-        	/* $('#color_code').spectrum({
-        		color: globalCRData[i].color_code,
-        		showAlpha: true,
-        		move: function(color){
-        			$('#color').css('background-color',color.toHexString());
-                    $('#color').val(color.toHexString());
-
-        		}
-        	}); */
-        	
          break;
          
        }
@@ -250,28 +238,30 @@ getReasonTypesForDropdown:function(){
 	      } 
 	  });
 },
-resetRTyOnAction:function(){
-   	if(reasonTypeArray != null){
-   	 $("#reason_type_id").html('');
-	 $("#reason_type_id").append('<option value="0"> Select Reason Type </option>');
-  		for(var i=0; i< reasonTypeArray.length; i++){
-			   $("#reason_type_id").append('<option value="'+reasonTypeArray[i].id+'">'+reasonTypeArray[i].message+'</option>'); 
-  		}
-  	}
-},
+
 gotoBack:function(){
 	 var comp_id = $('#comp_id').val();
 	 var plant_id = $('#plant_id').val();
 	 var wc_id = $('#wc_id').val();
-	 window.location="../company/equipment.php?comp_id="+comp_id+"&plant_id="+plant_id+"&wc_id="+wc_id;
+	 window.location="../company/equipment.php?comp_id="+comp_id+"&plant_id="+plant_id+"&wc_id="+wc_id+"&screen=cs";
 },
-
+clearForm:function(){
+    $('#reason_type_id').val(0).change();  
+    $("#fromReasons").fadeToggle("slow");
+    $('#eq_code').prop('readonly', false);
+    $('#fromReasons')[0].reset();
+    $("#addReason").show();
+    $("#updateReason").hide();       
+}
 
 
 };
 
 $(document).ready(function() {
 debugger;
+
+    $("#menuCompany").parent().addClass('active');
+    $("#menuCompany").parent().parent().closest('.treeview').addClass('active menu-open');
 
     $('#comp_id').val(<?php echo $_GET['comp_id'];?>);
     $('#plant_id').val(<?php echo $_GET['plant_id'];?>);
@@ -305,13 +295,13 @@ debugger;
 
   $('.select2').select2();
   $("#fromReasons").hide();
-  $('#commonMsg').hide();
+   $('#commonMsg').hide();
+   
     $('#createReasons').click(function(){
-      $("#fromReasons").fadeToggle("slow");
-        $('#eq_code').prop('readonly', false);
-        $('#fromReasons')[0].reset();
-        $("#addReason").show();
-        $("#updateReason").hide();
+    	tempData.oeecr.clearForm();
+    });
+    $('#cancel').click(function(){
+    	tempData.oeecr.clearForm();
     });
      if($('#comp_id').val() != "" && $('#wc_id').val() != ""){
     	$('#back').show();
@@ -353,14 +343,13 @@ debugger;
           <div id="error" class="alert alert-danger" style="color:white;text-align:center;font-weight:600;display:none;"></div>
           
         <div id="delCommonMsg"> </div>  
+        <div id="commonMsg"> </div>
         <form class="" id="fromReasons">  
            
           <input type="hidden" name="comp_id" id="comp_id"/> 
           <input type="hidden" name="reason_id" id="reason_id"/> 
           <input type="hidden" name="plant_id" id="plant_id"/>
-          <input type="hidden" name="wc_id" id="wc_id"/>
-          <div id="commonMsg"> </div>
-            
+          <input type="hidden" name="wc_id" id="wc_id"/>            
             <div class="form-group">
              <div class="row">   
                 <div class="col-md-6">
@@ -414,10 +403,12 @@ debugger;
                     <button type="button" id="updateReason" onclick="tempData.oeecr.saveReasons();"  class="btn btn-sm btn-success" style="display:none;">
                       <i class="fa fa-floppy-o"></i>&nbsp; Update Reason
                     </button>
+                     <button type="button" id="cancel" onclick="" class="btn btn-sm btn-danger"><i class="fa fa-close"></i>&nbsp; Cancel
+                    </button>
                    </div>
               </div>
             </div>  
- <hr class="hr-primary"/>  
+           <hr class="hr-primary"/>  
           </form>
 
       <div class="table-responsive"> 

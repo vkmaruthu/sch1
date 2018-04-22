@@ -268,19 +268,8 @@ saveEquipment:function(){
 	        if(obj.data.infoRes=='S'){
 	           $("#commonMsg").show();
 	           $('#commonMsg').html('<p class="commonMsgSuccess"> <i class="fa fa-check"></i> '+obj.data.info+'</p>');
-	           $("#showImg").hide();
-	         
-	           $("#size").html('');
-	           $('#eq_code').prop('readonly', false);
-	           $('#fromEquipment')[0].reset();
-
-	           $("#addEquipment").show();
-	           $("#updateEquipment").hide(); 
-	           $("#reason_codes").val('').change();         
 	           tempData.oeeEquipment.loadAllEquipment();
-	           tempData.oeeEquipment.resetModelOnAction();
-	           tempData.oeeEquipment.resetEQTyOnAction();
-
+	           tempData.oeeEquipment.clearForm();
 	        }else{
 	          $("#commonMsg").show();
 	           $('#commonMsg').html('<p class="commonMsgFail"> <i class="fa fa-warning"></i> '+obj.data.info+'</p>');
@@ -295,6 +284,7 @@ saveEquipment:function(){
 	  });
   }
 },
+
 gotoBack:function(){
 	 var comp_id = $('#comp_id').val();
 	 var plant_id = $('#plant_id').val();
@@ -368,8 +358,7 @@ saveModel:function(){
 	        if(obj.data.infoRes=='S'){
 	           $("#commonMsg").show();
 	           $('#commonMsg').html('<p class="commonMsgSuccess"> <i class="fa fa-check"></i> '+obj.data.info+'</p>');
-	           $("#showImg").hide();
-	           $("#size").html('');
+	          
 	           $('#fromEquipmentModel')[0].reset();
 	           $('#addModelModal').modal('hide');
 	           tempData.oeeEquipment.getModelNameForDropdown();
@@ -416,15 +405,12 @@ saveEquipmentType:function(){
 	        if(obj.data.infoRes=='S'){
 	           $("#commonMsg").show();
 	           $('#commonMsg').html('<p class="commonMsgSuccess"> <i class="fa fa-check"></i> '+obj.data.info+'</p>');
-	           $("#showImg").hide();
-	           $("#size").html('');
-	           
 	     	   $('#is_machine').iCheck('uncheck');
-	     	  $('#is_tool').iCheck('uncheck');
+	     	   $('#is_tool').iCheck('uncheck');
 	     	   $('#is_afs_size_id').iCheck('uncheck');
-	        	$('#is_dc_po').iCheck('uncheck');	
+	           $('#is_dc_po').iCheck('uncheck');	
 	     	        
-	     	  $('#fromEquipmentType')[0].reset();
+	     	   $('#fromEquipmentType')[0].reset();
 	           tempData.oeeEquipment.getEQTypeForDropdown();
 	           $('#addEQTypeModal').modal('hide');
 
@@ -491,8 +477,8 @@ getEQTypeForDropdown:function(){//reasonsArray
 	        }
 	      } 
 	  });
- },
- getReasonsForDropdown:function(){
+},
+getReasonsForDropdown:function(){
  	  var url="getDataController.php";
  	  var myData = {getReasons:'getReasons'};
  	  $.ajax({
@@ -514,51 +500,46 @@ getEQTypeForDropdown:function(){//reasonsArray
  	        }
  	      } 
  	  });
-   },
-resetEQTyOnAction:function(){
- $("#eq_type").html('');
- $("#eq_type").append('<option value="0"> Select Equipment Type </option>');
- 	if(eqTypeArray != null){
-		for(var i=0; i< eqTypeArray.length; i++){
-		   $("#eq_type").append('<option value="'+eqTypeArray[i].id+'">'+eqTypeArray[i].eq_type_desc+'</option>'); 
-		}
-	}
 },
-resetModelOnAction:function(){
- 	if(modelArray != null){
-    	 $("#model").html('');
-       	 $("#model").append('<option value="0">Select Model</option>');
-    	 for(var i=0; i< modelArray.length; i++){
-    		 $("#model").append('<option value="'+modelArray[i].id+'">'+modelArray[i].model_name+'</option>'); 
-    	 }
-	}
+clearForm:function(){
+    $("#fromEquipment").fadeToggle("slow");
+	$("#showImg").hide();
+    $("#size").html('');
+    $('#eq_code').prop('readonly', false);
+    $('#fromEquipment')[0].reset();
+    $("#addEquipment").show();
+    $("#updateEquipment").hide(); 
+    $("#reason_codes").val('').change();
+    $("#model").val(0).change();  
+    $("#eq_type").val(0).change();    
 }
   
 };
 
 $(document).ready(function() {
 debugger;
-   $("#addCompany").parent().addClass('active');
-   $("#addCompany").parent().parent().closest('.treeview').addClass('active menu-open');
-   
-  $('#comp_id').val(<?php echo $_GET['comp_id'];?>);
-  $('#plant_id').val(<?php echo $_GET['plant_id'];?>);
-  $('#wc_id').val(<?php echo $_GET['wc_id'];?>);
-  
-  $('.select2').select2();
-  $("#fromEquipment").hide();
-  $('#commonMsg').hide();
-  $("#showImg").hide();
-  
+      $("#menuCompany").parent().addClass('active');
+      $("#menuCompany").parent().parent().closest('.treeview').addClass('active menu-open');
+       
+      $('#comp_id').val(<?php echo $_GET['comp_id'];?>);
+      $('#plant_id').val(<?php echo $_GET['plant_id'];?>);
+      $('#wc_id').val(<?php echo $_GET['wc_id'];?>);
+      $('#screen').val('<?php echo $_GET['screen'];?>');
+
+      if($('#screen').val() == "cs"){
+          $("#fromEquipment").show();
+      }else{
+          $("#fromEquipment").hide();
+      }
+      $('.select2').select2();
+      $('#commonMsg').hide();
+      $("#showImg").hide();
     $('#createEquipment').click(function(){
-      $("#fromEquipment").fadeToggle("slow");
-        $('#eq_code').prop('readonly', false);
-        $('#fromEquipment')[0].reset();
-        $("#showImg").hide();
-        $("#size").html('');
-        $("#addEquipment").show();
-        $("#updateEquipment").hide();
+    	 tempData.oeeEquipment.clearForm();
     });
+    $('#cancel').click(function(){
+   	 tempData.oeeEquipment.clearForm();
+   });
   
     $('#eq_code').keyup(function(){
        this.value = this.value.toUpperCase();
@@ -603,6 +584,7 @@ debugger;
 });
 
 </script>
+  <input type="hidden" name="screen" id="screen"/>
   <div class="content-wrapper">
     <!-- Main content -->
     <section class="content">
@@ -631,7 +613,7 @@ debugger;
           <div id="error" class="alert alert-danger" style="color:white;text-align:center;font-weight:600;display:none;"></div>
 
         <div id="delCommonMsg"> </div>  
-        
+        <div id="commonMsg"> </div>
         <form class="" id="fromEquipment" enctype="multipart/form-data"> 
             
           <input type="hidden" name="comp_id" id="comp_id"/> 
@@ -639,7 +621,7 @@ debugger;
           <input type="hidden" name="plant_id" id="plant_id"/>
           <input type="hidden" name="wc_id" id="wc_id"/>
            <input type="hidden" name="eq_id" id="eq_id"/>
-            <div id="commonMsg"> </div>
+
             <div class="form-group">
              <div class="row">
                 <div class="col-md-6">
@@ -743,6 +725,8 @@ debugger;
                     </button>
                     <button type="button" id="updateEquipment" onclick="tempData.oeeEquipment.saveEquipment()"  class="btn btn-sm btn-success" style="display:none;">
                       <i class="fa fa-floppy-o"></i>&nbsp; Update
+                    </button>
+                     <button type="button" id="cancel" onclick="" class="btn btn-sm btn-danger"><i class="fa fa-close"></i>&nbsp; Cancel
                     </button>
                    </div>
               </div>

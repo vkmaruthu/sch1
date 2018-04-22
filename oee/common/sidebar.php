@@ -54,11 +54,11 @@
               <li><a href="../user/user.php" id="menuUserConfiguration"><i class="fa fa-users"></i> User Configuration</a></li>
               <li><a href="../company/index.php" id="menuCompany"><i class="fa fa-users"></i> Add Company</a></li>
               <li><a href="../productionorder/index.php" id="menuProductionOrder"><i class="fa fa-th"></i> Production Order</a></li>
-              <li><a href="../company/plant.php" id="menuPlants"><i class="fa fa-th"></i>Plants</a></li>
+              <li><a href="../partsandtools/plant.php" id="menuPlants"><i class="fa fa-th"></i>Plants</a></li>
               <li><a href="../user/screens.php" id="menuScreens"><i class="fa fa-files-o"></i> Screens</a></li>
           </ul>
         </li>        
-      </ul>
+      </ul> 
     </section>
     <!-- /.sidebar -->
   </aside>

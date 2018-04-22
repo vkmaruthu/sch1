@@ -51,7 +51,8 @@ loadPlants:function(){
                       { data: "id" ,className: "text-left",
                         render: function (data, type, row, meta) {
                           var c='<button type="button" class="btn btn-success btn-xs" onclick="tempData.oeeplant.gotoWorkcenter('+row.id+',\''+row.comp_id+'\');"><i class="fa fa-check-square-o"></i> View Work Center</button>';
-                          return c;
+                          var d='<button type="button" class="btn btn-warning btn-xs" onclick="tempData.oeeplant.gotoParts('+row.id+',\''+row.comp_id+'\');"><i class="fa fa-check-square-o"></i> Parts </button>';
+                          return c+' '+d;
                         }
                       },
                       { data: "image_file_name" ,className: "text-left",
@@ -137,15 +138,8 @@ loadPlants:function(){
     	        if(obj.data.infoRes=='S'){
     	           $("#commonMsg").show();
     	           $('#commonMsg').html('<p class="commonMsgSuccess"> <i class="fa fa-check"></i> '+obj.data.info+'</p>');
-    	           $("#showImg").hide();
-    	         
-    	           $("#size").html('');
-    	           $("#addPlant").show();
-    	           $("#updatePlant").hide();
-    	           $('#plant_code').prop('readonly', false);
-    	           
-    	           $('#fromPlant')[0].reset();
     	           tempData.oeeplant.loadPlants();
+    	           tempData.oeeplant.clearForm();
 
     	        }else{
     	          $("#commonMsg").show();
@@ -163,7 +157,15 @@ loadPlants:function(){
       }
 
   },
-  
+clearForm:function(){
+	$("#fromPlant").fadeToggle("slow");
+    $("#showImg").hide();
+    $("#size").html('');
+    $("#addPlant").show();
+    $("#updatePlant").hide();
+    $('#plant_code').prop('readonly', false);
+    $('#fromPlant')[0].reset();
+},
   deletePlant:function (id,img){
 	  //alert(img);
 	  var url="getDataController.php";
@@ -182,12 +184,6 @@ loadPlants:function(){
 	        if(obj.data.infoRes=='S'){
 	           $("#delCommonMsg").show();
 	           $('#delCommonMsg').html('<p class="commonMsgSuccess"> <i class="fa fa-trash"></i> '+obj.data.info+'</p>');
-	           //$('#fromCompany')[0].reset();
-	          // $("#showImg").hide();
-	           //$("#size").html('');
-	          // $("#addCompany").show();
-	           //$("#updateCompany").hide();
-	           // location.reload(true);
 	           tempData.oeeplant.loadPlants();
 
 	        }else{
@@ -205,7 +201,9 @@ loadPlants:function(){
 gotoWorkcenter:function(plantId, compId){
   window.location="workcenter.php?comp_id="+compId+"&plant_id="+plantId;
 },
-
+gotoParts:function(plantId, compId){
+	  window.location="../partsandtools/parts.php?comp_id="+compId+"&plant_id="+plantId+"&screen=c";
+},
 reload:function(){
 	   location.reload(true);
 },
@@ -267,8 +265,8 @@ getCompanyDesc:function(){
 
 $(document).ready(function() {
     debugger;
-   $("#addCompany").parent().addClass('active');
-   $("#addCompany").parent().parent().closest('.treeview').addClass('active menu-open');
+   $("#menuCompany").parent().addClass('active');
+   $("#menuCompany").parent().parent().closest('.treeview').addClass('active menu-open');
 
     $('#comp_id').val(<?php echo $_GET['comp_id'];?>);
     $('.select2').select2();
@@ -276,15 +274,11 @@ $(document).ready(function() {
     $('#commonMsg').hide();
     $("#showImg").hide();
       $('#createPlant').click(function(){
-        $("#fromPlant").fadeToggle("slow");
-          $('#plant_code').prop('readonly', false);
-          $('#fromPlant')[0].reset();
-          $("#showImg").hide();
-          $("#size").html('');
-          $("#addPlant").show();
-          $("#updatePlant").hide();
+    	  tempData.oeeplant.clearForm();
       });
-    
+      $('#cancel').click(function(){
+    	  tempData.oeeplant.clearForm();
+        });
       $('#plant_code').keyup(function(){
          this.value = this.value.toUpperCase();
          $('#plant_code').css('border-color', '');
@@ -293,7 +287,7 @@ $(document).ready(function() {
       $("#contact_number").keyup(function() {
           $("#contact_number").val(this.value.match(/[0-9]*/));
       });
-
+      
    tempData.oeeplant.getCompanyDesc();   
    tempData.oeeplant.loadPlants();
 });
@@ -329,13 +323,14 @@ $(document).ready(function() {
           <div id="error" class="alert alert-danger" style="color:white;text-align:center;font-weight:600;display:none;"></div>
 
          <div id="delCommonMsg"> </div>  
+           <div id="commonMsg"> </div> 
         <form class="" id="fromPlant" enctype="multipart/form-data"> 
             
           <input type="hidden" name="comp_id" id="comp_id"/>
           <input type="hidden" name="img_id" id="img_id"/> 
           <input type="hidden" name="plant_id" id="plant_id"/> 
           
-            <div id="commonMsg"> </div> 
+          
           
             <div class="form-group">
              <div class="row">
@@ -406,6 +401,8 @@ $(document).ready(function() {
                     </button>
                     <button type="button" id="updatePlant" onclick="tempData.oeeplant.savePlant();"  class="btn btn-sm btn-success" style="display:none;">
                       <i class="fa fa-floppy-o"></i>&nbsp; Update
+                    </button>
+                    <button type="button" id="cancel"   class="btn btn-sm btn-danger"><i class="fa fa-close"></i>&nbsp; Cancel
                     </button>
                    </div>
               </div>
