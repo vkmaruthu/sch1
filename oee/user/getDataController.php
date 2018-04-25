@@ -133,21 +133,22 @@ if(isset($_POST['saveRoles'])){
     
     $table = 'sfs_roles';
 
+   // $val=;
     if($companyName==0){
           $DataMarge=array('name'=>$roleName,
                      'description'=>$roleDesc,
                      'screen_access'=>$screens,
                      'access_rights'=>$accessMode,
-                     'company_id'=>'',
-                     'plant_id'=>''
+                     'company_id'=>'NULL',
+                     'plant_id'=>'NULL'
                     );
-    }elseif ($plantName==0) {
+    }else if($plantName==0) {
         $DataMarge=array('name'=>$roleName,
                      'description'=>$roleDesc,
                      'company_id'=>$companyName,
                      'screen_access'=>$screens,
                      'access_rights'=>$accessMode,
-                     'plant_id'=>''
+                     'plant_id'=>'NULL'
                     );
     }
     else{
@@ -164,7 +165,7 @@ if(isset($_POST['saveRoles'])){
 
     if($recordId == ''){
         $sqlQuery = mysqli_insert_array($table, $DataMarge, "submit"); // Function say generate complete query        $
-        $res=mysqli_query($con,$sqlQuery); //or die('Error: ' . mysqli_error($con));
+        $res=mysqli_query($con,$sqlQuery) or die('Error: ' . mysqli_error($con));
         
         if(!$res) {
             $error="Role Already Exists";
@@ -187,9 +188,7 @@ if(isset($_POST['saveRoles'])){
     }else{
         $cond=' id='.$recordId;
         $sqlQuery = mysqli_update_array($table, $DataMarge, "submit",$cond); // Function say generate complete query
-        //$finalQ.="SET FOREIGN_KEY_CHECKS = 0; ".$sqlQuery;
-
-        echo $finalQ;
+       // echo $sqlQuery; die();
         $res=mysqli_query($con,$sqlQuery) or die('Error: ' . mysqli_error($con));
 
         if(!$res) {

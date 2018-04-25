@@ -8,8 +8,14 @@ function mysqli_insert_array($table, $data, $exclude = array()) {
     foreach( array_keys($data) as $key ) {
         if( !in_array($key, $exclude) ) {
             $fields[] = "`$key`";
-            //$values[] = "'" . mysql_real_escape_string($data[$key]) . "'";
-            $values[] = "'" .$data[$key]. "'";
+
+            if($data[$key] == 'NULL'){
+                $values[] =$data[$key];
+            }else{
+                $values[] ="'" .$data[$key]. "'";
+            }
+
+            //$values[] = "'" .$data[$key]. "'";
         }
     }
     $fields = implode(",", $fields);
@@ -24,7 +30,12 @@ function mysqli_update_array($table, $data, $exclude = array(),$cond) {
     if( !is_array($exclude) ) $exclude = array($exclude);
     foreach( array_keys($data) as $key ) {
         if( !in_array($key, $exclude) ) {
-            $dataA[]=$key."='" .$data[$key]. "'";
+
+            if($data[$key] == 'NULL'){
+                $dataA[]=$key."=".$data[$key];
+            }else{
+                $dataA[]=$key."='" .$data[$key]. "'";
+            }
         }
     }
     $dataA = implode(",", $dataA);
