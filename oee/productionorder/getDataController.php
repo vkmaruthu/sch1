@@ -266,7 +266,6 @@ if(isset($_POST['completePO'])){
     $oper_no=$_POST['com_oper_no'];
     
     $table = 'sfs_dc_po';
-    $DataMarge=array('eq_code' => 'null');
     if($po_id != ''){
         $cond=' id='.$po_id." and order_number='".$po_num."' and operation='".$oper_no."'";
         $sqlQuery = "UPDATE sfs_dc_po SET eq_code=null where ".$cond ; //mysqli_update_array($table, $DataMarge, "submit",$cond); // Function say generate complete query

@@ -47,7 +47,7 @@ $(document).ready(function() {
              if(obj.rule.ManageUser==1){$('#ManageUser').show();}else{$('#ManageUser').hide();}   
              if(obj.rule.ManageRole==1){$('#ManageRole').show();}else{$('#ManageRole').hide();}   
              if(obj.rule.configure_shift==1){$('#configure_shift').show();}else{$('#configure_shift').hide();}*/
-
+         	$('#comp_id').val(obj.userDetails.company_id);
           	$('#compNameDB').html(obj.userDetails.compName);
           	$('#sidebarUserName').html(obj.userDetails.first_name);
           	if(obj.userDetails.img_file_name != ''){
