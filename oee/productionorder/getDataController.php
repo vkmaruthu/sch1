@@ -88,13 +88,19 @@ if(isset($_POST['getPODetails'])){
     
     if (($plant_id != "" && $plant_id != 0)) {
        $eqQ="SELECT dp.id, dp.operation, dp.order_number, dp.material, dp.target_qty, dp.line_feed_qty, dp.conf_no, dp.no_of_conf, 
-             dp.conf_yield_count, dp.conf_scarp_count, dp.is_final_confirmed, dp.plant_id, dp.eq_code, p.descp FROM sfs_dc_po dp, 
-             sfs_plant p, sfs_company c where c.id=p.comp_id and p.id=dp.plant_id and dp.plant_id=".$plant_id;
-    }else {
+                dp.conf_yield_count, dp.conf_scarp_count, dp.is_final_confirmed, dp.plant_id, dp.eq_code, p.descp, eq.eq_desc
+                FROM  sfs_dc_po dp LEFT JOIN  sfs_plant p on dp.plant_id=p.id 
+                                   LEFT JOIN sfs_company c on c.id=p.comp_id
+                                   LEFT JOIN sfs_equipment eq on dp.eq_code=eq.eq_code
+                WHERE c.id=p.comp_id and p.id=dp.plant_id and dp.plant_id=".$plant_id;
+      }else {
         $eqQ="SELECT dp.id, dp.operation, dp.order_number, dp.material, dp.target_qty, dp.line_feed_qty, dp.conf_no, dp.no_of_conf, 
-              dp.conf_yield_count, dp.conf_scarp_count, dp.is_final_confirmed, dp.plant_id, dp.eq_code, p.descp FROM sfs_dc_po dp, 
-              sfs_plant p, sfs_company c where c.id=p.comp_id and p.id=dp.plant_id and c.id=".$comp_id;
-    }
+                dp.conf_yield_count, dp.conf_scarp_count, dp.is_final_confirmed, dp.plant_id, dp.eq_code, p.descp, eq.eq_desc
+                FROM  sfs_dc_po dp LEFT JOIN  sfs_plant p on dp.plant_id=p.id 
+                                   LEFT JOIN sfs_company c on c.id=p.comp_id
+                                   LEFT JOIN sfs_equipment eq on dp.eq_code=eq.eq_code
+                WHERE c.id=p.comp_id and p.id=dp.plant_id  and c.id=".$comp_id;
+      }
 
     $eqDetails=mysqli_query($con,$eqQ) or die('Error:'.mysqli_error($con));
     while ($row=mysqli_fetch_array($eqDetails)){
@@ -113,6 +119,7 @@ if(isset($_POST['getPODetails'])){
         $plant_desc=$row['descp'];
         $plantId=$row['plant_id'];
         $eq_code=$row['eq_code'];
+        $eq_desc=$row['eq_desc'];
         
         $getEQData[]=array('id' =>"$id",
             'order_number' =>"$order_number",
@@ -127,6 +134,7 @@ if(isset($_POST['getPODetails'])){
             'operation' => "$operation",
             'plant_id' => "$plantId",
             'plant_desc' => "$plant_desc",
+            'eq_desc' => "$eq_desc",
             'eq_code' => "$eq_code"
         );
     }
@@ -198,16 +206,17 @@ if(isset($_POST['assignPO'])){
     );
     if($po_id != '' && $equi_code !=''){
         $cond=' id='.$po_id." and order_number='".$po_num."' and operation='".$oper_no."'";
-        $sqlQuery = mysqli_update_array($table, $DataMarge, "submit",$cond); // Function say generate complete query
+        $sqlQuery = mysqli_update_array($table, $DataMarge, "submit",$cond);
         //echo $sqlQuery;
-        $res=mysqli_query($con,$sqlQuery); //or die('Error: ' . mysqli_error($con));
+        $res=mysqli_query($con,$sqlQuery);
         if(!$res) {
             $error="Equipment Already Assigned";
             $response['info']=$error;
             $response['infoRes']='E'; //Error
         }else {
             if(mysqli_errno() != 1062){
-                move_uploaded_file($file_tmps,$filePath);
+                $sqlQuery = "UPDATE sfs_equipment SET order_id=".$po_id." where eq_code='".$equi_code."'";
+                $res=mysqli_query($con,$sqlQuery);
                 $response['info']="Equipment Successfully Assigned To PO:".$po_num." Operation:".$oper_no;
                 $response['infoRes']="S"; // success
                 $response['mysqli_insert_id']=mysqli_insert_id($con);
@@ -229,12 +238,12 @@ if(isset($_POST['stopPO'])){
     $po_num=$_POST['stop_po_number'];
     $po_id=$_POST['stop_po_assign_id'];
     $oper_no=$_POST['stop_oper_no'];
-    
+    $equi_code=$_POST['stop_equi_code'];
     $table = 'sfs_dc_po';
     if($po_id != ''){
         $cond=' id='.$po_id." and order_number='".$po_num."' and operation='".$oper_no."'";
-        $sqlQuery = "UPDATE sfs_dc_po SET eq_code=null where ".$cond ;
-       // echo $sqlQuery;
+        $sqlQuery = "UPDATE sfs_dc_po SET line_feed_qty=0, eq_code=null where ".$cond;
+        // echo $sqlQuery;
         $res=mysqli_query($con,$sqlQuery); 
         if(!$res) {
             $error="Error in removing equipment";
@@ -242,7 +251,8 @@ if(isset($_POST['stopPO'])){
             $response['infoRes']='E'; //Error
         }else {
             if(mysqli_errno() != 1062){
-                move_uploaded_file($file_tmps,$filePath);
+                $sqlQuery = "UPDATE sfs_equipment SET order_id=0 where eq_code='".$equi_code."'";
+                $res=mysqli_query($con,$sqlQuery);
                 $response['info']="Equipment Removed Successfully";
                 $response['infoRes']="S"; // success
                 $response['mysqli_insert_id']=mysqli_insert_id($con);
@@ -264,25 +274,26 @@ if(isset($_POST['completePO'])){
     $po_num=$_POST['com_po_number'];
     $po_id=$_POST['com_po_assign_id'];
     $oper_no=$_POST['com_oper_no'];
-    
+    $equi_code=$_POST['com_equi_code'];
     $table = 'sfs_dc_po';
     if($po_id != ''){
         $cond=' id='.$po_id." and order_number='".$po_num."' and operation='".$oper_no."'";
-        $sqlQuery = "UPDATE sfs_dc_po SET eq_code=null where ".$cond ; //mysqli_update_array($table, $DataMarge, "submit",$cond); // Function say generate complete query
+        $sqlQuery = "UPDATE sfs_dc_po SET line_feed_qty=0, eq_code=null, is_final_confirmed=1 where ".$cond ;
         // echo $sqlQuery;
-        $res=mysqli_query($con,$sqlQuery); //or die('Error: ' . mysqli_error($con));
+        $res=mysqli_query($con,$sqlQuery);
         if(!$res) {
-            $error="Error in removing equipment";
+            $error="Error in Completing the Production Order";
             $response['info']=$error;
             $response['infoRes']='E'; //Error
         }else {
             if(mysqli_errno() != 1062){
-                move_uploaded_file($file_tmps,$filePath);
-                $response['info']="Equipment Removed Successfully";
+                $sqlQuery = "UPDATE sfs_equipment SET order_id=0 where eq_code='".$equi_code."'";
+                $res=mysqli_query($con,$sqlQuery);
+                $response['info']="Production Order completed Successfully";
                 $response['infoRes']="S"; // success
                 $response['mysqli_insert_id']=mysqli_insert_id($con);
             }else{
-                $error="Error in removing equipment";
+                $error="Error in Completing the Production Order";
                 $response['info']=$error;
                 $response['infoRes']='E'; //Error
             }

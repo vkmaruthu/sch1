@@ -56,7 +56,7 @@ loadAllPO:function(){
               { data: "conf_yield",className: "text-right"},
               { data: "conf_scrap",className: "text-right"},
               { data: "plant_desc"},
-              { data: "eq_code"},
+              { data: "eq_desc"},
               { data: "id" ,className: "text-left",
                   render: function (data, type, row, meta) {
                     var result = "";
@@ -74,9 +74,13 @@ loadAllPO:function(){
               },
               { data: "id" ,className: "text-left",
                 render: function (data, type, row, meta) {
+                  if(row.is_final_confirmed != 1){
                   var a='<button type="button" title="Edit" class="btn btn-primary btn-xs" onclick="tempData.oeeprodorder.editPO('+row.id+',\''+row.plant_id+'\');"><i class="fa fa-pencil-square-o"></i> </button>';
                   var b='<button type="button" title="Delete" class="btn btn-danger btn-xs" onclick="tempData.oeeprodorder.deletePO('+row.id+');"><i class="fa fa-trash"></i> </button>';
                   return a+' '+b;
+                  }else{
+                	  return "";
+                  }
                 }
               },
                ]
@@ -360,11 +364,19 @@ assignPOToEq:function(){
 	  var fromPartData = new FormData($('#fromAssignPO')[0]);
 	  fromPartData.append("assignPO", "assignPO");
 	  var lin_feed_qty=$('#lin_feed_qty').val();
-	    if(lin_feed_qty == "") {
+	    if(lin_feed_qty == "" || lin_feed_qty == 0) {
 	        $('#lin_feed_qty').css('border-color', 'red');
 	        return false;
 	    }else{
 	      $('#lin_feed_qty').css('border-color', '');
+	      
+	       $('#order_number').css('border-color', '');
+	       if($('#equi_code').val() == 0){
+	    	    $('#modalMsg').html('*Select Equipment');
+	    	    return false;
+	    	}else {
+	    		$('#modalMsg').html('');
+	    	}	      
 	  $.ajax({
 	    type:"POST",
 	    url:url,
@@ -409,6 +421,7 @@ stopPOModal:function(id, plantId){
              $("#stop_yield_qty").val(globalPOData[i].conf_yield);
              $("#stop_scrap_qty").val(globalPOData[i].conf_scrap);
              $('#stop_po_assign_id').val(id);
+             $('#stop_equi_code').val(globalPOData[i].eq_code);
           break;
         }   
    }
@@ -436,6 +449,7 @@ removePOFromEq:function(){
 		       $('#stop_po_assign_id').val('');
 		       $('#stop_po_number').val('');
 		       $('#stopPOModal').modal('hide');
+		        $('#stop_equi_code').val('');
 	            tempData.oeeprodorder.loadAllPO();
 	        }else{
 		      $('#stopPOModal').modal('hide');
@@ -459,6 +473,7 @@ completePOModal:function(id, plantId){
 	             $("#com_yield_qty").val(globalPOData[i].conf_yield);
 	             $("#com_scrap_qty").val(globalPOData[i].conf_scrap);
 	             $('#com_po_assign_id').val(id);
+	             $('#com_equi_code').val(globalPOData[i].eq_code);
 	          break;
 	        }   
 	   }
@@ -485,6 +500,7 @@ finalConfirm:function(){
 	           $('#fromStopPO')[0].reset();
 		       $('#com_po_assign_id').val('');
 		       $('#com_po_number').val('');
+		       $('#com_equi_code').val('');
 		       $('#completePOModal').modal('hide');
 	            tempData.oeeprodorder.loadAllPO();
 	        }else{
@@ -527,6 +543,9 @@ debugger;
   });
   $('#operation').change(function(){
       $('#msg').html('');
+  });
+  $('#equi_code').change(function(){
+      $('#modalMsg').html('');
   });
   $("#equi_code").append('<option value="0"> Select Operation </option>');
   $("#equi_code").prop("disabled", true);
@@ -812,6 +831,7 @@ debugger;
                         </div>
                     </div>
                 </div>
+                <div id="modalMsg" style="color: red;"></div>
           </div>
           <div class="modal-footer" style="text-align: center;">
             <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
@@ -838,6 +858,7 @@ debugger;
           </div>
           <form id="fromStopPO" enctype="multipart/form-data">
            <input type="hidden" name="stop_po_assign_id" id="stop_po_assign_id"/> 
+             <input type="hidden" name="stop_equi_code" id="stop_equi_code"/> 
            <div class="modal-body">          
                <div class="row">                                  
                     <div class="col-md-12" >
@@ -900,6 +921,7 @@ debugger;
           <form id="fromComPO" enctype="multipart/form-data">
            <input type="hidden" name="com_po_assign_id" id="com_po_assign_id"/> 
            <input type="hidden" name="com_oper_no" id="com_oper_no"/> 
+           <input type="hidden" name="com_equi_code" id="com_equi_code"/> 
            <div class="modal-body">          
                <div class="row">                                  
                     <div class="col-md-12" >
