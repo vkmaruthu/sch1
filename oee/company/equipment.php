@@ -511,7 +511,9 @@ clearForm:function(){
     $("#updateEquipment").hide(); 
     $("#reason_codes").val('').change();
     $("#model").val(0).change();  
-    $("#eq_type").val(0).change();    
+    $("#eq_type").val(0).change();
+    $("#img_id").val(''); 
+    $("#eq_id").val('');      
 }
   
 };

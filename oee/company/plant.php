@@ -165,6 +165,8 @@ clearForm:function(){
     $("#updatePlant").hide();
     $('#plant_code').prop('readonly', false);
     $('#fromPlant')[0].reset();
+    $('#img_id').val('');
+    $('#plant_id').val('');
 },
   deletePlant:function (id,img){
 	  //alert(img);

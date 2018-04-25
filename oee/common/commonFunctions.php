@@ -89,9 +89,13 @@ if(isset($_POST['getPlantDetails'])){
     $comp_id=$_POST['comp_id'];
     $plant_id =$_POST['plant_id'];
     if ($plant_id != "") {
-        $plantQ="SELECT id,code,descp,address,contact_person,contact_number,image_file_name, comp_id FROM sfs_plant where id=".$plant_id." and comp_id=".$comp_id;
-    }else{
-      $plantQ="SELECT id,code,descp,address,contact_person,contact_number,image_file_name, comp_id FROM sfs_plant where comp_id=".$comp_id;
+        $plantQ="SELECT p.id, p.code, p.descp, p.address, p.contact_person, p.contact_number, p.image_file_name, p.comp_id, c.code as comp_code FROM 
+                 sfs_plant p, sfs_company c where p.comp_id=c.id and p.id=".$plant_id." and p.comp_id=".$comp_id;
+    }elseif ($comp_id != ""){
+        $plantQ="SELECT p.id, p.code, p.descp, p.address, p.contact_person, p.contact_number, p.image_file_name, p.comp_id, c.code as comp_code FROM
+                 sfs_plant p, sfs_company c where p.comp_id=c.id  and p.comp_id=".$comp_id;
+    }else {
+        
     }
    $plantDetails=mysqli_query($con,$plantQ) or die('Error:'.mysqli_error($con));
     
@@ -104,6 +108,7 @@ if(isset($_POST['getPlantDetails'])){
         $contact_number=$row['contact_number'];
         $image_file_name=$row['image_file_name'];
         $comp_id=$row['comp_id'];
+        $comp_code=$row['comp_code'];
         
         $getCompData[]=array('id' =>"$id",
             'plant_code' =>"$plant_code",
@@ -112,7 +117,8 @@ if(isset($_POST['getPlantDetails'])){
             'contact_person' =>"$contact_person",
             'contact_number' =>"$contact_number",
             'image_file_name' =>"$image_file_name",
-            'comp_id' => "$comp_id"
+            'comp_id' => "$comp_id",
+            'comp_code' => "$comp_code",
         );
         
     }
@@ -123,12 +129,15 @@ if(isset($_POST['getPlantDetails'])){
 }
 
 if(isset($_POST['getWCDetails'])){
+    $comp_id = $_POST['comp_id'];
     $plant_id=$_POST['plant_id'];
     $wc_id = $_POST['wc_id'];
     if ($wc_id != "") {
-        $plantQ="SELECT id,code,descp,contact_person,contact_number,image_file_name, plant_id FROM sfs_workcenter where id=".$wc_id;
+        $plantQ="SELECT wc.id, wc.code, wc.descp, wc.contact_person, wc.contact_number, wc.image_file_name, wc.plant_id FROM sfs_workcenter wc, 
+                 sfs_plant p, sfs_company c where wc.plant_id=p.id and p.comp_id=c.id and wc.id=".$wc_id;
     }elseif ($plant_id != "") {
-        $plantQ="SELECT id,code,descp,contact_person,contact_number,image_file_name, plant_id FROM sfs_workcenter where plant_id=".$plant_id;
+        $plantQ="SELECT wc.id, wc.code, wc.descp, wc.contact_person, wc.contact_number, wc.image_file_name, wc.plant_id FROM sfs_workcenter wc,
+                 sfs_plant p, sfs_company c where wc.plant_id=p.id and p.comp_id=c.id and wc.plant_id=".$plant_id;
     }else{
         return "No data";
     }
@@ -245,6 +254,7 @@ if(isset($_POST['getPartsDetails'])){
     echo json_encode($status);
     mysqli_close($con);
 }
+
 
 
 ?>

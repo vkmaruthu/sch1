@@ -276,6 +276,8 @@ clearForm:function(){
     $("#updateWC").hide();
     $('#wc_code').prop('readonly', false);
     $('#fromWC')[0].reset();
+    $('#wc_id').val('');
+    $('#img_id').val('');
 }
 
 

@@ -56,8 +56,9 @@ $address=$_POST['address'];
       if($comp_id == ''){
 
         $sqlQuery = mysqli_insert_array($table, $DataMarge, "submit"); // Function say generate complete query
+       // echo $sqlQuery;
         $res=mysqli_query($con,$sqlQuery); //or die('Error: ' . mysqli_error($con));  
-
+        
         if(!$res) {
             $error="Company Code Already Exists";
                 $response['info']=$error;

@@ -11,6 +11,9 @@ var globalToolsData=new Array();
 var modelArray = new Array();
 var tooLIdTypeArray = Array();
 var reasonsArray = Array();
+var plant_code = "";
+var comp_code = "";
+var part_code = "";
 
 tempData.oeeTools=
 {
@@ -40,7 +43,7 @@ var myData={getToolDetails:"getToolDetails","comp_id":comp_id, "plant_id":plant_
                 "destroy":true,
             }).clear().draw();
 
-          }else{
+          }else{       
 
         var DataTableProject = $('#toolTable').DataTable( {
                 'paging'      : true,
@@ -61,6 +64,7 @@ var myData={getToolDetails:"getToolDetails","comp_id":comp_id, "plant_id":plant_
                           }
                       }
                    },
+                  { data: "number"},
                   { data: "tool_name" },
                   { data: "tool_desc" },
                   { data: "ton" },
@@ -84,18 +88,35 @@ var myData={getToolDetails:"getToolDetails","comp_id":comp_id, "plant_id":plant_
         } // ajax success ends
     });  
 },
-saveTool:function(){
+saveTool:function(action){
 	debugger;
 	  var url="getDataController.php";
+      $('#plant_code').val(plant_code);
+      $('#comp_code').val(comp_code); 
+      $('#part_code').val(part_code);
+      $('#action').val(action);
+      
+      var idType = $('#tool_opr_id_type').val();
+      if(idType == 0){
+          $('#msg').html('*Select Tool Operation Id Type');
+          return false;
+	     }else{
+	    	 $('#msg').html('');
+		 }
+      var idName = $("#tool_opr_id_type option:selected").text();
+      if(idName.toUpperCase() === "OPERATION"){
+    	    $('#tag_id').val($('#plant_id').val()+':'+$('#part_id').val()+':'+$('#opr_id').val());
+        }else{
+        	$('#tag_id').val($('#plant_id').val()+':'+$('#opr_id').val());
+        }
 	  var formEQData = new FormData($('#fromTool')[0]);
 	  formEQData.append("saveTool", "saveTool");
-	   var tool_name=$('#tool_name').val();
+	   var tool_name=$('#opr_id').val();
 	    if(tool_name == "") {
-	        $('#tool_name').css('border-color', 'red');
+	        $('#opr_id').css('border-color', 'red');
 	        return false;
 	    }else{
-	        $('#tool_name').css('border-color', '');
-		  
+	        $('#opr_id').css('border-color', '');
 	  $.ajax({
 	    type:"POST",
 	    url:url,
@@ -130,10 +151,8 @@ saveTool:function(){
 },
 editTool:function (tag_id){
 	debugger;
-	 alert();
  for(var i=0;i<globalToolsData.length;i++){ 
      if(tag_id==globalToolsData[i].tag_id){
-         
        $("#showImg").show();
        $('#tag_id').val(tag_id);
        $('#tool_name').val(globalToolsData[i].tool_name);
@@ -144,20 +163,17 @@ editTool:function (tag_id){
        $('#ton').val(globalToolsData[i].ton);
        $('#maint_count').val(globalToolsData[i].maint_count);
        $('#lifetime_count').val(globalToolsData[i].lifetime_count);
-       $('#mac_id').val(globalToolsData[i].mac_id);
        $('#img_id').val(globalToolsData[i].image_file_name);
-
-       $('#workcenter').val(1).change();
-       $('#tool_opr_id_type').val(1).change();
-       
+       $('#opr_id').val(globalToolsData[i].number);
+       $('#tool_opr_id_type').val(globalToolsData[i].type_id).change();
        if(globalToolsData[i].image_file_name!=''){
          $('#showImg').html('<img style="width: 30%;" src="../common/img/tools/'+globalToolsData[i].image_file_name+'">');
        }else{
          $('#showImg').html('<img style="width: 30%;" src="../common/img/machine/default.png">');
        }
-       $('#tool_name').prop('readonly', true);
+       $('#opr_id').prop('readonly', true);
+       $("#tool_opr_id_type").prop("disabled", true);
        break;
-      
      }
  }
  $("#fromTool").fadeIn("fast");
@@ -194,14 +210,12 @@ deleteTool:function (id,img){
 gotoBack:function(){
 	 var comp_id = $('#comp_id').val();
 	 var plant_id = $('#plant_id').val();
-	 
 	 if($('#screen').val() == "p"){
 	 	window.location="parts.php?comp_id="+comp_id+"&plant_id="+plant_id+"&screen=p";
 	 }else{
 		window.location="parts.php?comp_id="+comp_id+"&plant_id="+plant_id+"&screen=c";
 	 }
 },
-
 getPlantDesc:function(){	
 	  var url="getDataController.php";
 	  var plant_id=$('#plant_id').val();
@@ -216,6 +230,10 @@ getPlantDesc:function(){
 	    success: function(obj) {
 	      if(obj.plantDetails !=null){
 	        $('#plantName').html(obj.plantDetails[0].plant_desc);
+	        plant_code = obj.plantDetails[0].plant_code;
+	        comp_code = obj.plantDetails[0].comp_code;
+	        $('#plant_code').val(plant_code);
+	        $('#comp_code').val(comp_code); 
 	      } 
 	    }
 	  });
@@ -235,6 +253,8 @@ getPartDesc:function(){
 		    success: function(obj) {
 		      if(obj.partsDetails !=null){
 		        $('#partName').html(obj.partsDetails[0].part_desc);
+		        part_code = obj.partsDetails[0].part_num;
+		        $('#part_num').val(part_code); 
 		      } 
 		    }
 	  });
@@ -340,8 +360,6 @@ getToolIdTypeForDropdown:function(){
     		 for(var i=0; i< obj.toolIdTypes.length; i++){
 			   $("#tool_opr_id_type").append('<option value="'+obj.toolIdTypes[i].id+'">'+obj.toolIdTypes[i].tool_id_type+'</option>'); 
     		 }
-            	
-        	
 	        }
 	      } 
 	  });
@@ -370,15 +388,20 @@ getToolIdTypeForDropdown:function(){
 },
 clearForm:function(){     
 	$("#fromTool").fadeToggle("slow");
-    $('#tool_name').prop('readonly', false);
+    $('#opr_id').prop('readonly', false);
     $("#showImg").hide();
     $("#size").html('');
+    $('#tool_opr_id_type').val(0).change();
+    $('#tag_id').val("");
+    $('#opr_id').val("");
+    $('#action').val("");
+    $('#img_id').val("");
     $('#fromTool')[0].reset();
     $("#addToolsBtn").show();
     $("#updateTools").hide(); 
+    $("#tool_opr_id_type").prop("disabled", false);
 }
 
- 
 };
 
 $(document).ready(function() {
@@ -409,9 +432,27 @@ debugger;
       	tempData.oeeTools.clearForm();
     });
   
-    $('#tool_name').keyup(function(){
-       $('#tool_name').css('border-color', '');
+    $('#opr_id').keyup(function(){tool_id_type
+       $('#opr_id').css('border-color', '');
     });
+
+    $('#tool_id_type').keyup(function(){
+    	this.value = this.value.toUpperCase();
+     });
+
+    $('#tool_opr_id_type').change(function(){
+    	  $('#msg').html('');
+          var idName = $("#tool_opr_id_type option:selected").text();
+          if(idName.toUpperCase() === "OPERATION"){
+             $('#idName').html('Operation No.<span class="required">*</span>');
+             $('#op_name').html('Operation Name<span class="required">*</span>');
+             $('#op_desc').html('Description<span class="required">*</span>');
+          }else{
+        	  $('#idName').html('Tool Number<span class="required">*</span>');
+              $('#op_name').html('Tool Name<span class="required">*</span>');
+              $('#op_desc').html('Tool Description<span class="required">*</span>');
+          }        
+     });
 
     tempData.oeeTools.loadAllTools();
     tempData.oeeTools.getPlantDesc();
@@ -456,18 +497,19 @@ debugger;
           <input type="hidden" name="img_id" id="img_id"/> 
           <input type="hidden" name="plant_id" id="plant_id"/>
           <input type="hidden" name="tag_id" id="tag_id"/>
-           <input type="hidden" name="part_id" id="part_id"/>
-           <input type="hidden" name="screen" id="screen"/>
-           
+          <input type="hidden" name="part_id" id="part_id"/>
+          <input type="hidden" name="screen" id="screen"/>
+          <input type="hidden" name="part_num" id="part_num"/> 
+          <input type="hidden" name="plant_code" id="plant_code"/> 
+          <input type="hidden" name="action" id="action"/> 
             <div class="form-group">
             
                <div class="row" style="margin-top: 0px;">
                 <div class="col-md-6">
-                  <label class="control-label col-md-4 col-sm-6 col-xs-12">Tool Operation Id Type</label>
+                  <label class="control-label col-md-4 col-sm-6 col-xs-12" >Tool/Operation Type*</label>
                     <div class="col-md-5 col-sm-5 col-xs-10" style="padding-right: 0px;">
                       <div class="form-group">
-                        <select class="form-control select2"  id="tool_opr_id_type" name="tool_opr_id_type" style="width:100%;">
-                      
+                        <select class="form-control select2"  id="tool_opr_id_type" name="tool_opr_id_type" style="width:100%;">                      
                         </select>
                       </div>
                     </div>
@@ -477,50 +519,44 @@ debugger;
                       </button>
                     </div>
                 </div>
-
                <div class="col-md-6">
-                  <label class="control-label col-md-4 col-sm-6 col-xs-12">Work Center<span class="required">*</span></label>
-                    <div class="col-md-6 col-sm-6 col-xs-12" >
-                      <div class="form-group">
-                        <select class="form-control select2"  id="workcenter" name="workcenter" style="width:100%;">
-                        </select>
-                      </div>
-                    </div>
+                 
                 </div>
               </div>
             
                <div class="row">
                 <div class="col-md-6">
-                  <label class="control-label col-md-4 col-sm-6 col-xs-12">Operation Id<span class="required">*</span></label>
+                  <label class="control-label col-md-4 col-sm-6 col-xs-12" id="idName" >Tool Number<span class="required">*</span></label>
                   <div class="col-md-6 col-sm-6 col-xs-12">
                     <input type="text" name="opr_id" id="opr_id" onkeyup=""
-                     placeholder="Operation Id" maxlength="30" class="form-control" required="true" autofocus/>
+                     placeholder="" maxlength="30" class="form-control" required="true" autofocus/>
                   </div>
                 </div>
                 <div class="col-md-6">
-                <label class="control-label col-md-4 col-sm-6 col-xs-12">Mac Id<span class="required">*</span></label>
-                <div class="col-md-6 col-sm-6 col-xs-12">
-                  <input type="text" name="mac_id" id="mac_id" onkeyup=""
-                   placeholder="Mac Id" class="form-control" required="true"/>
-                </div>
+                  <label class="control-label col-md-4 col-sm-6 col-xs-12" id="op_name">Tool Name<span class="required">*</span></label>
+                  <div class="col-md-6 col-sm-6 col-xs-12">
+                    <input type="text" name="tool_name" id="tool_name" onkeyup=""
+                     placeholder=""  class="form-control" required="true" autofocus/>
+                  </div>
+
                 </div>
               </div>
               
              <div class="row" style="margin-top: 10px;">
                 <div class="col-md-6">
-                  <label class="control-label col-md-4 col-sm-6 col-xs-12">Operation<span class="required">*</span></label>
-                  <div class="col-md-6 col-sm-6 col-xs-12">
-                    <input type="text" name="tool_name" id="tool_name" onkeyup=""
-                     placeholder="Operation"  class="form-control" required="true" autofocus/>
-                  </div>
-                </div>
-                
-                <div class="col-md-6">
-                <label class="control-label col-md-4 col-sm-6 col-xs-12">Description<span class="required">*</span></label>
+                <label class="control-label col-md-4 col-sm-6 col-xs-12" id="op_desc">Tool Description<span class="required">*</span></label>
                 <div class="col-md-6 col-sm-6 col-xs-12">
                   <input type="text" name="tool_desc" id="tool_desc" onkeyup=""
-                   placeholder="Tool Description" class="form-control" required="true"/>
+                   placeholder="" class="form-control" required="true"/>
                 </div>
+                </div>
+                <div class="col-md-6">
+                   <label class="control-label col-md-4 col-sm-6 col-xs-12">Tons <b> (ton) </b> </label>
+                    <div class="col-md-6 col-sm-6 col-xs-12">
+                      <input type="number" min="0" name="ton" id="ton" onkeyup=""
+                       placeholder="Tons" class="form-control" required="true" value="0"/>
+                    </div>
+
                 </div>
               </div>
               
@@ -528,54 +564,45 @@ debugger;
                <div class="col-md-6">
                     <label class="control-label col-md-4 col-sm-6 col-xs-12">Bench Mark Setup Time<b>(min)</b></label>
                     <div class="col-md-6 col-sm-6 col-xs-12">
-                      <input type="number" name="bm_setup_time" id="bm_setup_time" onkeyup=""
+                      <input type="number" min="0" name="bm_setup_time" id="bm_setup_time" onkeyup=""
                        placeholder="Bench Mark Setup Time" class="form-control" required="true" value="0"/>
                     </div>   
                 </div>
                  <div class="col-md-6">
                     <label class="control-label col-md-4 col-sm-6 col-xs-12">Bench Mark Production Time<b>(min)</b></label>
                     <div class="col-md-6 col-sm-6 col-xs-12">
-                      <input type="number" name="bm_prod_time" id="bm_prod_time" onkeyup=""
+                      <input type="number" min="0" name="bm_prod_time" id="bm_prod_time" onkeyup=""
                        placeholder="Bench Mark Production Time" class="form-control" required="true" value="0"/>
                     </div>   
                 </div>
               </div>
               
              <div class="row" style="margin-top: 0px;">
-                 <div class="col-md-6">
-                    <label class="control-label col-md-4 col-sm-6 col-xs-12">No. of Items Per Operation</label>
-                    <div class="col-md-6 col-sm-6 col-xs-12">
-                      <input type="number" name="no_of_items_per_oper" id="no_of_items_per_oper" onkeyup=""
-                       placeholder="No. of Items Per Operation" class="form-control" required="true" value="1"/>
-                    </div>   
-                 </div>
-                 <div class="col-md-6">
-                    <label class="control-label col-md-4 col-sm-6 col-xs-12">Tons <b> (ton) </b> </label>
-                    <div class="col-md-6 col-sm-6 col-xs-12">
-                      <input type="number" name="ton" id="ton" onkeyup=""
-                       placeholder="Tons" class="form-control" required="true" value="0"/>
-                    </div>   
-                </div>
-              </div>
-              
-             <div class="row" style="margin-top: 10px;">
                <div class="col-md-6">
                     <label class="control-label col-md-4 col-sm-6 col-xs-12">Maintenance Count</label>
                     <div class="col-md-6 col-sm-6 col-xs-12">
-                      <input type="number" name="maint_count" id="maint_count" onkeyup=""
+                      <input type="number" min="0" name="maint_count" id="maint_count" onkeyup=""
                        placeholder="Maintenance Count" class="form-control" required="true" value="0"/>
                     </div>   
                 </div>
                  <div class="col-md-6">
                     <label class="control-label col-md-4 col-sm-6 col-xs-12">Life Time Count</label>
                     <div class="col-md-6 col-sm-6 col-xs-12">
-                      <input type="number" name="lifetime_count" id="lifetime_count" onkeyup=""
+                      <input type="number" min="0" name="lifetime_count" id="lifetime_count" onkeyup=""
                        placeholder="Life Time Count" class="form-control" required="true" value="0"/>
                     </div>   
                 </div>
               </div>
               
               <div class="row" style="margin-top: 10px;">
+              
+                 <div class="col-md-6">
+                    <label class="control-label col-md-4 col-sm-6 col-xs-12">No. of Items Per Operation</label>
+                    <div class="col-md-6 col-sm-6 col-xs-12">
+                      <input type="number" min="1" name="no_of_items_per_oper" id="no_of_items_per_oper" onkeyup=""
+                       placeholder="No. of Items Per Operation" class="form-control" required="true" value="1"/>
+                    </div>   
+                 </div>
                
                   <div class="col-md-6">
                       <label class="control-label col-md-4 col-sm-6 col-xs-12">Image Upload</label>
@@ -588,19 +615,16 @@ debugger;
                         <span id="showImg"></span> 
                        </div>
                     </div>
-                  <div class="col-md-6">
-                  
-                 </div>
               </div>
               
               <div class="row">
                <div id="msg" style="padding-left: 28px;color: red;"></div>
                    <div class="col-md-12 text-center">
-                    <button type="button" id="addToolsBtn" onclick="tempData.oeeTools.saveTool();" 
+                    <button type="button" id="addToolsBtn" onclick="tempData.oeeTools.saveTool('S');" 
                       class="btn btn-sm btn-success">
                       <i class="fa fa-floppy-o"></i>&nbsp; Save
                     </button>
-                    <button type="button" id="updateTools" onclick="tempData.oeeTools.saveTool();"  class="btn btn-sm btn-success" style="display:none;">
+                    <button type="button" id="updateTools" onclick="tempData.oeeTools.saveTool('U');"  class="btn btn-sm btn-success" style="display:none;">
                       <i class="fa fa-floppy-o"></i>&nbsp; Update
                     </button>
                      <button type="button" id="cancel" class="btn btn-sm btn-danger"><i class="fa fa-close"></i>&nbsp; Cancel
@@ -616,7 +640,8 @@ debugger;
            <thead>
              <tr>
               <th>Image</th>
-              <th>Operation</th> 
+              <th>Operation/Tool Number</th>
+              <th>Operation/Tool Name</th>
               <th>Description</th>
               <th>Ton<span style="font-size: 10px;">(ton)</span></th>
               <th>Maintenance Count</th>
