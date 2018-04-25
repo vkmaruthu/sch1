@@ -356,20 +356,20 @@ saveModel:function(){
 	        debugger;
 	      if(obj.data !=null){
 	        if(obj.data.infoRes=='S'){
-	           $("#commonMsg").show();
-	           $('#commonMsg').html('<p class="commonMsgSuccess"> <i class="fa fa-check"></i> '+obj.data.info+'</p>');
-	          
+	           $("#commonMsgModel").show();
+	           $('#commonMsgModel').html('<p class="commonMsgSuccess"> <i class="fa fa-check"></i> '+obj.data.info+'</p>');
 	           $('#fromEquipmentModel')[0].reset();
-	           $('#addModelModal').modal('hide');
+	           $('#model_id').val('');
+	          // $('#addModelModal').modal('hide');
 	           tempData.oeeEquipment.getModelNameForDropdown();
 
 	        }else{
-	          $("#commonMsg").show();
-	           $('#commonMsg').html('<p class="commonMsgFail"> <i class="fa fa-warning"></i> '+obj.data.info+'</p>');
+	          $("#commonMsgModel").show();
+	           $('#commonMsgModel').html('<p class="commonMsgFail"> <i class="fa fa-warning"></i> '+obj.data.info+'</p>');
 	        }  
 	      } 
 	      setTimeout(function(){  
-	        $("#commonMsg").fadeToggle('slow');        
+	        $("#commonMsgModel").fadeToggle('slow');        
 	      }, 1500);
 	    }
 	  });
@@ -440,7 +440,9 @@ getModelNameForDropdown:function(){
 	    success: function(obj) {
 	        debugger;
 	      if(obj.models !=null){
-             modelArray = obj.models;
+	         modelArray = obj.models;
+	    	 tempData.oeeEquipment.loadModelTable(modelArray);
+	    	 
              	if(modelArray != null){
              		 $("#model").html('');
         	    	 $("#model").append('<option value="0"> Select Model </option>');
@@ -450,9 +452,50 @@ getModelNameForDropdown:function(){
             	}
         	
 	        }
+
 	      } 
 	  });
+},
+loadModelTable:function(modelValue){
+    var DataTableProject = $('#modelTable').DataTable( {
+        'paging'      : true,
+        'lengthChange': false,
+        'searching'   : true,
+        'ordering'    : true,
+        'info'        : true,
+        "destroy"     : true,  
+        'autoWidth'   : false,
+        "pageLength": 4,
+        "data":modelValue,   
+        "columns": [
+          { data: "model_name" },
+          { data: "num_of_di" },
+          { data: "num_of_do" },
+          { data: "num_of_ai" },
+          { data: "num_of_ao" },
+          { data: "id" ,className: "text-left",
+              render: function (data, type, row, meta) {
+                var a='<button type="button" class="btn btn-primary btn-xs" onclick="tempData.oeeEquipment.editModel('+row.id+');"><i class="fa fa-pencil-square-o"></i> </button>';
+                // var b='<button type="button" class="btn btn-danger btn-xs" onclick="tempData.oeeEquipment.deleteModel('+row.id+');"><i class="fa fa-trash"></i> </button>';
+                return a;
+              }
+            },
+           ]
+         });
+
  },
+editModel:function(id){
+   for(var i=0;i<modelArray.length;i++){ 
+       if(id==modelArray[i].id){ 
+    	   $('#model_id').val(id);
+    	   $('#model_name').val(modelArray[i].model_name);
+    	   $('#num_of_di').val(modelArray[i].num_of_di);
+    	   $('#num_of_do').val(modelArray[i].num_of_do);
+    	   $('#num_of_ai').val(modelArray[i].num_of_ai);
+    	   $('#num_of_ao').val(modelArray[i].num_of_ao);
+		}
+   }
+},
 getEQTypeForDropdown:function(){//reasonsArray
 	  var url="getDataController.php";
 	  var myData = {getEquipmentType:'getEquipmentType'};
@@ -825,7 +868,7 @@ debugger;
      <!-- Add Model modal -->
 
     <div class="modal fade" id="addModelModal">
-      <div class="modal-dialog">
+      <div class="modal-dialog modal-lg" >
         <div class="modal-content">
           <div class="modal-header">
             <button type="button" class="close" data-dismiss="modal" aria-label="Close">
@@ -833,9 +876,10 @@ debugger;
               <h4 class="modal-title">Add Model</h4>
           </div>
           <form id="fromEquipmentModel" enctype="multipart/form-data"> 
+          <input type="hidden" name="model_id" id="model_id"/> 
           <div class="modal-body">          
                <div class="row">
-                    <div class="col-md-12">
+                    <div class="col-md-6">
                       <label class="control-label col-md-4 col-sm-6 col-xs-12">Model Name<span class="required">*</span></label>
                         <div class="col-md-6 col-sm-6 col-xs-12">
                           <input type="text" name="model_name" id="model_name" onkeyup=""
@@ -843,14 +887,14 @@ debugger;
                         </div>
                     </div>
                     
-                    <div class="col-md-12" style="padding-top: 1px;">
+                    <div class="col-md-6" style="padding-top: 1px;">
                         <label class="control-label col-md-4 col-sm-6 col-xs-12">No. of Digital I/P</label>
                         <div class="col-md-6 col-sm-6 col-xs-12">
                           <input type="text" name="num_of_di" id="num_of_di" onkeyup=""
                            placeholder="No. of Digital Input" class="form-control"  value="0" maxlength="4" required="true"/>
                         </div>
                     </div>
-                    <div class="col-md-12" style="padding-top: 1px;">
+                    <div class="col-md-6" style="padding-top: 1px;">
                         <label class="control-label col-md-4 col-sm-6 col-xs-12">No. of Digital O/P</label>
                         <div class="col-md-6 col-sm-6 col-xs-12">
                           <input type="text" name="num_of_do" id="num_of_do" onkeyup=""
@@ -858,14 +902,14 @@ debugger;
                         </div>
                     </div>
                     
-                    <div class="col-md-12" style="padding-top: 1px;">
+                    <div class="col-md-6" style="padding-top: 1px;">
                         <label class="control-label col-md-4 col-sm-6 col-xs-12">No. of Analog I/P</label>
                         <div class="col-md-6 col-sm-6 col-xs-12">
                           <input type="text" name="num_of_ai" id="num_of_ai" onkeyup=""
                            placeholder="No. of Analog Input" class="form-control"  value="0" maxlength="4" required="true"/>
                         </div>
                     </div>
-                    <div class="col-md-12" style="padding-top: 1px;">
+                    <div class="col-md-6" style="padding-top: 1px;">
                         <label class="control-label col-md-4 col-sm-6 col-xs-12">No. of Analog O/P</label>
                         <div class="col-md-6 col-sm-6 col-xs-12">
                           <input type="text" name="num_of_ao" id="num_of_ao" onkeyup=""
@@ -873,12 +917,32 @@ debugger;
                         </div>
                     </div>
                 </div>
-          </div>
-          <div class="modal-footer" style="text-align: center;">
-            <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+           <br>
+          <div class="" style="text-align: center;">
             <button type="button" class="btn btn-success" onclick="tempData.oeeEquipment.saveModel();" >Save</button>
+            <button type="button" class="btn btn-danger" data-dismiss="modal">Cancel</button>
           </div>
+          <div id="commonMsgModel"></div>
+           <br>
           </form>
+          
+            <div class="table-responsive"> 
+              <table id="modelTable" class="table table-hover table-bordered  nowrap">
+               <thead>
+                 <tr>
+                  <th>Model</th>
+                  <th>No. of Digital I/P</th> 
+                  <th>No. of Digital O/P</th>
+                  <th>No. of Analog I/P</th> 
+                  <th>No. of Analog O/P</th>
+                  <th>Action</th>
+                 </tr>
+               </thead>
+               </table>
+             </div>
+              </div>
+           <div class="modal-footer" style="text-align: center;">
+           </div>
         </div>
         <!-- /.modal-content -->
       </div>

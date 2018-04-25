@@ -61,7 +61,7 @@ loadAllPO:function(){
                   render: function (data, type, row, meta) {
                     var result = "";
                     if(row.is_final_confirmed == 1){
-                    	result='<button type="button" class="btn btn-success btn-xs" onclick="" title="Completed PO"><i class="fa fa-ban"></i> Completed </button>';
+                    	result='<button type="button" class="btn btn-success btn-xs" onclick="" title="Completed PO"><i class="fa fa-check"></i> Completed </button>';
                     }else if(row.eq_code == "" || row.eq_code == null){ 
                        result ='<button type="button" class="btn btn-primary btn-xs" onclick="tempData.oeeprodorder.assingPOModal('+row.id+',\''+row.plant_id+'\');" title="Assign PO"><i class="fa fa-flag"> Assign </i></button>';
                     }else {
@@ -950,6 +950,7 @@ debugger;
                         </div>
                     </div>
                 </div>
+                <div><span>  Note: You can't re-assign after PO completion</span></div>
           </div>
           <div class="modal-footer" style="text-align: center;">
             <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>

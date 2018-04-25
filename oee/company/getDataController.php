@@ -603,6 +603,27 @@ if(isset($_POST['saveEquipmentModel'])){
         }
         
     }else{
+        $cond=' id='.$model_id;
+        $sqlQuery = mysqli_update_array($table, $DataMarge, "submit",$cond); // Function say generate complete query
+        $res=mysqli_query($con,$sqlQuery); //or die('Error: ' . mysqli_error($con));
+        //echo $sqlQuery;
+        if(!$res) {
+            $error="Equipment Model Already Exists";
+            $response['info']=$error;
+            $response['infoRes']='E'; //Error
+        }else {
+            if(mysqli_errno() != 1062){
+                move_uploaded_file($file_tmps,$filePath);
+                $response['info']="Record Updated Successfully";
+                $response['infoRes']="S"; // success
+                $response['mysqli_insert_id']=mysqli_insert_id($con);
+            }else{
+                $error="Equipment Model Already Exists";
+                $response['info']=$error;
+                $response['infoRes']='E'; //Error
+            }
+            
+        }
         
     }
     
@@ -659,16 +680,24 @@ if(isset($_POST['saveEquipmentType'])){
 }
 
 if(isset($_POST['getEquipmentModel'])){
-    $eqQ="SELECT id,name FROM sfs_equipment_model";
+    $eqQ="SELECT id,name, num_of_di, num_of_do, num_of_ai, num_of_ao FROM sfs_equipment_model";
     $eqDetails=mysqli_query($con,$eqQ) or die('Error:'.mysqli_error($con));
     
     while ($row=mysqli_fetch_array($eqDetails)){
            $id=$row['id'];
            $model_name=$row['name'];
+           $num_of_di=$row['num_of_di'];
+           $num_of_do=$row['num_of_do'];
+           $num_of_ai=$row['num_of_ai'];
+           $num_of_ao=$row['num_of_ao'];
+           
            $getEQData[]=array('id' =>"$id",
-              'model_name' =>"$model_name"
+              'model_name' =>"$model_name",
+              'num_of_di'  =>"$num_of_di",
+              'num_of_do'  =>"$num_of_do",
+              'num_of_ai'  =>"$num_of_ai",
+              'num_of_ao'  =>"$num_of_ao"
            );
-        
     }
     $status['models'] = $getEQData;
     echo json_encode($status);
