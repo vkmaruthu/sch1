@@ -38,6 +38,11 @@ tempData.oeehome=
 $(document).ready(function() {
 debugger; 
 /* Date is defined to DatePicker */
+
+
+ $("#companyOEE").parent().addClass('active');
+ $("#companyOEE").parent().parent().closest('.treeview').addClass('active menu-open');
+ 
 var date = new Date();
 var today = new Date(date.getFullYear(), date.getMonth(), date.getDate());
 $('.datepicker-me').datepicker('setDate', today);

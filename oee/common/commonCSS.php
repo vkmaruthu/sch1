@@ -207,6 +207,15 @@ p{
 
 a {cursor: pointer;}
 
+.lb-md{
+  font-size: 12px;
+}
+.emailConfirm{
+  float: right;
+  margin-top: -29px;
+  margin-right: -25px;
+}
+
 
 /* **************************************************************************************************** */
 /*==========  Mobile First Method  ==========*/
@@ -276,6 +285,10 @@ a {cursor: pointer;}
         min-height:57px;
          margin-bottom: 3%;
       }
+      .banner-sec{
+        display: none;
+      }
+
 
 
     }
@@ -355,6 +368,9 @@ a {cursor: pointer;}
       .commonPageHead{
         min-height: 47px;
          margin-bottom: 1%;
+      }
+      .banner-sec{
+        display: inline;
       }
 
 

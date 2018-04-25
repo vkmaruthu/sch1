@@ -131,11 +131,8 @@ saveScreens:function(){
           if(obj.screenData.infoRes=='S'){
              $("#commonMsg").show();
              $('#commonMsg').html('<p class="commonMsgSuccess"> <i class="fa fa-check"></i> '+obj.screenData.info+'</p>');
-
-             $('#fromScreen')[0].reset();
-
-             $("#addScreen").show();
-             $("#updateScreen").hide();       
+      
+              tempData.oeescreen.clearForm();
               tempData.oeescreen.loadScreenTable();
 
           }else{
@@ -151,6 +148,12 @@ saveScreens:function(){
       }
     });
   }
+},
+clearForm:function(){
+   $('#fromScreen')[0].reset();
+   $("#addScreen").show();
+   $("#updateScreen").hide(); 
+   $("#fromScreen").fadeToggle("slow");
 },
 editScreens:function(id){
   debugger;
@@ -176,11 +179,18 @@ debugger;
    $("#menuScreens").parent().addClass('active');
    $("#menuScreens").parent().parent().closest('.treeview').addClass('active menu-open');
 
+  if($('#screenPage').val()=='s'){
+    $('#screenBack').hide();
+  }else{
+    $('#screenBack').show();
+  }
   $('#commonMsg').hide();
   $('.select2').select2();
+
   $('#createScreen').click(function(){
     $("#fromScreen").fadeToggle("slow");
   });
+
   $("#fromScreen").fadeOut("fast");
   $("#plantName").prop("disabled", true);
 
@@ -189,6 +199,8 @@ debugger;
 });
 
 </script>
+<input type="hidden" name="screenPage" id="screenPage" value="<?php echo $_GET['screen']; ?>" />
+
   <div class="content-wrapper">
     <!-- Main content -->
     <section class="content">
@@ -200,9 +212,9 @@ debugger;
 
     <div class="panel panel-default">
       <div class="panel-heading "> 
-        <!-- <div class="panel-title pull-left">
-              <p style="margin: 0px; font-size: 18px; font-weight: 600;">Create Roles</p>
-        </div> -->
+        <div class="panel-title pull-left" id="screenBack">
+            <a href="role.php" class="btn btn-info btn-xs"><i class="fa fa-reply"></i> Back </a>
+        </div>
         <button type="button" id="createScreen" class="btn btn-sm btn-primary pull-right" style="margin-top: -3px;margin-bottom: -2px;">
               <i class="fa fa-pencil-square-o"></i>&nbsp; Add Screen
         </button>
@@ -212,11 +224,11 @@ debugger;
         <div class="row">
           <div class="col-md-12"> 
         
-        <div id="delCommonMsg"> </div>  
+        <div id="delCommonMsg"> </div> 
+        <div id="commonMsg"> </div> 
 
         <form class="" id="fromScreen">    
-            <input type="hidden" name="record_id" id="record_id"/> 
-             <div id="commonMsg"> </div>
+            <input type="hidden" name="record_id" id="record_id"/>             
 
             <div class="form-group">
              <div class="row">
@@ -224,7 +236,7 @@ debugger;
                   <label class="control-label col-md-4 col-sm-6 col-xs-12">Screen Id<span class="required">*</span></label>
                   <div class="col-md-6 col-sm-6 col-xs-12">
                     <input type="text" name="screenId" id="screenId" onkeyup=""
-                     placeholder="ID Name" maxlength="10" class="form-control" required="true" autofocus/>
+                     placeholder="ID Name" class="form-control" required="true" autofocus/>
                   </div>
                 </div>
 
@@ -254,9 +266,11 @@ debugger;
                     <button type="button" id="addScreen" onclick="tempData.oeescreen.saveScreens();" 
                       class="btn btn-sm btn-success"> <i class="fa fa-floppy-o"></i>&nbsp; Save 
                     </button>
-                    <button type="button" id="updateScreen" onclick=""  class="btn btn-sm btn-success" style="display:none;">
+                    <button type="button" id="updateScreen" onclick="tempData.oeescreen.saveScreens();"  class="btn btn-sm btn-success" style="display:none;">
                       <i class="fa fa-floppy-o"></i>&nbsp; Update
                     </button>
+                      <button type="button" id="cancelRole" onclick="tempData.oeescreen.clearForm();"  class="btn btn-sm btn-danger"> <i class="glyphicon glyphicon-remove"></i>&nbsp; Cancel
+                      </button>                    
                    </div>
               </div>
             </div>  

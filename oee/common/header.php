@@ -1,12 +1,22 @@
-
-<!DOCTYPE html>
-<html>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN"
+  "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="zh-CN" xmlns:epub="http://www.idpf.org/2007/ops">
 <head>
   <meta charset="utf-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <title>Dashboard</title>
   <!-- Tell the browser to be responsive to screen width -->
-  <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8 width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
+
+
+<!-- <!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <title>Dashboard</title>
+ // Tell the browser to be responsive to screen width
+  <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport"> -->
   
   <style type="text/css">
 
@@ -188,7 +198,7 @@
   <!-- Google Font -->
 <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,600,700,300italic,400italic,600italic">
 </head>
-<body class="skin-blue sidebar-mini fixed">
+<body class="skin-blue sidebar-mini fixed" onload="window.history.forward();">
 <div class="wrapper">
 
   <header class="main-header">
@@ -198,7 +208,7 @@
       <span class="logo-mini"><img src="../common/img/SCHLogo_Blue.png" class="SCHLogo" style="width: 100%;"></span>
       <!-- logo for regular state and mobile devices -->
       <span class="logo-lg"><img src="../common/img/SCHLogo_full.png" class="FullSCHLogo"></span>
-      <span class="logo-lg"><img src="../common/img/comp_logo/d/eimsdefault.png" class="CustMobileLogo"></span>
+      <span class="logo-lg" id="compImg"><!-- <img src="../common/img/comp_logo/d/eimsdefault.png" class="CustMobileLogo"> --></span>
       <span class="logo-lg"><img src="../common/img/SCHLogo_Blue.png" class="SCHLogoMobile"></span>
     </a>
     <!-- Header Navbar: style can be found in header.less -->
@@ -211,12 +221,12 @@
 
     <div class="col-md-10 Headtitle text-center">  
       <span class="product_title">smartFactory Dashboard</span><br>
-      <span class="company_title">IFB Industries Limited</span>
+      <span class="company_title" id="compNameDB"></span>
     </div>
 
     <div class="col-md-2" style=" margin-left: -4%;">  
-      <span class="logo-mini">
-        <img src="../common/img/comp_logo/d/eimsdefault.png" class="cust_logo">
+      <span class="logo-mini" id="compImgMini">
+       <!--  <img src="../common/img/comp_logo/d/eimsdefault.png" class="cust_logo"> -->
       </span>
     </div>  
            

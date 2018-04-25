@@ -42,6 +42,9 @@ tempData.oeemachine=
 
 $(document).ready(function() {
 debugger; 
+ $("#companyOEE").parent().addClass('active');
+ $("#companyOEE").parent().parent().closest('.treeview').addClass('active menu-open');
+ 
 var today="<?php echo $_GET['selDate']; ?>";
 $('.datepicker-me').datepicker('setDate', today);
 

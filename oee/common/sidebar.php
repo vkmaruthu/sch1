@@ -4,12 +4,12 @@
     <section class="sidebar">
       <!-- Sidebar user panel -->
       <div class="user-panel">
-        <div class="pull-left image">
-          <img src="../common/img/user.jpg" class="img-circle" alt="User Image">
+        <div class="pull-left image" id="userImgFileName">
+        <!--   <img src="../common/img/user.jpg" class="img-circle" alt="User Image"> -->
         </div>
         <div class="pull-left info">
-          <p>Alexander Pierce</p>
-          <!-- <a href="#"><i class="fa fa-circle text-success"></i> Online</a> -->
+          <p id="sidebarUserName"></p>
+          <a href="../logout.php">Logout <i class="fa fa-sign-out"></i></a> 
         </div>
       </div>
       <!-- search form -->
@@ -34,7 +34,7 @@
             </span>
           </a>
           <ul class="treeview-menu">
-            <li><a href="../home/index.php"><i class="fa fa-circle-o"></i> Company</a></li>
+            <li><a href="../home/index.php" id="companyOEE"><i class="fa fa-circle-o"></i> Company OEE</a></li>
             <li><a href="index2.html"><i class="fa fa-circle-o"></i> History</a></li>
             <li><a href="index2.html"><i class="fa fa-circle-o"></i> Pridiction</a></li>
           </ul>
@@ -54,11 +54,11 @@
               <li><a href="../user/user.php" id="menuUserConfiguration"><i class="fa fa-users"></i> User Configuration</a></li>
               <li><a href="../company/index.php" id="menuCompany"><i class="fa fa-users"></i> Add Company</a></li>
               <li><a href="../productionorder/index.php" id="menuProductionOrder"><i class="fa fa-th"></i> Production Order</a></li>
-              <li><a href="../partsandtools/plant.php" id="menuPlants"><i class="fa fa-th"></i>Plants</a></li>
-              <li><a href="../user/screens.php" id="menuScreens"><i class="fa fa-files-o"></i> Screens</a></li>
+              <li><a href="../partsandtools/plant.php" id="menuPlants"><i class="fa fa-th"></i> Plants</a></li>
+              <li><a href="../user/screens.php?screen=s" id="menuScreen"><i class="fa fa-files-o"></i> Screens</a></li>
           </ul>
         </li>        
-      </ul> 
+      </ul>
     </section>
     <!-- /.sidebar -->
   </aside>

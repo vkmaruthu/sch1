@@ -57,7 +57,7 @@
 <script type="text/javascript">
 $(document).ready(function() {
 debugger; 
-
+window.history.forward();
 	$('.knob').knob();
 
 	//iCheck for checkbox and radio inputs

@@ -7,49 +7,84 @@ if(tempData===null||tempData===undefined){
    tempData={};
 }
 
-var globalRoleData=new Array();
+var globalRolesData =new Array();
 var plantArray=new Array();
 var companyArray=new Array();
 
-tempData.oeeroles=
+tempData.oeeRoles=
 {
-loadTable:function(){
-    debugger;
+roleTable:function(){
+   debugger;
+  var url="getDataController.php";
+  var filterComp =$('#filterComp').val();
+  var filterPlant=$('#filterPlant').val();
 
-    var url="loadData.txt";
-       $.ajax({
-            type:"POST",
-            url:url,
-            async: false,
-            dataType: 'json',
-            success: function(obj){
-            globalRoleData=obj;
-    var DataTableProject = $('#roleTable').DataTable( {
-            'paging'      : true,
-            'lengthChange': false,
-            'searching'   : true,
-            'ordering'    : true,
-            'info'        : true,
-            'autoWidth'   : false,
-            "data":obj,   
-            "columns": [
-              { data: "role_name" },
-              { data: "role_desc" },
-              { data: "company_name"},
-              { data: "plant_name" },
-              { data: "screens"},
-              { data: "access_mode" },
-               { data: "id" ,className: "text-left",
-                render: function (data, type, row, meta) {
-                    var a='<button type="button" class="btn btn-primary btn-xs" onclick="tempData.oeecompany.editRole('+row.id+');"><i class="fa fa-pencil-square-o"></i> </button>';
-                    var b='<button type="button" class="btn btn-danger btn-xs" onclick=""><i class="fa fa-trash"></i> </button>';
-                   return a+' '+b;
-                }
-              },
-               ]
-           } );   
-          }
-        });  
+  var myData={roleTable:"roleTable",filterComp:filterComp,filterPlant:filterPlant};
+   $.ajax({
+        type:"POST",
+        url:url,
+        async: false,
+        dataType: 'json',
+        data:myData,
+        success: function(obj){
+            
+        globalRolesData=obj.rolesDetails;
+
+        if(obj.rolesDetails==null){
+              $('#roleTable').DataTable({
+                "paging":false,
+                "ordering":true,
+                "info":true,
+                "searching":false,         
+                "destroy":true,
+            }).clear().draw();
+
+          }else{
+
+var DataTableProject = $('#roleTable').DataTable( {
+        'paging'      : true,
+        'lengthChange': false,
+        'searching'   : true,
+        'ordering'    : true,
+        'info'        : true,
+        'autoWidth'   : false,
+        "destroy":true,
+        "data":obj.rolesDetails,   
+        "columns": [
+          { data: "name" },
+          { data: "description" },
+          { data: "companyName" },
+          { data: "plantName" },
+          { data: "screen_access" ,className: "text-left",
+            render: function (data, type, row, meta) {
+              var a=row.screen_access;
+              var text='<div style="white-space:normal;width:200px;">'+a.slice(0, -2)+'</div>';
+               return text;
+            }
+          },
+          { data: "access_rights" ,className: "text-left",
+            render: function (data, type, row, meta) {
+              if(row.access_rights==1){
+                return 'Read'; 
+              }else{
+                return 'Read / Write'; 
+              }
+            }
+          },
+          { data: "id" ,className: "text-left",
+              render: function (data, type, row, meta) {
+                var a='<button type="button" class="btn btn-primary btn-xs" onclick="tempData.oeeRoles.editRoles('+row.id+');"><i class="fa fa-pencil-square-o"></i> </button>';
+                 var b='<button type="button" class="btn btn-danger btn-xs" onclick="tempData.oeeRoles.deleteRoles('+row.id+');"><i class="fa fa-trash"></i> </button>';
+                return a+' '+b;
+              }
+            },
+           ]
+         }); 
+        
+        } // else End here 
+
+        } // ajax success ends
+    });  
 },
 getCompanyForDropdown:function(){//reasonsArray
   var url="getDataController.php";
@@ -75,6 +110,14 @@ getCompanyForDropdown:function(){//reasonsArray
                $("#companyName").append('<option value="'+companyArray[i].id+'">'+companyArray[i].comp_desc+'</option>'); 
               }
             }
+
+          $("#filterComp").html('');
+          $("#filterComp").append('<option value="0"> Select Company </option>');
+            if(companyArray != null){
+              for(var i=0; i< companyArray.length; i++){
+               $("#filterComp").append('<option value="'+companyArray[i].id+'">'+companyArray[i].comp_desc+'</option>'); 
+              }
+            }
         }
       } 
   });
@@ -92,26 +135,79 @@ getPlantDropdown:function(){
       data:myData,
       success: function(obj) {
         plantArray = obj.plantDetails;
-        if(obj.plantDetails !=null){
-           $("#plantName").html('');
-         $("#plantName").append('<option value="0"> Select Plant </option>');
-            for(var i=0; i< obj.plantDetails.length; i++){
-             $("#plantName").append('<option value="'+obj.plantDetails[i].id+'">'+obj.plantDetails[i].plant_desc+'</option>'); 
-            }
+          if(obj.plantDetails !=null){
+            $("#plantName").html('');
+            $("#plantName").append('<option value="0"> Select Plant </option>');
+              for(var i=0; i< obj.plantDetails.length; i++){
+               $("#plantName").append('<option value="'+obj.plantDetails[i].id+'">'+obj.plantDetails[i].plant_desc+'</option>'); 
+              } 
+          }          
+          else{
+            $("#plantName").html('');
+            $("#plantName").append('<option value="0"> Select Plant </option>');
+          }
+        } 
+    });
+},
+filterPlantDropdown:function(){
+    var url="getDataController.php";
+    var comp_id = $('#filterComp').val();
+    var myData = {getPlantDetails:'getPlantDetails', comp_id:comp_id};
+    $.ajax({
+      type:"POST",
+      url:url,
+      async: false,
+      dataType: 'json',
+      cache: false,
+      data:myData,
+      success: function(obj) {
+        plantArray = obj.plantDetails;
+          if(obj.plantDetails !=null){
+              $("#filterPlant").html('');
+              $("#filterPlant").append('<option value="0"> Select Plant </option>');
+              for(var i=0; i< obj.plantDetails.length; i++){
+               $("#filterPlant").append('<option value="'+obj.plantDetails[i].id+'">'+obj.plantDetails[i].plant_desc+'</option>'); 
+              }
+          }
+          else{
+            $("#filterPlant").html('');
+            $("#filterPlant").append('<option value="0"> Select Plant </option>');
+          }
+        } 
+    });
+},
+loadAllScreen:function(){
+    var url="getDataController.php";
+    var myData = {screenTable:'screenTable'};
+    $.ajax({
+      type:"POST",
+      url:url,
+      async: false,
+      dataType: 'json',
+      cache: false,
+      data:myData,
+      success: function(obj) {
+          if(obj.screenDetails !=null){
+             $("#screens").html('');
+              for(var i=0; i< obj.screenDetails.length; i++){
+               $("#screens").append('<option value="'+obj.screenDetails[i].id+'">'+obj.screenDetails[i].screenName+'</option>'); 
+              }
+          }else{
+              $("#screens").html('');
           }
         } 
     });
 },
 gotoScreens:function(){
-   window.location="screens.php";
+   window.location="screens.php?screen=r";
 },
 reload:function(){
      location.reload(true);
 },
-deleteRoles:function (id,img){
+deleteRoles:function (id){
     var url="getDataController.php";
-    var eq_id=id;
-    var myData={deleteEquipment:"deleteEquipment",eq_id:eq_id,img:img};
+    var recordId=id;
+    var myData={deleteRoles:"deleteRoles",recordId:recordId};
     $.ajax({
       type:"POST",
       url:url,
@@ -125,7 +221,7 @@ deleteRoles:function (id,img){
              $("#delCommonMsg").show();
              $('#delCommonMsg').html('<p class="commonMsgSuccess"> <i class="fa fa-trash"></i> '+obj.data.info+'</p>');
              
-             tempData.oeeEquipment.loadAllEquipment();
+             tempData.oeeRoles.roleTable();
 
           }else{
             $("#delCommonMsg").show();
@@ -140,45 +236,34 @@ deleteRoles:function (id,img){
 saveRoles:function(){
   debugger;
     var url="getDataController.php";
-    var formEQData = new FormData($('#fromEquipment')[0]);
-    formEQData.append("saveEquipment", "saveEquipment");
-    var eq_code=$('#eq_code').val();
-    var eq_protocol = $('#eq_protocol').val();
-    var eqType = $('#eq_type').val();
-    var model = $('#model').val();
-    var reasons = $('#reason_codes').val();
+
+    var formEQData = new FormData($('#fromRoles')[0]);
+    formEQData.append("saveRoles", "saveRoles");
     
-      if(eq_code == "") {
-          $('#eq_code').css('border-color', 'red');
+    var roleName=$('#roleName').val();
+    //var companyName = $('#companyName').val();
+    var screens = $('#screens').val();
+    var accessMode = $('#accessMode').val();
+    
+      if(roleName == "") {
+          $('#roleName').css('border-color', 'red');
           return false;
       }else{
-          $('#eq_code').css('border-color', '');
-          if(eqType == 0){
-               $('#msg').html('*Select Equipment Type');
+          $('#roleName').css('border-color', '');
+
+          if(screens == ""){
+            $('#msg').html('*Select Screens');
                return false;
             }else {
              $('#msg').html('');
-            }
-          if(model == 0){
-            $('#msg').html('*Select Model');
-               return false;
-            }else {
-            $('#msg').html('');
-            }
-          if(eq_protocol == ""){
-           $('#eq_protocol').css('border-color', 'red');
-             return false;
-          }else {
-            $('#eq_protocol').css('border-color', '');
           }
-
-          if(reasons == ""){
-            $('#msg').html('*Select Reason Codes');
+         
+          if(accessMode == 0){
+           $('#msg').html('*Select Access Mode');
                return false;
             }else {
-            $('#msg').html('');
-            }
-        
+             $('#msg').html('');
+          }
     $.ajax({
       type:"POST",
       url:url,
@@ -190,26 +275,16 @@ saveRoles:function(){
       data:formEQData,
       success: function(obj) {
           debugger;
-        if(obj.data !=null){
-          if(obj.data.infoRes=='S'){
+        if(obj.screenData !=null){
+          if(obj.screenData.infoRes=='S'){
              $("#commonMsg").show();
-             $('#commonMsg').html('<p class="commonMsgSuccess"> <i class="fa fa-check"></i> '+obj.data.info+'</p>');
-             $("#showImg").hide();
-           
-             $("#size").html('');
-             $('#eq_code').prop('readonly', false);
-             $('#fromEquipment')[0].reset();
-
-             $("#addEquipment").show();
-             $("#updateEquipment").hide(); 
-             $("#reason_codes").val('').change();         
-             tempData.oeeEquipment.loadAllEquipment();
-             tempData.oeeEquipment.resetModelOnAction();
-             tempData.oeeEquipment.resetEQTyOnAction();
-
+             $('#commonMsg').html('<p class="commonMsgSuccess"> <i class="fa fa-check"></i> '+obj.screenData.info+'</p>');
+    
+             tempData.oeeRoles.clearForm();
+             tempData.oeeRoles.roleTable();
           }else{
             $("#commonMsg").show();
-             $('#commonMsg').html('<p class="commonMsgFail"> <i class="fa fa-warning"></i> '+obj.data.info+'</p>');
+             $('#commonMsg').html('<p class="commonMsgFail"> <i class="fa fa-warning"></i> '+obj.screenData.info+'</p>');
           }  
         } 
 
@@ -221,43 +296,44 @@ saveRoles:function(){
     });
   }
 },
-editRoles:function (id, wcId, eqTypeId, modelId){
+editRoles:function (id){
   debugger;
-   for(var i=0;i<globalEquipmentData.length;i++){ 
-       if(id==globalEquipmentData[i].id){
-         $("#showImg").show();
-         $('#eq_id').val(globalEquipmentData[i].id);
-         $('#eq_code').val(globalEquipmentData[i].eq_code);
-         $('#eq_desc').val(globalEquipmentData[i].eq_desc);
-         $('#eq_protocol').val(globalEquipmentData[i].eq_protocol);
-         
-         $('#eq_type_id').val(globalEquipmentData[i].eq_type_id);
-         $('#eq_model_id').val(globalEquipmentData[i].eq_model_id);
-         
-         $('#model').val(modelId).change();
-         $('#eq_type').val(eqTypeId).change();
-         var str = globalEquipmentData[i].reason_code_arr;
-         var reason = new Array();
-         reason = str.split(",");
-         $('#reason_codes').val(reason).change();
-         
-         
-         $('#wc_id').val(globalEquipmentData[i].wc_id);
-         $('#img_id').val(globalEquipmentData[i].image_file_name);
-         if(globalEquipmentData[i].image_file_name!=''){
-           $('#showImg').html('<img style="width: 30%;" src="../common/img/machine/'+globalEquipmentData[i].image_file_name+'">');
+   for(var i=0;i<globalRolesData.length;i++){ 
+       if(id==globalRolesData[i].id){
+         $('#recordId').val(globalRolesData[i].id);
+         $('#roleName').val(globalRolesData[i].name);
+         $('#roleDesc').val(globalRolesData[i].description);
+         if(globalRolesData[i].companyName==''){
+            $('#companyName').val(0).change();         
+            $('#plantName').val(0).change();
          }else{
-           $('#showImg').html('<img style="width: 30%;" src="../common/img/machine/default.png">');
+            $('#companyName').val(globalRolesData[i].company_id).change();         
+            $('#plantName').val(globalRolesData[i].plant_id).change();
          }
-         $('#eq_code').prop('readonly', true);
-         break;
          
+         $('#accessMode').val(globalRolesData[i].access_rights).change();
+
+         var str = globalRolesData[i].screen_access_arr;
+         var screens = new Array();
+         screens = str.split(",");
+         $('#screens').val(screens).change();
+         break;
        }
    }
-   $("#fromEquipment").fadeIn("fast");
-   $("#addEquipment").hide();
-   $("#updateEquipment").show();            
+   $("#fromRoles").fadeIn("fast");
+   $("#addRole").hide();
+   $("#updateRole").show();            
 },
+clearForm:function(){
+    $('#fromRoles')[0].reset();
+    $("#addRole").show();
+    $("#updateRole").hide();             
+    $("#screens").val('').change(); 
+    $("#accessMode").val(0).change(); 
+    $("#companyName").val(0).change(); 
+    $("#plantName").val(0).change(); 
+    $("#fromRoles").fadeToggle("slow");
+}
 
 };
 
@@ -269,21 +345,54 @@ debugger;
   });
   $("#fromRoles").fadeOut("fast");
   $("#plantName").prop("disabled", true);
+  $("#filterPlant").prop("disabled", true);
 
   
   $('#companyName').change(function(){
      if($('#companyName').val() != 0){
-        tempData.oeeroles.getPlantDropdown();
+        tempData.oeeRoles.getPlantDropdown();
         $("#plantName").prop("disabled", false); 
      }else{
        $("#plantName").html('');
        $("#plantName").append('<option value="0"> Select Plant </option>');
        $("#plantName").prop("disabled", true); 
      }
+  });  
+
+  $('#filterComp').change(function(){
+     if($('#filterComp').val() != 0){
+        tempData.oeeRoles.filterPlantDropdown();
+        $("#filterPlant").prop("disabled", false); 
+     }else{
+       $("#filterPlant").html('');
+       $("#filterPlant").append('<option value="0"> Select Plant </option>');
+       $("#filterPlant").prop("disabled", true); 
+     }
   });
 
-  //tempData.oeeroles.loadTable();
-  tempData.oeeroles.getCompanyForDropdown();
+  $('#roleName').keyup(function(){
+     this.value = this.value.toUpperCase();
+     $('#roleName').css('border-color', '');
+  });
+
+    $('#roleDesc').change(function(){
+        $('#msg').html('');
+     });
+     $('#companyName').change(function(){
+        $('#msg').html('');
+     });
+     
+     $('#screens').change(function(){
+         $('#msg').html('');
+      });
+
+      $('#accessMode').change(function(){
+         $('#msg').html('');
+      });
+
+  tempData.oeeRoles.roleTable();
+  tempData.oeeRoles.getCompanyForDropdown();
+  tempData.oeeRoles.loadAllScreen();
 
 });
 
@@ -302,20 +411,22 @@ debugger;
         <!-- <div class="panel-title pull-left">
               <p style="margin: 0px; font-size: 18px; font-weight: 600;">Create Roles</p>
         </div> -->
-        <button type="button" id="createRoles" class="btn btn-sm btn-primary pull-right" style="margin-top: -3px;margin-bottom: -2px;">
-              <i class="fa fa-pencil-square-o"></i>&nbsp; Add Role
+          <button type="button" onclick="tempData.oeeRoles.reload();" class="btn btn-sm btn-info pull-right" style="margin-top: -3px;margin-bottom: -2px;margin-left:15px;">   <i class="fa  fa-refresh"> </i>
         </button>
+
+        <button type="button" id="createRoles" class="btn btn-sm btn-primary pull-right" style="margin-top: -3px;margin-bottom: -2px;">  <i class="fa fa-pencil-square-o"></i>&nbsp; Add Role
+        </button>
+
           <div class="clearfix"></div>
       </div>   
       <div class="panel-body">
         <div class="row">
           <div class="col-md-12"> 
-          <div id="status" class="alert alert-success" style="color:green;text-align:center;font-weight:600;display:none;"></div>
-          <div id="error" class="alert alert-danger" style="color:white;text-align:center;font-weight:600;display:none;"></div>
+         <div id="delCommonMsg"> </div>
+         <div id="commonMsg"> </div>  
 
-        <form class="" id="fromRoles">     
-          <input type="hidden" name="comp_id" id="comp_id"/> 
-          <input type="hidden" name="plant_id" id="plant_id"/> 
+        <form class="" id="fromRoles">    
+          <input type="hidden" name="recordId" id="recordId"/>     
             <div class="form-group">
              <div class="row">
                 <div class="col-md-6">
@@ -340,7 +451,7 @@ debugger;
                 <label class="control-label col-md-4 col-sm-6 col-xs-12">Company Name</label>
                 <div class="col-md-6 col-sm-6 col-xs-12">
                   <div class="form-group">
-                    <select class="form-control select2" style="width: 100%;" id="companyName">
+                    <select class="form-control select2" style="width: 100%;" id="companyName" name="companyName">
                     </select>
                   </div>
                 </div>
@@ -350,7 +461,7 @@ debugger;
                 <label class="control-label col-md-4 col-sm-6 col-xs-12">Plant Name</label>
                 <div class="col-md-6 col-sm-6 col-xs-12">
                   <div class="form-group">
-                    <select class="form-control select2" style="width: 100%;" id="plantName">
+                    <select class="form-control select2" style="width: 100%;" id="plantName" name="plantName">
                     </select>
                   </div>
                 </div>
@@ -359,23 +470,16 @@ debugger;
 
               <div class="row" style="margin-top: 1px;">
                 <div class="col-md-6">
-                <label class="control-label col-md-4 col-sm-6 col-xs-12">Screen Access Permission</label>
-                <div class="col-md-5 col-sm-5 col-xs-5" style="padding-right: 0px;">
+                <label class="control-label col-md-4 col-sm-6 col-xs-12">Screens</label>
+                <div class="col-md-5 col-sm-5 col-xs-10" style="padding-right: 0px;">
                   <div class="form-group">
-                    <select class="form-control select2" multiple="multiple" data-placeholder="Select" style="width: 100%;" id="screen">
-                      <option value="1">Dashboard</option>
-                      <option value="2">Reports</option>
-                      <option value="3">Edit Idle Time</option>
-                      <option value="4">Parts</option>
-                      <option value="5">Tools</option>
-                      <option value="6">Shift config</option>
-                      <option value="7">OEE Config</option>
+                    <select class="form-control select2" multiple="multiple" data-placeholder="Select Screens" style="width: 100%;" id="screens" name="screens[]">                     
                     </select>
                   </div>
                 </div>
 
                 <div class="col-md-1 col-sm-1 col-xs-2" style="padding-left: 3px;padding-top: 2px; ">
-                  <button type="button" class="btn btn-sm btn-info" onclick="tempData.oeeroles.gotoScreens();" >
+                  <button type="button" class="btn btn-sm btn-info" onclick="tempData.oeeRoles.gotoScreens();" >
                     <i class="fa  fa-plus"></i> <!-- data-toggle="modal" data-target="#addEQTypeModal" -->
                   </button>
                 </div>
@@ -386,8 +490,8 @@ debugger;
                 <label class="control-label col-md-4 col-sm-6 col-xs-12">Screen Access Mode</label>
                 <div class="col-md-6 col-sm-6 col-xs-12">
                   <div class="form-group">
-                    <select class="form-control select2" style="width: 100%;" id="accessMode">
-                      <option selected="selected">Select</option>
+                    <select class="form-control select2" style="width: 100%;" id="accessMode" name="accessMode">
+                      <option value="0">Select Mode</option>
                       <option value="1">Read</option>
                       <option value="2">Read/Write</option>
                     </select>
@@ -397,21 +501,41 @@ debugger;
               </div> 
 
               <div class="row">
-                   <div class="col-md-12 text-center">
-                    <button type="button" id="addRole" onclick="" 
-                      class="btn btn-sm btn-success">
-                      <i class="fa fa-floppy-o"></i>&nbsp; Save 
-                    </button>
-                    <button type="button" id="updateRole" onclick=""  class="btn btn-sm btn-success" style="display:none;">
-                      <i class="fa fa-floppy-o"></i>&nbsp; Update
-                    </button>
-                   </div>
+                   <div id="msg" style="padding-left: 28px;color: red;"></div>
+                 <div class="col-md-12 text-center">
+                  <button type="button" id="addRole" onclick="tempData.oeeRoles.saveRoles();" class="btn btn-sm btn-success">
+                    <i class="fa fa-floppy-o"></i>&nbsp; Save 
+                  </button>
+                  <button type="button" id="updateRole" onclick="tempData.oeeRoles.saveRoles();"  class="btn btn-sm btn-success" style="display:none;"> <i class="fa fa-floppy-o"></i>&nbsp; Update
+                  </button>
+                  <button type="button" id="cancelRole" onclick="tempData.oeeRoles.clearForm();"  class="btn btn-sm btn-danger"> <i class="glyphicon glyphicon-remove"></i>&nbsp; Cancel
+                  </button>
+                 </div>
               </div>
             </div>  
  <hr class="hr-primary"/>  
           </form>
 
       <div class="table-responsive"> 
+
+        <div class="col-sm-6">
+            <div>
+                <label>Filter By:  
+                   <select class="form-control select2"  id="filterComp" name="filterComp" >
+                      <option value="0">Select Company</option>
+                   </select>
+                   
+                   <select class="form-control select2"  id="filterPlant" name="filterPlant" >
+                      <option value="0">Select Plant</option>
+                   </select>
+                   
+                  <button type="button" onclick="tempData.oeeRoles.roleTable();" class="btn btn-sm btn-primary pull-right" style="padding-top: 6px;margin-left:15px;"><i class="fa  fa-refresh"></i>
+                  </button>
+                </label>
+            </div>
+        </div>
+
+
           <table id="roleTable" class="table table-hover table-bordered nowrap" style="font-size: 12px;width:100%;">
            <thead>
              <tr>

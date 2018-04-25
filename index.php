@@ -1,1 +1,1 @@
-<META HTTP-EQUIV="Refresh" CONTENT="0;URL=oee/home"> 	
+<META HTTP-EQUIV="Refresh" CONTENT="0;URL=oee/login"> 	
