@@ -9,7 +9,9 @@ if(isset($_POST['userDetails'])){
 
     $eqQ="SELECT su.first_name as first_name,su.last_name as last_name, su.email_id as email_id, su.contact_number as contact_number, su.img_file_name as img_file_name, su.roles_id as roles_id,sr.name as name, sr.company_id as company_id, sr.plant_id as plant_id ,sr.screen_access as screen_access, sr.access_rights as access_rights,sc.descp as compName,sc.image_file_name as compImg  from sfs_user su, sfs_roles sr, sfs_company sc where su.roles_id=sr.id and sr.company_id = sc.id and su.email_id='".$userMail."'";
 
+    
     $userDetailRes=mysqli_query($con,$eqQ) or die('Error:'.mysqli_error($con));
+   // echo $eqQ;
     while ($row=mysqli_fetch_array($userDetailRes)){
         $first_name=$row['first_name'];
         $last_name=$row['last_name'];
