@@ -272,12 +272,16 @@ clearForm:function(){
    $("#updateUser").hide(); 
    $("#formUser").fadeToggle("slow");
    $('#showImg').hide();
+    $("#companyName").val(0).change(); 
+    $("#userRole").val(0).change(); 
 },
 editUsers:function(id){
   debugger;
-$('#showImg').show();
-   $("#email_status").hide(); 
-   $('#formUser')[0].reset();
+  $('#showImg').show();
+  $('#msg').hide();
+  $("#email_status").hide(); 
+  $('#formUser')[0].reset();
+
    for(var i=0;i<globalUserData.length;i++){ 
        if(id==globalUserData[i].id){        
          $("#showImg").show();

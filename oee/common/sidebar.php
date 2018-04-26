@@ -56,6 +56,7 @@
               <li><a href="../productionorder/index.php" id="menuProductionOrder"><i class="fa fa-th"></i> Production Order</a></li>
               <li><a href="../partsandtools/plant.php" id="menuPlants"><i class="fa fa-th"></i> Plants</a></li>
               <li><a href="../user/screens.php?screen=s" id="menuScreen"><i class="fa fa-files-o"></i> Screens</a></li>
+              <li><a href="../reasons/createreasons.php" id="menuReason"><i class="fa fa-files-o"></i> Reasons</a></li>
           </ul>
         </li>        
       </ul>

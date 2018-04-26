@@ -260,8 +260,8 @@ clearForm:function(){
 $(document).ready(function() {
 debugger;
 
-    $("#menuCompany").parent().addClass('active');
-    $("#menuCompany").parent().parent().closest('.treeview').addClass('active menu-open');
+    $("#menuReason").parent().addClass('active');
+    $("#menuReason").parent().parent().closest('.treeview').addClass('active menu-open');
 
     $('#comp_id').val(<?php echo $_GET['comp_id'];?>);
     $('#plant_id').val(<?php echo $_GET['plant_id'];?>);

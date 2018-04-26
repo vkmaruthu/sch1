@@ -9,12 +9,12 @@
 if(isset($_POST['saveScreen'])){
       
     $recordId=$_POST['record_id'];
-    $screenId=$_POST['screenId'];
+    $ui_tag_id=$_POST['ui_tag_id'];
     $screenName=$_POST['screenName'];
     $screen_descp=$_POST['screen_descp'];
     
     $table = 'sfs_screens';
-    $DataMarge=array('screenId'=>$screenId,
+    $DataMarge=array('ui_tag_id'=>$ui_tag_id,
                      'name'=>$screenName,
                      'descp'=>$screen_descp
     );
@@ -97,16 +97,16 @@ if(isset($_POST['deleteScreen'])){
 
 
 if(isset($_POST['screenTable'])){
-    $screenQ="SELECT id,screenId,name,descp FROM sfs_screens";
+    $screenQ="SELECT id,ui_tag_id,name,descp FROM sfs_screens";
     $screenDetails=mysqli_query($con,$screenQ) or die('Error:'.mysqli_error($con));
     while ($row=mysqli_fetch_array($screenDetails)){
         $id=$row['id'];
-        $screenId=$row['screenId'];
+        $ui_tag_id=$row['ui_tag_id'];
         $name=$row['name'];
         $descp=$row['descp'];
 
         $getEQData[]=array('id' =>"$id",
-            'screenId' =>"$screenId",
+            'ui_tag_id' =>"$ui_tag_id",
             'screenName' =>"$name",
             'screen_descp' => "$descp",
         );
@@ -136,7 +136,7 @@ if(isset($_POST['saveRoles'])){
    // $val=;
     if($companyName==0){
           $DataMarge=array('name'=>$roleName,
-                     'description'=>$roleDesc,
+                     'descp'=>$roleDesc,
                      'screen_access'=>$screens,
                      'access_rights'=>$accessMode,
                      'company_id'=>'NULL',
@@ -144,7 +144,7 @@ if(isset($_POST['saveRoles'])){
                     );
     }else if($plantName==0) {
         $DataMarge=array('name'=>$roleName,
-                     'description'=>$roleDesc,
+                     'descp'=>$roleDesc,
                      'company_id'=>$companyName,
                      'screen_access'=>$screens,
                      'access_rights'=>$accessMode,
@@ -153,7 +153,7 @@ if(isset($_POST['saveRoles'])){
     }
     else{
         $DataMarge=array('name'=>$roleName,
-                     'description'=>$roleDesc,
+                     'descp'=>$roleDesc,
                      'company_id'=>$companyName,
                      'plant_id'=>$plantName,
                      'screen_access'=>$screens,
@@ -221,11 +221,12 @@ if(isset($_POST['roleTable'])){
     $plant_id=$_POST['filterPlant'];
 
     if($comp_id!=0 && $plant_id!=0){
-      $screenQ="SELECT sr.id,sr.name as role,sr.description,sr.company_id,sr.plant_id,sc.descp as compName,sp.descp as PlantName,sr.screen_access,sr.access_rights  FROM sfs_roles sr,sfs_company sc,sfs_plant sp where sr.company_id=".$comp_id." and sr.plant_id=".$plant_id." GROUP BY name";
+      $screenQ="SELECT sr.id,sr.name as role,sr.descp,sr.company_id,sr.plant_id,sc.descp as compName,sp.descp as PlantName,sr.screen_access,sr.access_rights  FROM sfs_roles sr,sfs_company sc,sfs_plant sp where sr.company_id=".$comp_id." and sr.plant_id=".$plant_id." GROUP BY name";
     }elseif($comp_id!=0){
-      $screenQ="SELECT sr.id,sr.name as role,sr.description,sr.company_id,sr.plant_id,sc.descp as compName,sp.descp as PlantName,sr.screen_access,sr.access_rights FROM sfs_roles sr,sfs_company sc,sfs_plant sp where sr.company_id=".$comp_id." GROUP BY name";
+      //$screenQ="SELECT sr.id,sr.name as role,sr.descp,sr.company_id,sr.plant_id,sc.descp as compName,sp.descp as PlantName,sr.screen_access,sr.access_rights FROM sfs_roles sr,sfs_company sc,sfs_plant sp where sr.company_id=".$comp_id." GROUP BY name";
+      $screenQ="SELECT sr.id,sr.name as role,sr.descp,sr.company_id,sr.plant_id,sc.descp as compName,sr.screen_access,sr.access_rights FROM sfs_roles sr,sfs_company sc where sr.company_id=".$comp_id." GROUP BY name";
     }else{
-      $screenQ="SELECT sr.id,sr.name as role,sr.description,sr.company_id,sr.plant_id,sc.descp as compName,sp.descp as PlantName,sr.screen_access,sr.access_rights FROM sfs_roles sr  LEFT JOIN sfs_company sc ON sc.id = sr.company_id
+      $screenQ="SELECT sr.id,sr.name as role,sr.descp,sr.company_id,sr.plant_id,sc.descp as compName,sp.descp as PlantName,sr.screen_access,sr.access_rights FROM sfs_roles sr  LEFT JOIN sfs_company sc ON sc.id = sr.company_id
         LEFT JOIN sfs_plant sp  ON sp.id = sr.plant_id";
     }
     
@@ -234,7 +235,7 @@ if(isset($_POST['roleTable'])){
     while ($row=mysqli_fetch_array($screenDetails)){
         $id=$row['id'];
         $roleName=$row['role'];
-        $description=$row['description'];
+        $descp=$row['descp'];
         $compName=$row['compName'];
         $plantName=$row['PlantName'];
         $screen_access=$row['screen_access'];
@@ -251,7 +252,7 @@ if(isset($_POST['roleTable'])){
 
         $getRoleData[]=array('id' =>"$id",
             'name' =>"$roleName",
-            'description' =>"$description",
+            'descp' =>"$descp",
             'companyName' => "$compName",
             'plantName' => "$plantName",
             'screen_access' => "$strMsg",
@@ -520,17 +521,17 @@ if(isset($_POST['checkValidEmail'])){
 if(isset($_POST['getUserRoleDropdown'])){
   $comp_id=$_POST['comp_id'];
 
-    $screenQ="SELECT id,name,description,screen_access FROM sfs_roles where company_id=".$comp_id;
+    $screenQ="SELECT id,name,descp,screen_access FROM sfs_roles where company_id=".$comp_id;
     $roleDetails=mysqli_query($con,$screenQ) or die('Error:'.mysqli_error($con));
     while ($row=mysqli_fetch_array($roleDetails)){
         $id=$row['id'];
         $name=$row['name'];
-        $description=$row['description'];
+        $descp=$row['descp'];
         $screen_access=$row['screen_access'];
 
         $getEQData[]=array('id' =>"$id",
                            'roleName' =>"$name",
-                           'description' =>"$description",
+                           'descp' =>"$descp",
                            'screen_access' =>"$screen_access"
                           );
         
@@ -545,8 +546,8 @@ if(isset($_POST['userTable'])){
   $comp_id=$_POST['comp_id'];
 
     if($comp_id!=0){
-        $screenQ="  SELECT su.id as id,su.name as name, su.first_name as first_name, su.last_name as last_name, su.password as password, su.email_id as email_id, su.contact_number as contact_number, su.is_active as is_active, su.img_file_name as img_file_name,sr.name as roleName,sr.id as roleId,sc.descp as compName,sp.descp as plantName 
-            FROM sfs_user su  
+        $screenQ="SELECT su.id as id,su.name as name, su.first_name as first_name, su.last_name as last_name, su.password as password, su.email_id as email_id, su.contact_number as contact_number, su.is_active as is_active, su.img_file_name as img_file_name,sr.name as roleName,sr.id as roleId,sc.id as compId,sc.descp as compName,sp.descp as plantName 
+            FROM sfs_user su 
             LEFT JOIN sfs_roles sr ON sr.id = su.roles_id  
             LEFT JOIN sfs_plant sp ON sp.id = sr.plant_id 
             LEFT JOIN sfs_company sc ON sc.id=sr.company_id

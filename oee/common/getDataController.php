@@ -28,16 +28,16 @@ if(isset($_POST['userDetails'])){
         $compImg=$row['compImg'];
 
 
-        $q="select screenId from sfs_screens where id IN(".$screen_access.")";
+        $q="select ui_tag_id from sfs_screens where id IN(".$screen_access.")";
         $res=mysqli_query($con,$q) or die('Error:'.mysqli_error($con));
         while ($row=mysqli_fetch_array($res)){
-            $screenArr[]=$row['screenId'];
+            $screenArr[]=$row['ui_tag_id'];
         }
 
-        $screenQ="select screenId from sfs_screens";
+        $screenQ="select ui_tag_id from sfs_screens";
         $screenRes=mysqli_query($con,$screenQ) or die('Error:'.mysqli_error($con));
         while ($row=mysqli_fetch_array($screenRes)){
-            $allScreenArr[]=$row['screenId'];
+            $allScreenArr[]=$row['ui_tag_id'];
         }
 
 

@@ -52,7 +52,7 @@ var DataTableProject = $('#roleTable').DataTable( {
         "data":obj.rolesDetails,   
         "columns": [
           { data: "name" },
-          { data: "description" },
+          { data: "descp" },
           { data: "companyName" },
           { data: "plantName" },
           { data: "screen_access" ,className: "text-left",
@@ -302,13 +302,17 @@ editRoles:function (id){
        if(id==globalRolesData[i].id){
          $('#recordId').val(globalRolesData[i].id);
          $('#roleName').val(globalRolesData[i].name);
-         $('#roleDesc').val(globalRolesData[i].description);
+         $('#roleDesc').val(globalRolesData[i].descp);
          if(globalRolesData[i].companyName==''){
             $('#companyName').val(0).change();         
             $('#plantName').val(0).change();
          }else{
             $('#companyName').val(globalRolesData[i].company_id).change();         
             $('#plantName').val(globalRolesData[i].plant_id).change();
+         }
+
+         if(globalRolesData[i].plant_id==''){
+           $('#plantName').val(0).change();
          }
          
          $('#accessMode').val(globalRolesData[i].access_rights).change();

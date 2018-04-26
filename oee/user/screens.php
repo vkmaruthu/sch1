@@ -46,7 +46,7 @@ var DataTableProject = $('#screenTable').DataTable( {
         "destroy":true,
         "data":obj.screenDetails,   
         "columns": [
-          { data: "screenId" },
+          { data: "ui_tag_id" },
           { data: "screenName" },
           { data: "screen_descp" },
           { data: "id" ,className: "text-left",
@@ -100,14 +100,14 @@ saveScreens:function(){
     var formEQData = new FormData($('#fromScreen')[0]);
     formEQData.append("saveScreen", "saveScreen");
 
-    var screenId=$('#screenId').val();
+    var ui_tag_id=$('#ui_tag_id').val();
     var screenName = $('#screenName').val();
     
-      if(screenId == "") {
-          $('#screenId').css('border-color', 'red');
+      if(ui_tag_id == "") {
+          $('#ui_tag_id').css('border-color', 'red');
           return false;
       }else{
-          $('#screenId').css('border-color', '');
+          $('#ui_tag_id').css('border-color', '');
         
           if(screenName == ""){
            $('#screenName').css('border-color', 'red');
@@ -161,7 +161,7 @@ editScreens:function(id){
    for(var i=0;i<globalScreenData.length;i++){ 
        if(id==globalScreenData[i].id){        
          $('#record_id').val(globalScreenData[i].id);
-         $('#screenId').val(globalScreenData[i].screenId);
+         $('#ui_tag_id').val(globalScreenData[i].ui_tag_id);
          $('#screenName').val(globalScreenData[i].screenName);
          $('#screen_descp').val(globalScreenData[i].screen_descp);        
          break;         
@@ -176,8 +176,8 @@ editScreens:function(id){
 
 $(document).ready(function() {
 debugger;
-   $("#menuScreens").parent().addClass('active');
-   $("#menuScreens").parent().parent().closest('.treeview').addClass('active menu-open');
+   $("#menuScreen").parent().addClass('active');
+   $("#menuScreen").parent().parent().closest('.treeview').addClass('active menu-open');
 
   if($('#screenPage').val()=='s'){
     $('#screenBack').hide();
@@ -235,7 +235,7 @@ debugger;
                 <div class="col-md-6">
                   <label class="control-label col-md-4 col-sm-6 col-xs-12">Screen Id<span class="required">*</span></label>
                   <div class="col-md-6 col-sm-6 col-xs-12">
-                    <input type="text" name="screenId" id="screenId" onkeyup=""
+                    <input type="text" name="ui_tag_id" id="ui_tag_id" onkeyup=""
                      placeholder="ID Name" class="form-control" required="true" autofocus/>
                   </div>
                 </div>
