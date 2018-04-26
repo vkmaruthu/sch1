@@ -349,32 +349,28 @@ debugger;
 
         <div id="delCommonMsg"> </div>        
         <div id="commonMsg"> </div> 
-        <form class="" id="fromWC" enctype="multipart/form-data"> 
-            
+        <form class="" id="fromWC" enctype="multipart/form-data">    
           <input type="hidden" name="comp_id" id="comp_id"/> 
           <input type="hidden" name="img_id" id="img_id"/> 
           <input type="hidden" name="plant_id" id="plant_id"/>
           <input type="hidden" name="wc_id" id="wc_id"/> 
-
             <div class="form-group">
              <div class="row">
                 <div class="col-md-6">
-                  <label class="control-label col-md-4 col-sm-6 col-xs-12">Code<span class="required">*</span></label>
+                  <label class="control-label col-md-4 col-sm-6 col-xs-12">Code <span class="required">*</span></label>
                   <div class="col-md-6 col-sm-6 col-xs-12">
                     <input type="text" name="wc_code" id="wc_code" onkeyup=""
                      placeholder="Work Center Code" maxlength="4" class="form-control" required="true" autofocus/>
                   </div>
                 </div>
-                
                 <div class="col-md-6">
-                <label class="control-label col-md-4 col-sm-6 col-xs-12">Description</label>
+                <label class="control-label col-md-4 col-sm-6 col-xs-12">Description <span class="required">*</span></label>
                 <div class="col-md-6 col-sm-6 col-xs-12">
                   <input type="text" name="wc_desc" id="wc_desc" onkeyup=""
                    placeholder="Work Center Description" class="form-control" required="true"/>
                 </div>
                 </div>
               </div>
-            
               <div class="row" style="margin-top: 1px;">
                 <div class="col-md-6">
                 <label class="control-label col-md-4 col-sm-6 col-xs-12">Contact Person</label>
@@ -383,7 +379,6 @@ debugger;
                    placeholder="Contact Person" class="form-control" required="true"/>
                 </div>
                 </div>
-
                <div class="col-md-6">
                 <label class="control-label col-md-4 col-sm-6 col-xs-12">Contact Number</label>
                 <div class="col-md-6 col-sm-6 col-xs-12">
@@ -391,9 +386,7 @@ debugger;
                    placeholder="Contact Number" maxlength="10"  class="form-control" required="true"/>
                 </div>
                 </div>
-
               </div>
-
               <div class="row" style="margin-top: 1px;">                 
                   <div class="col-md-6">
                       <label class="control-label col-md-4 col-sm-6 col-xs-12">Upload Image</label>
@@ -407,7 +400,6 @@ debugger;
                        </div>
                     </div>
               </div> 
-
               <div class="row">
                    <div class="col-md-12 text-center">
                     <button type="button" id="addWC" onclick="tempData.oeewc.saveWC();" 

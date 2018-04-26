@@ -403,25 +403,23 @@ saveEquipmentType:function(){
 	        debugger;
 	      if(obj.data !=null){
 	        if(obj.data.infoRes=='S'){
-	           $("#commonMsg").show();
-	           $('#commonMsg').html('<p class="commonMsgSuccess"> <i class="fa fa-check"></i> '+obj.data.info+'</p>');
+	           $("#commonMsgEqType").show();
+	           $('#commonMsgEqType').html('<p class="commonMsgSuccess"> <i class="fa fa-check"></i> '+obj.data.info+'</p>');
 	     	   $('#is_machine').iCheck('uncheck');
 	     	   $('#is_tool').iCheck('uncheck');
 	     	   $('#is_afs_size_id').iCheck('uncheck');
-	           $('#is_dc_po').iCheck('uncheck');	
-	     	        
+	           $('#is_dc_po').iCheck('uncheck');		     	        
 	     	   $('#fromEquipmentType')[0].reset();
+	     	   $('#type_id').val(''); 
 	           tempData.oeeEquipment.getEQTypeForDropdown();
-	           $('#addEQTypeModal').modal('hide');
-
 	        }else{
-	          $("#commonMsg").show();
-	           $('#commonMsg').html('<p class="commonMsgFail"> <i class="fa fa-warning"></i> '+obj.data.info+'</p>');
+	          $("#commonMsgEqType").show();
+	           $('#commonMsgEqType').html('<p class="commonMsgFail"> <i class="fa fa-warning"></i> '+obj.data.info+'</p>');
 	        }  
 	      } 
 
 	      setTimeout(function(){  
-	        $("#commonMsg").fadeToggle('slow');        
+	        $("#commonMsgEqType").fadeToggle('slow');        
 	      }, 1500);
 	    }
 	  });
@@ -455,6 +453,71 @@ getModelNameForDropdown:function(){
 
 	      } 
 	  });
+},
+loadEqTypeTable:function(eqType){
+    var DataTableProject = $('#eqTypeTable').DataTable( {
+        'paging'      : true,
+        'lengthChange': false,
+        'searching'   : true,
+        'ordering'    : true,
+        'info'        : true,
+        "destroy"     : true,  
+        'autoWidth'   : false,
+        "pageLength": 4,
+        "data":eqType,   
+         "columns": [
+          { data: "eq_type_desc" },
+          { data: "is_machine" },
+          { data: "is_tool" },
+          { data: "is_dc_po" },
+          { data: "is_afs_size_id" },
+          { data: "id" ,className: "text-left",
+              render: function (data, type, row, meta) {
+                var a='<button type="button" class="btn btn-primary btn-xs" onclick="tempData.oeeEquipment.editEqType('+row.id+');"><i class="fa fa-pencil-square-o"></i> </button>';
+                // var b='<button type="button" class="btn btn-danger btn-xs" onclick="tempData.oeeEquipment.deleteModel('+row.id+');"><i class="fa fa-trash"></i> </button>';
+                return a;
+              }
+            },
+           ]
+         });
+
+ },
+ 
+editEqType:function(id){
+   for(var i=0;i<eqTypeArray.length;i++){ 
+       if(id==eqTypeArray[i].id){
+             $('#type_id').val(id); 
+        	 $('#eq_type_desc').val(eqTypeArray[i].eq_type_desc);
+        	 if (eqTypeArray[i].is_machine == 1){
+            	 $('#is_machine').val(1);
+            	 $('#is_machine').iCheck('check');
+             }else{
+        		 $('#is_machine').val(0);
+            	 $('#is_machine').iCheck('uncheck');
+             }
+        	 if (eqTypeArray[i].is_tool == 1){
+            	 $('#is_tool').val(1);
+            	 $('#is_tool').iCheck('check');
+             }else{
+            	 $('#is_tool').val(0);
+            	 $('#is_tool').iCheck('uncheck');
+              }
+        	 if (eqTypeArray[i].is_dc_po == 1 ){
+            	 $('#is_dc_po').val(1);
+            	 $('#is_dc_po').iCheck('check');
+             }else{
+            	 $('#is_dc_po').val(0);
+            	 $('#is_dc_po').iCheck('uncheck');
+             }
+        	 if (eqTypeArray[i].is_afs_size_id == 1){
+            	  $('#is_afs_size_id').val(1);
+            	  $('#is_afs_size_id').iCheck('check');
+             }else{
+            	 $('#is_afs_size_id').val(0);
+           	     $('#is_afs_size_id').iCheck('uncheck');
+             }
+		}
+   }
 },
 loadModelTable:function(modelValue){
     var DataTableProject = $('#modelTable').DataTable( {
@@ -510,6 +573,7 @@ getEQTypeForDropdown:function(){//reasonsArray
 	        debugger;
 	      if(obj.eqTypes !=null){
 	    	  eqTypeArray = obj.eqTypes;
+	    	  tempData.oeeEquipment.loadEqTypeTable(eqTypeArray);
 	    	 $("#eq_type").html('');
 	    	 $("#eq_type").append('<option value="0"> Select Equipment Type </option>');
              	if(eqTypeArray != null){
@@ -579,13 +643,31 @@ debugger;
       $('.select2').select2();
       $('#commonMsg').hide();
       $("#showImg").hide();
+      
+      tempData.oeeEquipment.getCompanyDesc();
+      tempData.oeeEquipment.loadAllEquipment();
+      tempData.oeeEquipment.getPlantDesc();
+      tempData.oeeEquipment.getWCDesc();
+      tempData.oeeEquipment.getModelNameForDropdown();
+      tempData.oeeEquipment.getEQTypeForDropdown();
+      tempData.oeeEquipment.getReasonsForDropdown();
+   
     $('#createEquipment').click(function(){
     	 tempData.oeeEquipment.clearForm();
     });
     $('#cancel').click(function(){
-   	 tempData.oeeEquipment.clearForm();
-   });
-  
+   	     tempData.oeeEquipment.clearForm();
+    });
+    $('#cancelBtn2').click(function(){
+    	 $('#fromEquipmentModel')[0].reset();
+    });
+    $('#cancelBtn1').click(function(){
+   	   $('#is_machine').iCheck('uncheck');
+ 	   $('#is_tool').iCheck('uncheck');
+ 	   $('#is_afs_size_id').iCheck('uncheck');
+       $('#is_dc_po').iCheck('uncheck');
+   	   $('#fromEquipmentType')[0].reset();
+    });
     $('#eq_code').keyup(function(){
        this.value = this.value.toUpperCase();
        $('#eq_code').css('border-color', '');
@@ -595,37 +677,18 @@ debugger;
         this.value = this.value.toUpperCase();
         $('#model_name').css('border-color', '');
      });
-  
-    $("#num_of_di").keyup(function() {
-        $("#num_of_di").val(this.value.match(/[0-9]*/));
-    });
-    $("#num_of_do").keyup(function() {
-        $("#num_of_do").val(this.value.match(/[0-9]*/));
-    });
-    $("#num_of_ai").keyup(function() {
-        $("#num_of_ai").val(this.value.match(/[0-9]*/));
-    });
-    $("#num_of_ao").keyup(function() {
-        $("#num_of_ao").val(this.value.match(/[0-9]*/));
-    });
+    
     $('#model').change(function(){
         $('#msg').html('');
-     });
-     $('#eq_type').change(function(){
+    });
+    
+    $('#eq_type').change(function(){
         $('#msg').html('');
-     });
-     
-     $('#reason_codes').change(function(){
+    }); 
+        
+    $('#reason_codes').change(function(){
          $('#msg').html('');
-      });
-    tempData.oeeEquipment.getCompanyDesc();
-    tempData.oeeEquipment.loadAllEquipment();
-    tempData.oeeEquipment.getPlantDesc();
-    tempData.oeeEquipment.getWCDesc();
-    tempData.oeeEquipment.getModelNameForDropdown();
-    tempData.oeeEquipment.getEQTypeForDropdown();
-    tempData.oeeEquipment.getReasonsForDropdown();
-  
+    });
 });
 
 </script>
@@ -656,11 +719,9 @@ debugger;
           <div class="col-md-12"> 
           <div id="status" class="alert alert-success" style="color:green;text-align:center;font-weight:600;display:none;"></div>
           <div id="error" class="alert alert-danger" style="color:white;text-align:center;font-weight:600;display:none;"></div>
-
         <div id="delCommonMsg"> </div>  
         <div id="commonMsg"> </div>
         <form class="" id="fromEquipment" enctype="multipart/form-data"> 
-            
           <input type="hidden" name="comp_id" id="comp_id"/> 
           <input type="hidden" name="img_id" id="img_id"/> 
           <input type="hidden" name="plant_id" id="plant_id"/>
@@ -670,7 +731,7 @@ debugger;
             <div class="form-group">
              <div class="row">
                 <div class="col-md-6">
-                  <label class="control-label col-md-4 col-sm-6 col-xs-12">Code<span class="required">*</span></label>
+                  <label class="control-label col-md-4 col-sm-6 col-xs-12">Code <span class="required">*</span></label>
                   <div class="col-md-6 col-sm-6 col-xs-12">
                     <input type="text" name="eq_code" id="eq_code" onkeyup=""
                      placeholder="Equipment Code" maxlength="4" class="form-control" required="true" autofocus/>
@@ -678,7 +739,7 @@ debugger;
                 </div>
                 
                 <div class="col-md-6">
-                <label class="control-label col-md-4 col-sm-6 col-xs-12">Description</label>
+                <label class="control-label col-md-4 col-sm-6 col-xs-12">Description <span class="required">*</span></label>
                 <div class="col-md-6 col-sm-6 col-xs-12">
                   <input type="text" name="eq_desc" id="eq_desc" onkeyup=""
                    placeholder="Equipment Description" class="form-control" required="true"/>
@@ -728,7 +789,6 @@ debugger;
                            placeholder="Equipment Protocol" class="form-control" required="true"/>
                         </div>   
                     </div>
-                   
               </div>
               
               <div class="row" style="margin-top: 10px;">
@@ -815,49 +875,66 @@ debugger;
  <!-- Add Equipment Type Modal -->
 
     <div class="modal fade" id="addEQTypeModal">
-      <div class="modal-dialog">
+      <div class="modal-dialog modal-lg">
         <div class="modal-content">
           <div class="modal-header">
             <button type="button" class="close" data-dismiss="modal" aria-label="Close">
               <span aria-hidden="true">&times;</span></button>
             <h4 class="modal-title">Equipment Type</h4>
           </div>
-          <form id="fromEquipmentType" enctype="multipart/form-data"> 
+          <form id="fromEquipmentType" enctype="multipart/form-data">
+          <input type="hidden" name="type_id" id="type_id"/>  
           <div class="modal-body">          
                <div class="row">
                     <div class="col-md-12">
-                      <label class="control-label col-md-4 col-sm-6 col-xs-12">Description<span class="required">*</span></label>
-                        <div class="col-md-6 col-sm-6 col-xs-12">
+                      <label class="control-label col-md-3 col-sm-3 col-xs-12">Description<span class="required">*</span></label>
+                        <div class="col-md-4 col-sm-4 col-xs-12">
                           <input type="text" name="eq_type_desc" id="eq_type_desc" onkeyup=""
                            placeholder="Equipment Type Desc" class="form-control" required="true"/>
                         </div>
                     </div>
-                    
-                    <div class="col-md-12" style="padding-top: 1px;">
-                      <div class="col-md-6 col-sm-6 col-xs-6" >
+                    <div class="col-md-6 col-sm-12 col-xs-12" style="padding-top: 1px;">
                           <div class="checkbox">
                             <label><input type="checkbox" name="is_machine" value="0" id="is_machine" class="minimal"> Is Machine</label>
                           </div>
                           <div class="checkbox">
                             <label><input type="checkbox" name="is_dc_po" value="0" id="is_dc_po" class="minimal"> Is dc po</label>
                           </div>
-                      </div>
-                       <div class="col-md-6 col-sm-6 col-xs-6">
+                    </div>
+                    <div class="col-md-6 col-sm-12 col-xs-12">
                           <div class="checkbox">
                             <label><input type="checkbox" name="is_tool" value="0" id="is_tool" class="minimal"> Is Tool</label>
                           </div>
                           <div class="checkbox">
                             <label><input type="checkbox" name="is_afs_size_id" value="0" id="is_afs_size_id" class="minimal"> Is afs size id</label>
                           </div>
-                       </div>
-                    </div>
+                     </div>
                 </div>
-          </div>
-          <div class="modal-footer" style="text-align: center;">
-            <button type="button" class="btn btn-default " data-dismiss="modal">Cancel</button>
-            <button type="button" class="btn btn-success" onclick="tempData.oeeEquipment.saveEquipmentType();">Save</button>
-          </div>
+            <br>
+            <div class="" style="text-align: center;">
+           		 <button type="button" class="btn btn-success" onclick="tempData.oeeEquipment.saveEquipmentType();">Save</button>
+           		 <button type="button" class="btn btn-danger " data-dismiss="modal" id="cancelBtn1">Cancel</button>
+            </div>
+            <div id="commonMsgEqType"></div>
+            <br>
           </form>
+             <div class="table-responsive"> 
+              <table id="eqTypeTable" class="table table-hover table-bordered  nowrap">
+               <thead>
+                 <tr>
+                  <th>Description</th>
+                  <th>Is Machine</th> 
+                  <th>Is Tool</th>
+                  <th>Is dc po</th> 
+                  <th>Is afs size Id</th>
+                  <th>Action</th>
+                 </tr>
+               </thead>
+               </table>
+             </div>
+            </div>
+            <div class="modal-footer">
+            </div>
         </div>
         <!-- /.modal-content -->
       </div>
@@ -890,37 +967,37 @@ debugger;
                     <div class="col-md-6" style="padding-top: 1px;">
                         <label class="control-label col-md-4 col-sm-6 col-xs-12">No. of Digital I/P</label>
                         <div class="col-md-6 col-sm-6 col-xs-12">
-                          <input type="text" name="num_of_di" id="num_of_di" onkeyup=""
-                           placeholder="No. of Digital Input" class="form-control"  value="0" maxlength="4" required="true"/>
+                          <input type="number" min="0" name="num_of_di" id="num_of_di"
+                           placeholder="No. of Digital Input" class="form-control" maxlength="4" value="0"/>
                         </div>
                     </div>
                     <div class="col-md-6" style="padding-top: 1px;">
                         <label class="control-label col-md-4 col-sm-6 col-xs-12">No. of Digital O/P</label>
                         <div class="col-md-6 col-sm-6 col-xs-12">
-                          <input type="text" name="num_of_do" id="num_of_do" onkeyup=""
-                           placeholder="No. of Digital Output" class="form-control"  value="0" maxlength="4" required="true"/>
+                          <input type="number" min="0" name="num_of_do" id="num_of_do"
+                           placeholder="No. of Digital Output" class="form-control" maxlength="4" value="0"/>
                         </div>
                     </div>
                     
                     <div class="col-md-6" style="padding-top: 1px;">
                         <label class="control-label col-md-4 col-sm-6 col-xs-12">No. of Analog I/P</label>
                         <div class="col-md-6 col-sm-6 col-xs-12">
-                          <input type="text" name="num_of_ai" id="num_of_ai" onkeyup=""
-                           placeholder="No. of Analog Input" class="form-control"  value="0" maxlength="4" required="true"/>
+                          <input type="number" min="0" name="num_of_ai" id="num_of_ai" 
+                           placeholder="No. of Analog Input" class="form-control" maxlength="4" value="0"/>
                         </div>
                     </div>
                     <div class="col-md-6" style="padding-top: 1px;">
                         <label class="control-label col-md-4 col-sm-6 col-xs-12">No. of Analog O/P</label>
                         <div class="col-md-6 col-sm-6 col-xs-12">
-                          <input type="text" name="num_of_ao" id="num_of_ao" onkeyup=""
-                           placeholder="No. of Analog Output" class="form-control"  value="0" maxlength="4" required="true"/>
+                          <input type="number" min="0" name="num_of_ao" id="num_of_ao" onkeyup=""
+                           placeholder="No. of Analog Output" class="form-control"  maxlength="4" value="0"/>
                         </div>
                     </div>
                 </div>
            <br>
           <div class="" style="text-align: center;">
             <button type="button" class="btn btn-success" onclick="tempData.oeeEquipment.saveModel();" >Save</button>
-            <button type="button" class="btn btn-danger" data-dismiss="modal">Cancel</button>
+            <button type="button" class="btn btn-danger" data-dismiss="modal" id="cancelBtn2">Cancel</button>
           </div>
           <div id="commonMsgModel"></div>
            <br>
@@ -940,8 +1017,8 @@ debugger;
                </thead>
                </table>
              </div>
-              </div>
-           <div class="modal-footer" style="text-align: center;">
+           </div>
+           <div class="modal-footer">
            </div>
         </div>
         <!-- /.modal-content -->

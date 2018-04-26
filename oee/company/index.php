@@ -24,9 +24,7 @@ loadAllComp:function(){
             dataType: 'json',
             data:myData,
             success: function(obj){
-
             globalCompanyData=obj.compDetails;
-
         if(obj.compDetails==null){
           $('#companyTable').DataTable({
              "paging":false,
@@ -70,10 +68,10 @@ loadAllComp:function(){
               { data: "contact_number"},
               { data: "id" ,className: "text-left",
                 render: function (data, type, row, meta) {
-                  var a='<button type="button" class="btn btn-primary btn-xs" onclick="tempData.oeecompany.editCompany('+row.id+');"><i class="fa fa-pencil-square-o"></i> </button>';
-var b='<button type="button" class="btn btn-danger btn-xs" onclick="tempData.oeecompany.deleteCompany('+row.id+',\''+row.image_file_name+'\');"><i class="fa fa-trash"></i> </button>';
+                var a='<button type="button" class="btn btn-primary btn-xs" onclick="tempData.oeecompany.editCompany('+row.id+');"><i class="fa fa-pencil-square-o"></i> </button>';
+                var b='<button type="button" class="btn btn-danger btn-xs" onclick="tempData.oeecompany.deleteCompany('+row.id+',\''+row.image_file_name+'\');"><i class="fa fa-trash"></i> </button>';
                   return a+' '+b;
-                }
+                 }
               },
                ]
            });
@@ -88,27 +86,21 @@ var b='<button type="button" class="btn btn-danger btn-xs" onclick="tempData.oee
 editCompany:function (id){
     for(var i=0;i<globalCompanyData.length;i++){
         if(id==globalCompanyData[i].id){
-          //alert(globalCompanyData[i].id);
           $("#showImg").show();
-
-          $('#comp_id').val(globalCompanyData[i].id);
+          $('#comp_id_local').val(globalCompanyData[i].id);
           $('#comp_code').val(globalCompanyData[i].comp_code);
           $('#comp_desc').val(globalCompanyData[i].comp_desc);
           $('#address').val(globalCompanyData[i].address);
           $('#contact_person').val(globalCompanyData[i].contact_person);
           $('#contact_number').val(globalCompanyData[i].contact_number);
-
           $('#img_id').val(globalCompanyData[i].image_file_name);
           if(globalCompanyData[i].image_file_name!=''){
             $('#showImg').html('<img style="width: 30%;" src="../common/img/comp_logo/'+globalCompanyData[i].image_file_name+'">');
           }else{
             $('#showImg').html('<img style="width: 30%;" src="../common/img/comp_logo/d/eimsdefault.png">');
           }
-
-
           $('#comp_code').prop('readonly', true);
           break;
-
         }
     }
     $("#fromCompany").fadeIn("fast");
@@ -116,11 +108,9 @@ editCompany:function (id){
     $("#updateCompany").show();            
 },
 deleteCompany:function (id,img){
-  //alert(img);
   var url="getDataController.php";
   var comp_id=id;
   var myData={deleteCompany:"deleteCompany",comp_id:comp_id,img:img};
-
   $.ajax({
     type:"POST",
     url:url,
@@ -140,14 +130,12 @@ deleteCompany:function (id,img){
            $('#delCommonMsg').html('<p class="commonMsgFail"> <i class="fa fa-warning"></i> '+obj.data.info+'</p>');
         }  
       } 
-
       setTimeout(function(){  $("#delCommonMsg").fadeToggle('slow'); }, 1500);
 
     }
   });
 
 },
-
 saveCompany:function(){
   var url="getDataController.php";
   var fromCompanyData = new FormData($('#fromCompany')[0]);
@@ -159,7 +147,6 @@ saveCompany:function(){
         return false;
     }else{
       $('#comp_code').css('border-color', '');
-
   $.ajax({
     type:"POST",
     url:url,
@@ -178,6 +165,7 @@ saveCompany:function(){
            $('#commonMsg').html('<p class="commonMsgSuccess"> <i class="fa fa-check"></i> '+obj.data.info+'</p>');  
            tempData.oeecompany.loadAllComp();
            tempData.oeecompany.clearForm();
+           $('#comp_id_local').val('');
         }else{
           $("#commonMsg").show();
            $('#commonMsg').html('<p class="commonMsgFail"> <i class="fa fa-warning"></i> '+obj.data.info+'</p>');
@@ -190,11 +178,8 @@ saveCompany:function(){
 
     }
   });
-
-    }
-
+ }
 }, 
-
 gotoPlants:function(id, compCode,compDesc){
     window.location="plant.php?comp_id="+id;
 },
@@ -249,32 +234,24 @@ clearForm:function(){
 };
 
 $(document).ready(function() {
-debugger;
-
   $('.select2').select2();  
   $('#commonMsg').hide();
   $("#fromCompany").hide();
   $("#showImg").hide();
-
   $('#createCompany').click(function(){
 	  tempData.oeecompany.clearForm();
   });
-  
   $('#cancel').click(function(){
 	  tempData.oeecompany.clearForm();
   });
-
   $('#comp_code').keyup(function(){
      this.value = this.value.toUpperCase();
      $('#comp_code').css('border-color', '');
   });
-
   $("#contact_number").keyup(function() {
       $("#contact_number").val(this.value.match(/[0-9]*/));
   }); 
-
-    tempData.oeecompany.loadAllComp();
-  
+  tempData.oeecompany.loadAllComp();
 });
 
 </script>
@@ -286,38 +263,26 @@ debugger;
         <h3 style="margin-top: 2px;">Company<h3>
         </div>
       </div>
-
     <div class="panel panel-default">
       <div class="panel-heading "> 
-        <div class="panel-title pull-left">
-              
+        <div class="panel-title pull-left">             
         </div>
-
         <button type="button" onclick="tempData.oeecompany.reload();" class="btn btn-sm btn-info pull-right" style="margin-top: -3px;margin-bottom: -2px;margin-left:15px;">   <i class="fa  fa-refresh"> </i>
         </button>
-
-
         <button type="button" id="createCompany" class="btn btn-sm btn-primary pull-right" style="margin-top: -3px;margin-bottom: -2px;">
               <i class="fa fa-pencil-square-o"></i>&nbsp; Add Company
-        </button>
-
-       
-
-
-          <div class="clearfix"></div>
+        </button>      
+       <div class="clearfix"></div>
       </div>   
       <div class="panel-body">
-
         <div class="row">
           <div class="col-md-12"> 
           <div id="status" class="alert alert-success" style="color:green;text-align:center;font-weight:600;display:none;"></div>
-          <div id="error" class="alert alert-danger" style="color:white;text-align:center;font-weight:600;display:none;"></div>
-
-         
+          <div id="error" class="alert alert-danger" style="color:white;text-align:center;font-weight:600;display:none;"></div>       
         <div id="commonMsg"> </div>  
         <div id="delCommonMsg"> </div>  
         <form class="" id="fromCompany" enctype="multipart/form-data">     
-          <input type="hidden" name="comp_id" id="comp_id"/> 
+          <input type="hidden" name="comp_id_local" id="comp_id_local"/> 
           <input type="hidden" name="img_id" id="img_id"/> 
           <!-- <input type="hidden" name="plant_id" id="plant_id"/>  -->
             <div class="form-group">
@@ -331,7 +296,7 @@ debugger;
                 </div>
                 
                 <div class="col-md-6">
-                <label class="control-label col-md-4 col-sm-6 col-xs-12">Description</label>
+                <label class="control-label col-md-4 col-sm-6 col-xs-12">Description <span class="required">*</span></label>
                 <div class="col-md-6 col-sm-6 col-xs-12">
                   <input type="text" name="comp_desc" id="comp_desc" onkeyup=""
                    placeholder="Company Description" class="form-control" required="true"/>
