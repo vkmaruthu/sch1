@@ -53,6 +53,9 @@
 <!-- iCheck 1.0.1 -->
 <script src="../../plugins/iCheck/icheck.min.js"></script>
 
+<!-- Range Selection -->
+<script src="../common/js/jquery-asRange.js"></script>
+
 
 <script type="text/javascript">
 $(document).ready(function() {

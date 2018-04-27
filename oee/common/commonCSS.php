@@ -35,6 +35,9 @@
 <!-- iCheck for checkboxes and radio inputs -->
 <link rel="stylesheet" href="../../plugins/iCheck/all.css">
 
+<!-- Range Selection -->
+<link rel="stylesheet" href="../common/css/asRange.css">
+
 <style type="text/css">
   /* Let's get this party started */
 ::-webkit-scrollbar {
