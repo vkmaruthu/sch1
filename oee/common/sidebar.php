@@ -49,7 +49,7 @@
           </a>
           <ul class="treeview-menu">
               <li><a href="pages/layout/top-nav.html" id="menuShiftConfiguration"><i class="fa fa-files-o"></i> Shift Configuration</a></li>
-              <li><a href="pages/layout/boxed.html" id="menuOeeConfiguration"><i class="fa fa-th"></i> OEE Configuration</a></li>
+              <li><a href="../oeelimits/oeelimits.php" id="menuOeeConfiguration"><i class="fa fa-th"></i> OEE Configuration</a></li>
               <li><a href="../user/role.php" id="menuRoleConfiguration"><i class="fa fa-users"></i> Role Configuration</a></li>
               <li><a href="../user/user.php" id="menuUserConfiguration"><i class="fa fa-users"></i> User Configuration</a></li>
               <li><a href="../company/index.php" id="menuCompany"><i class="fa fa-users"></i> Add Company</a></li>
