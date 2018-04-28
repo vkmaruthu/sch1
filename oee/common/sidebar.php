@@ -39,7 +39,7 @@
             <li><a href="index2.html"><i class="fa fa-circle-o"></i> Pridiction</a></li>
           </ul>
         </li>
-        <li class="treeview">
+        <li class="treeview" id="hideConfiguration">
           <a href="#">
             <i class="fa fa-files-o"></i>
             <span>Configuration</span>

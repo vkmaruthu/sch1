@@ -36,17 +36,7 @@ $(document).ready(function() {
         	for (var i=0; i < obj.screenArr.length ; i++) {
         		$('#'+obj.screenArr[i]).show();
         	}
- 			
-
-        	 /*if(obj.rule.Dashboard==1){$('#dashboard').show();}else{$('#dashboard').hide();}
-             if(obj.rule.Configuration==1){$('#configuration').show();}else{$('#configuration').hide();}
-             if(obj.rule.Tool_Tracking==1){$('#tool_tracking').show();}else{$('#tool_tracking').hide();}
-             if(obj.rule.Machine_Tracking==1){$('#machine_tracking').show();}else{$('#machine_tracking').hide();}
-             if(obj.rule.Alerts==1){$('#alerts').show();}else{$('#alerts').hide();}
-             if(obj.rule.Reports==1){$('#reports').show();}else{$('#reports').hide();}   
-             if(obj.rule.ManageUser==1){$('#ManageUser').show();}else{$('#ManageUser').hide();}   
-             if(obj.rule.ManageRole==1){$('#ManageRole').show();}else{$('#ManageRole').hide();}   
-             if(obj.rule.configure_shift==1){$('#configure_shift').show();}else{$('#configure_shift').hide();}*/
+         	
          	$('#comp_id').val(obj.userDetails.company_id);
           	$('#compNameDB').html(obj.userDetails.compName);
           	$('#sidebarUserName').html(obj.userDetails.first_name);
@@ -63,6 +53,10 @@ $(document).ready(function() {
           		$('#compImg').html('<img src="../common/img/comp_logo/d/eimsdefault.png" class="CustMobileLogo">');
           		$('#compImgMini').html('<img src="../common/img/comp_logo/d/eimsdefault.png" class="cust_logo">');
           	}
+
+          	/* Role Configuration */
+         	/*$('#adminRole').val(obj.userDetails.rolename);
+         	$('#companyName').val(obj.userDetails.company_id);*/
           	
         }else{
          

@@ -478,7 +478,7 @@ a:focus {
 .user-panel > .image > img {
     width: 100%;
     max-width: 50px;
-    height: 48px !important;
+    /*height: 48px !important;*/
 }
 .user-panel > .info {
   padding: 5px 5px 5px 15px;
