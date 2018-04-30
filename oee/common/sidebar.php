@@ -35,7 +35,7 @@
           </a>
           <ul class="treeview-menu">
             <li><a href="../home/index.php" id="companyOEE"><i class="fa fa-circle-o"></i> Company OEE</a></li>
-            <li><a href="index2.html"><i class="fa fa-circle-o"></i> History</a></li>
+            <li><a href="../history/index.php" id="menuHistory"><i class="fa fa-circle-o"></i> History</a></li>
             <li><a href="index2.html"><i class="fa fa-circle-o"></i> Pridiction</a></li>
           </ul>
         </li>

@@ -255,7 +255,7 @@ getEQDesc:function(wcId){
 	    success: function(obj) {
 	      if( obj.equipmentDetails !=null){
 	    	 $("#eq_desc").html('');
-	    	 $("#eq_desc").append('<option value="0"> Select Equipment </option>');
+	    	 $("#eq_desc").append('<option value="none"> Select Equipment </option>');
       		for(var i=0; i< obj.equipmentDetails.length; i++){
   			   $("#eq_desc").append('<option value="'+obj.equipmentDetails[i].eq_code+'">'+obj.equipmentDetails[i].eq_desc+'</option>'); 
       		}
@@ -312,7 +312,7 @@ $(document).ready(function() {
 		$("#wc_desc").html('');
 	 	$("#wc_desc").append('<option value="0"> Select Work Center </option>');
 		$("#eq_desc").html('');
-	 	$("#eq_desc").append('<option value="0"> Select Equipment </option>');
+	 	$("#eq_desc").append('<option value="none"> Select Equipment </option>');
      }
  });
  $('#plant_desc').change(function(){
@@ -323,7 +323,7 @@ $(document).ready(function() {
 		$("#wc_desc").html('');
 	 	$("#wc_desc").append('<option value="0"> Select Work Center </option>');
 		$("#eq_desc").html('');
-	 	$("#eq_desc").append('<option value="0"> Select Equipment </option>');
+	 	$("#eq_desc").append('<option value="none"> Select Equipment </option>');
      }
  });
  $('#wc_desc').change(function(){
@@ -332,7 +332,7 @@ $(document).ready(function() {
 		 tempData.oeelimitconfig.getEQDesc(wcId);
 	 }else{
 		$("#eq_desc").html('');
-	 	$("#eq_desc").append('<option value="0"> Select Equipment </option>');
+	 	$("#eq_desc").append('<option value="none"> Select Equipment </option>');
      }
  });
  $('#cancel').click(function(){
