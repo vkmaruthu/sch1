@@ -48,13 +48,6 @@ loadPlants:function(){
                     "destroy":true,
                     "data":obj.plantDetails,   
                     "columns": [
-                      { data: "id" ,className: "text-left",
-                        render: function (data, type, row, meta) {
-
-                          var d='<button type="button" class="btn btn-warning btn-xs" onclick="tempData.oeeplant.gotoParts('+row.id+',\''+row.comp_id+'\');"><i class="fa fa-check-square-o"></i> Parts </button>';
-                          return d;
-                        }
-                      },
                       { data: "image_file_name" ,className: "text-left",
                           render: function (data, type, row, meta) {
                              if(row.image_file_name != ""){
@@ -69,6 +62,13 @@ loadPlants:function(){
                       { data: "address"},
                       { data: "contact_person" },
                       { data: "contact_number"},
+                      { data: "id" ,className: "text-left",
+                          render: function (data, type, row, meta) {
+
+                            var d='<button type="button" class="btn btn-success btn-xs" onclick="tempData.oeeplant.gotoParts('+row.id+',\''+row.comp_id+'\');"><i class="fa fa-check-square-o"></i> View Parts </button>';
+                            return d;
+                          }
+                        },
                        ]
                      }); 
             
@@ -277,13 +277,13 @@ $(document).ready(function() {
           <table id="plantTable" class="table table-hover table-bordered nowrap" style="font-size: 12px;width:100%;">
            <thead>
              <tr>
-              <th>Action</th>
               <th>Plant Image</th>
               <th>Code</th> 
               <th>Description</th>
               <th>Address</th>
               <th>Contact Person</th>
               <th>Contact Number</th>
+              <th>Action</th>
              </tr>
            </thead>
            </table>

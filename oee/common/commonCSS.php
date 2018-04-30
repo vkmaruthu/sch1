@@ -291,6 +291,10 @@ a {cursor: pointer;}
       .banner-sec{
         display: none;
       }
+     .rangeBarSpace {
+        margin-bottom: -30px;
+        margin-top: 30px;
+      }
 
 
 
@@ -375,6 +379,10 @@ a {cursor: pointer;}
       .banner-sec{
         display: inline;
       }
+      .rangeBarSpace {
+        margin-bottom: -10px;
+        margin-top: 20px;
+       }
 
 
 

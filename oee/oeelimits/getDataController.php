@@ -4,52 +4,91 @@
     //require '../common/session.php';
 
 
-/* ------------Reasons DB Operation --------------------- */
+/* ------------OEE Config DB Operation --------------------- */
 
-if(isset($_POST['saveReasons'])){
-    $reason_id=$_POST['reason_id'];
-    $reason_type_id=$_POST['reason_type_id'];
-    $message=$_POST['message'];
-    $color_code=$_POST['color'];
-    $reason_code_no=$_POST['reason_code_no'];
-    $table = 'sfs_reason_code';
-    if($reason_id == ''){
-        $DataMarge=array('id'=>$reason_code_no,
-            'reason_type_id'=>$reason_type_id,
-            'message'=>$message,
-            'color_code'=>$color_code
-        );
-        $sqlQuery = mysqli_insert_array($table, $DataMarge, "submit"); // Function say generate complete query
-       // echo $sqlQuery;
+if(isset($_POST['saveOEEConfig'])){
+    
+    $oee_id = $_POST['oee_limit_id'];
+    if ($_POST['comp_desc'] == 0 || $_POST['comp_desc'] == "") {
+        $comp_desc='NULL';
+    }else{
+        $comp_desc=$_POST['comp_desc'];
+    }
+    if ($_POST['plant_desc'] == 0 || $_POST['plant_desc'] == "") {
+        $plant_desc='NULL';
+    }else{
+        $plant_desc=$_POST['plant_desc'];
+    }
+    if ($_POST['wc_desc'] == 0 || $_POST['wc_desc'] == "") {
+        $wc_desc='NULL';
+    }else{
+        $wc_desc=$_POST['wc_desc'];
+    }
+    if ($_POST['eq_desc'] == "") {
+        $eq_desc='NULL';
+    }else if($_POST['eq_desc'] == 0){
+        $eq_desc='NULL';
+    }else{
+        $eq_desc=$_POST['eq_desc'];
+    }
+    $p_limits_db = split(",",$_POST['p_limits_db']);
+    $p_high = $p_limits_db[1] > $p_limits_db[0] ? $p_limits_db[1]:$p_limits_db[0];
+    $p_low = $p_limits_db[0] < $p_limits_db[1] ? $p_limits_db[0]:$p_limits_db[1];
+    
+    $a_limits_db = split(",",$_POST['a_limits_db']);
+    $a_high = $a_limits_db[1] > $a_limits_db[0] ? $a_limits_db[1]:$a_limits_db[0];
+    $a_low = $a_limits_db[1] > $a_limits_db[0] ? $a_limits_db[0]:$a_limits_db[1];
+    
+    $q_limits_db = split(",",$_POST['q_limits_db']);
+    $q_high = $q_limits_db[1] > $q_limits_db[0] ? $q_limits_db[1]:$q_limits_db[0];
+    $q_low =  $q_limits_db[1] > $q_limits_db[0] ? $q_limits_db[0]:$q_limits_db[1];
+    
+    $oee_limits_db = split(",",$_POST['oee_limits_db']);
+    $oee_high = $oee_limits_db[1] > $oee_limits_db[0] ? $oee_limits_db[1]:$oee_limits_db[0];
+    $oee_low = $oee_limits_db[1] > $oee_limits_db[0] ? $oee_limits_db[0]:$oee_limits_db[1];
+    
+    $table = 'sfs_oee_limit';
+    $DataMarge=array('company_id'=>$comp_desc,
+        'plant_id'=>$plant_desc,
+        'workcenter_id'=>$wc_desc,
+        'eq_code'=>"$eq_desc",
+        'oee_high'=>"$oee_high",
+        'oee_low'=>"$oee_low",
+        'a_high'=>"$a_high",
+        'a_low'=>"$a_low",
+        'p_high'=>"$p_high",
+        'p_low'=>"$p_low",
+        'q_high'=>"$q_high",
+        'q_low'=>"$q_low"
+    );
+    
+    if($oee_id == ''){
+        $sqlQuery = mysqli_insert_array($table, $DataMarge, "submit");
+        //echo $sqlQuery;
         $res=mysqli_query($con,$sqlQuery);
         if(!$res) {
-            $error="Reason Code Already Exists";
+            $error="OEE Assigned Already";
             $response['info']=$error;
             $response['infoRes']='E'; //Error
         }else {
             if(mysqli_errno() != 1062){
                 move_uploaded_file($file_tmps,$filePath);
-                $response['info']="Reason Created Successfully";
+                $response['info']="Record Created Successfully";
                 $response['infoRes']="S"; // success
                 $response['mysqli_insert_id']=mysqli_insert_id($con);
             }else{
-                $error="Reason Code Already Exists";
+                $error="OEE Assigned Already";
                 $response['info']=$error;
                 $response['infoRes']='E'; //Error
             }
         }
     }else{
-        $DataMarge=array('id'=>$reason_code_no,
-            'reason_type_id'=>$reason_type_id,
-            'message'=>$message,
-            'color_code'=>$color_code
-        );
-        $cond=' id='.$reason_id;
+        $cond=' id='.$oee_id;
         $sqlQuery = mysqli_update_array($table, $DataMarge, "submit",$cond); // Function say generate complete query
         $res=mysqli_query($con,$sqlQuery);
         //echo $sqlQuery;
         if(!$res) {
-            $error="Reason Code Already Exists";
+            $error="OEE Assigned Already";
             $response['info']=$error;
             $response['infoRes']='E'; //Error
         }else {
@@ -59,7 +98,7 @@ if(isset($_POST['saveReasons'])){
                 $response['infoRes']="S"; // success
                 $response['mysqli_insert_id']=mysqli_insert_id($con);
             }else{
-                $error="Reason Code Already Exists";
+                $error="OEE Assigned Already";
                 $response['info']=$error;
                 $response['infoRes']='E'; //Error
             }
@@ -73,35 +112,66 @@ if(isset($_POST['saveReasons'])){
     mysqli_close($con);
 }
 
-if(isset($_POST['getReasonsDetails'])){
-    $eqQ="SELECT rc.id, rc.message, rc.color_code, rt.message as message1, rt.color_code as color_code1, rc.reason_type_id  FROM sfs_reason_code rc, sfs_reason_type rt where rt.id=reason_type_id";
+if(isset($_POST['getOEELimitsDetails'])){
+    $comp_id=$_POST['comp_id'];
+    $eqQ="SELECT ol.id, ol.oee_high, ol.oee_low, ol.a_high, ol.a_low, ol.p_low, ol.p_high, ol.q_high, ol.q_low, 
+          ol.company_id, ol.plant_id, ol.workcenter_id, ol.eq_code, c.descp as comp_desc, p.descp as plant_desc, 
+          wc.descp as wc_desc, eq.eq_desc
+          FROM sfs_oee_limit ol LEFT JOIN sfs_company c on c.id=ol.company_id 
+                      LEFT JOIN sfs_plant p on p.id=ol.plant_id
+                      LEFT JOIN sfs_workcenter wc on wc.id=ol.workcenter_id
+                      LEFT JOIN sfs_equipment eq on eq.eq_code=ol.eq_code where ol.company_id=".$comp_id;
+    
     $eqDetails=mysqli_query($con,$eqQ) or die('Error:'.mysqli_error($con));
     while ($row=mysqli_fetch_array($eqDetails)){
         $id=$row['id'];
-        $message=$row['message'];
-        $color_code=$row['color_code'];
-        $message1=$row['message1'];
-        $color_code1=$row['color_code1'];
-        $reason_type_id=$row['reason_type_id'];
-        $getEQData[]=array('id' =>"$id",
-            'message' =>"$message",
-            'color_code' =>"$color_code",
-            'message1' => "$message1",
-            'color_code1' => "$color_code1",
-            'reason_type_id' => "$reason_type_id"
-        );
+        $company_id=$row['company_id'];
+        $comp_desc=$row['comp_desc'];
+        $plant_id=$row['plant_id'];
+        $plant_desc=$row['plant_desc'];
+        $workcenter_id=$row['workcenter_id'];
+        $wc_desc=$row['wc_desc'];
+        $eq_code=$row['eq_code'];
+        $eq_desc=$row['eq_desc'];
         
+        $oee_high=$row['oee_high'];
+        $oee_low=$row['oee_low'];
+        $a_high=$row['a_high'];
+        $a_low=$row['a_low'];
+        $p_high=$row['p_high'];
+        $p_low=$row['p_low'];
+        $q_high=$row['q_high'];
+        $q_low=$row['q_low'];
+        
+        $getEQData[]=array('id' =>"$id",
+            'company_id' => "$company_id",
+            'comp_desc' => "$comp_desc",
+            'plant_id' => "$plant_id",
+            'plant_desc' => "$plant_desc",
+            'workcenter_id' => "$workcenter_id",
+            'wc_desc' => "$wc_desc",
+            'eq_code' => "$eq_code",
+            'eq_desc' => "$eq_desc",
+            'oee_high'  => "$oee_high",
+            'oee_low' => "$oee_low",
+            'a_high' => "$a_high",
+            'a_low' => "$a_low",
+            'p_high' => "$p_high",
+            'p_low' => "$p_low",
+            'q_high' => "$q_high",
+            'q_low' => "$q_low"
+        );
     }
     
-    $status['reasontDetails'] = $getEQData;
+    $status['oeeLimitsDetails'] = $getEQData;
     echo json_encode($status);
     mysqli_close($con);
 }
 
-if(isset($_POST['deleteReason'])){
-    $reason_id=$_POST['reason_id'];
+if(isset($_POST['deleteOEELimits'])){
+    $oee_limit_id=$_POST['oee_limit_id'];
    
-    $delQ="DELETE FROM sfs_reason_code WHERE id=".$reason_id;
+    $delQ="DELETE FROM sfs_oee_limit WHERE id=".$oee_limit_id;
     $result=mysqli_query($con,$delQ); //or die('Error:'.mysqli_error($con));
     
     if(!$result) {
@@ -124,88 +194,6 @@ if(isset($_POST['deleteReason'])){
     mysqli_close($con);
 }
 
-/* End of Reasons DB Operations */
-
-
-if(isset($_POST['saveReasonType'])){
-    $message=$_POST['message1'];
-    $color_code=$_POST['color_code1'];
-    $reason_id1=$_POST['reason_id1'];
-    $r_id=$_POST['id_reason_type'];
-    $table = 'sfs_reason_type';
-    if($r_id == ''){
-        $DataMarge=array('id'=>$reason_id1,
-            'message'=>$message,
-            'color_code'=>$color_code
-        );
-        $sqlQuery = mysqli_insert_array($table, $DataMarge, "submit"); // Function say generate complete query
-        $res=mysqli_query($con,$sqlQuery); //or die('Error: ' . mysqli_error($con));
-        
-        if(!$res) {
-            $error="Reason Type Already Exists";
-            $response['info']=$error;
-            $response['infoRes']='E'; //Error
-        }else {
-            if(mysqli_errno() != 1062){
-                move_uploaded_file($file_tmps,$filePath);
-                $response['info']="Reason Type Created Successfully";
-                $response['infoRes']="S"; // success
-                $response['mysqli_insert_id']=mysqli_insert_id($con);
-            }else{
-                $error="Reason Type Already Exists";
-                $response['info']=$error;
-                $response['infoRes']='E'; //Error
-            }
-            
-        }
-        
-    }else{
-        $DataMarge=array(
-            'message'=>$message,
-            'color_code'=>$color_code
-        );
-        $cond=' id='.$reason_id1;
-        $sqlQuery = mysqli_update_array($table, $DataMarge, "submit",$cond); // Function say generate complete query
-        $res=mysqli_query($con,$sqlQuery); 
-        if(!$res) {
-            $error="Reason Code Type Already Exists";
-            $response['info']=$error;
-            $response['infoRes']='E'; //Error
-        }else {
-            if(mysqli_errno() != 1062){
-                move_uploaded_file($file_tmps,$filePath);
-                $response['info']="Record Updated Successfully";
-                $response['infoRes']="S"; // success
-                $response['mysqli_insert_id']=mysqli_insert_id($con);
-            }else{
-                $error="Reason Code Type Already Exists";
-                $response['info']=$error;
-                $response['infoRes']='E'; //Error
-            }
-        }
-    }
-    $status['data'] = $response;
-    echo json_encode($status);
-    mysqli_close($con);
-}
-
-if(isset($_POST['getReasonType'])){
-    $eqQ="SELECT id,message, color_code FROM sfs_reason_type";
-    $eqDetails=mysqli_query($con,$eqQ) or die('Error:'.mysqli_error($con));
-    
-    while ($row=mysqli_fetch_array($eqDetails)){
-           $id=$row['id'];
-           $message=$row['message'];
-           $color_code=$row['color_code'];
-           $getEQData[]=array('id' =>"$id",
-                      'message' =>"$message",
-                      'color_code' => "$color_code"
-           );
-        
-    }
-    $status['reasonTypes'] = $getEQData;
-    echo json_encode($status);
-    mysqli_close($con);
-}
+/* End of OEE Conf DB Operations */
 
 ?>
