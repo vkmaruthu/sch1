@@ -113,6 +113,13 @@ getLogin:function(){
 
 $(document).ready(function() {
 
+
+  $('.login-block').css({ height: $(window).innerHeight() });
+  $(window).resize(function(){
+    $('.login-block').css({ height: $(window).innerHeight() });
+  });
+
+
   $('#email').val('');
   $('#password').val('');
 

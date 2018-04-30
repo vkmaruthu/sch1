@@ -220,6 +220,31 @@ a {cursor: pointer;}
 }
 
 
+/* Expand Div CSS */
+.fullscreen{
+    z-index: 10003;
+    width: 100%;
+    height: 100%;
+    position: fixed;
+    top: 0px;
+    left: 0px;
+    margin-top: 0%;
+    background-color: rgba(0, 0, 0, 0.32);
+ }
+
+.expandAddCssDIV{
+  height: 100% !important;
+}
+.expandAddCssGraph{
+  height: 400px !important;
+}
+.expandAddCssGraphLineGraph {
+    height: 84% !important;
+}
+
+
+
+/* Responsive Screen CSS MOBILE TAB PC etc... */
 /* **************************************************************************************************** */
 /*==========  Mobile First Method  ==========*/
 
@@ -291,6 +316,10 @@ a {cursor: pointer;}
       .banner-sec{
         display: none;
       }
+     .rangeBarSpace {
+        margin-bottom: -30px;
+        margin-top: 30px;
+      }
 
 
 
@@ -347,7 +376,7 @@ a {cursor: pointer;}
         margin-left: 0%;
       }
       .headerTitle{
-          font-size: 19px;
+          font-size: 14px;
           margin-top: 7px;
       }
       .btnsStyle{
@@ -375,6 +404,10 @@ a {cursor: pointer;}
       .banner-sec{
         display: inline;
       }
+      .rangeBarSpace {
+        margin-bottom: -10px;
+        margin-top: 20px;
+       }
 
 
 

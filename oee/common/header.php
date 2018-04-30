@@ -2,11 +2,14 @@
   "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="zh-CN" xmlns:epub="http://www.idpf.org/2007/ops">
 <head>
-  <meta charset="utf-8">
-  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <!-- Meta, title, CSS, favicons, etc. -->
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Dashboard</title>
   <!-- Tell the browser to be responsive to screen width -->
-  <meta http-equiv="Content-Type" content="text/html; charset=utf-8 width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
+
 
 
 <!-- <!DOCTYPE html>
@@ -224,7 +227,7 @@
       <span class="company_title" id="compNameDB"></span>
     </div>
 
-    <div class="col-md-2" style=" margin-left: -4%;">  
+    <div class="col-md-2" style=" margin-left: -6%;">  
       <span class="logo-mini" id="compImgMini">
        <!--  <img src="../common/img/comp_logo/d/eimsdefault.png" class="cust_logo"> -->
       </span>

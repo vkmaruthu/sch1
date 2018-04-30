@@ -1,7 +1,28 @@
 <?php include('../common/header.php'); ?>
 <?php include('../common/sidebar.php'); ?>
 
+
+<!-- Highchart JS and CSS -->
+<script src="../common/highchart/highcharts.js"></script>
+<script src="../common/highchart/modules/data.js"></script>
+<script src="../common/highchart/modules/drilldown.js"></script>
+
+<script src="../common/highchart/highcharts-more.js"></script>
+<script src="../common/highchart/solid-gauge.js"></script>
+<script src="../common/highchart/bullet.js"></script>
+
 <script type="text/javascript">
+/* highchart variable */
+var operBtn=null;
+
+/* Shift Variables */
+var Ghours=null;  
+var GinTime=null;   
+var GoutTime=null; 
+var GtotalHour=null;  
+var GstartHour=null;
+var ShiftGobalData=null;
+
 var tempData;
 if(tempData===null||tempData===undefined){
    tempData={};
@@ -41,7 +62,335 @@ visitWorkcenter:function(){
 visitMachine:function(){
   window.location.href="../machine/index.php?selDate="+$('#userDateSel').val();
 },   
+loadShiftData:function(){
+    debugger;
 
+    var selDate = $("#userDateSel").val();
+    var url= "getDataController.php";
+
+/*    var comp_id=$('#comp_id').val();
+    var plant_id=$('#plant_id').val();
+    var workCenter_id=$('#workCenter_id').val();
+    var iobotMachine= $('#iobotMachine').val();
+*/
+    var comp_id=1;
+    var plant_id=1;
+    var workCenter_id=1;
+    var iobotMachine=1;
+
+    var myData = {loadShiftData:'loadShiftData',selDate:selDate,plant_id:plant_id,comp_id:comp_id,plant_id:plant_id,workCenter_id:workCenter_id,iobotMachine:iobotMachine };
+
+        $.ajax({
+            type:"POST",
+            url:url,
+            async: false,
+            dataType: 'json',
+            data:myData,
+            success: function(obj) {
+              debugger;
+              ShiftGobalData=obj.shiftData;
+             // $("#shiftDropdown").html('<option value="default">Default Shift</option>');
+              $("#shiftDropdown").html(' ');
+              if(obj.shiftData != null){
+                for(var i=0;i<obj.shiftData.length;i++)
+                {
+                  if(obj.shiftData[i].shift != 0){
+                    $("#shiftDropdown").append('<option value="'+obj.shiftData[i].id+'"> Shift-'+
+                        obj.shiftData[i].shift+' '+obj.shiftData[i].dateFormat+'</option>');
+                  }
+                  else{
+                     if(obj.shiftData.length>2){
+                        $("#shiftDropdown").append('<option value="'+obj.shiftData[i].id+'"> All Shift '+obj.shiftData[i].dateFormat+'</option>'); 
+                      }
+                  }
+                } 
+              }else{
+                $("#shiftDropdown").html('<option value="default">Default Shift</option>');
+              }            
+              
+              tempData.oeeDash.shiftsdata();                                     
+            }
+        });
+  },   
+  convertTime:function(time){
+    var d;
+    d = new Date(time);
+    d.setSeconds(d.getSeconds() - 1);
+    return tempData.oeeDash.addZero(d.getHours()) + ':'+tempData.oeeDash.addZero(d.getMinutes()) + ':' + tempData.oeeDash.addZero(d.getSeconds());
+  },
+  convertTimeWithOutOneSec:function(time){
+    var d;
+    d = new Date(time);
+   // d.setSeconds(d.getSeconds() - 1);
+    return tempData.oeeDash.addZero(d.getHours()) + ':'+tempData.oeeDash.addZero(d.getMinutes()) + ':' + tempData.oeeDash.addZero(d.getSeconds());
+  },
+  getCommonDataForShift:function(obj){
+    debugger;
+    var arr=[];
+   var hours = parseInt(obj.num_hours)*60*60;
+   var inTime = tempData.oeeDash.convertTimeWithOutOneSec(obj.in_time);
+   var outTime = tempData.oeeDash.convertTime(obj.out_time);
+   var d = new Date(obj.in_time);
+    arr.push({"hour":hours,"inTime":inTime,"outTime":outTime,"startHour":d.getHours()});
+    return arr;
+  },
+    shiftsdata:function(){
+     debugger;
+     // tempData.oeeDash.changeDateFormat(); 
+
+    var shift= $('#shiftDropdown').val();
+    var ShiftName = $("#shiftDropdown option:selected").text();
+
+    $('#ShiftLabel').html(ShiftName);
+
+    if(shift=='default'){ // if no shift are aviable it takes default.
+      Ghours=90200;  GinTime='00:00:00';   GoutTime='23:59:59';  GtotalHour=24;  GstartHour=0;
+/*      tempData.oeeDash.loadEventGraph(Ghours,GinTime,GoutTime,GtotalHour,GstartHour);
+      tempData.oeeDash.loadgraph_productivity_analysis1('00:00:00','23:59:59');*/
+      tempData.oeeDash.checkData();
+    }else{
+      var singalJosn=tempData.oeeDash.getObjects(ShiftGobalData,'id',shift);
+      var get3Data= tempData.oeeDash.getCommonDataForShift(singalJosn[0]); // Passing all Selected Shift Data
+      // hours,inTime,outTime,totalHour,startHour
+      tempData.oeeDash.AfterShiftSelect(get3Data[0].hour,get3Data[0].inTime,get3Data[0].outTime,parseInt(singalJosn[0].num_hours),get3Data[0].startHour);
+      
+    }
+  },
+  AfterShiftSelect:function(hours,inTime,outTime,totalHour,startHour){
+        // hours,inTime,outTime,totalHour,startHour
+        Ghours=hours;  GinTime=inTime;   GoutTime=outTime;  GtotalHour=totalHour;  GstartHour=startHour;
+
+/*        tempData.oeeDash.loadEventGraph(hours,inTime,outTime,totalHour,startHour); 
+        tempData.oeeDash.loadgraph_productivity_analysis1(inTime,outTime); //inTime,outTime*/
+        tempData.oeeDash.checkData();
+  },
+   getObjects:function(obj, key, val) {  // JSON Search function
+    debugger;
+    var objects = [];
+    for (var i in obj) {
+        if (!obj.hasOwnProperty(i)) continue;
+        if (typeof obj[i] == 'object') {
+            objects = objects.concat(tempData.cpsData.getObjects(obj[i], key, val));
+        } else if (i == key && obj[key] == val) {
+            objects.push(obj);
+        }
+    }
+    return objects;    
+  },
+loadToolHourlyDrilldown:function(obj,msg){        /* Load Hourly Chart with Drilldown */
+debugger;
+operBtn = Highcharts.chart('hourlyProduction', {
+  lang: {
+        drillUpText: '<',
+    },
+    chart: {
+        type: 'column',
+        events: {
+                drillup: function (e) {
+                  //alert();
+                  //debugger; 
+                  /*globalOrderNum='';
+                  tempData.cpsData.checkHourlyGraph('','');
+                  
+                  $('#hourlyLineGraphName').html('');
+                  $("#avgCountPerPartCycle").hide();
+                  $("#avgCountPerPartSetting").hide();*/
+              }
+            }
+    },
+    title: {
+        text: 'Hourly Production'
+    },
+    subtitle: {
+        text: ''
+    },
+    xAxis: {
+        type: 'category'
+    },
+    yAxis: {
+        title: {
+            text: 'Parts / PO'
+        }
+    },
+    legend: {
+        enabled: false
+    },
+    plotOptions: {
+        series: {
+            events: {
+              click: function (e){
+                 // tempData.cpsData.checkHourlyGraph(e.point.drilldown); 
+              }
+            },
+            borderWidth: 0,
+            dataLabels: {
+                enabled: true,
+                format: '{point.y}'
+            }
+        }
+    },
+    tooltip: {
+        headerFormat: '<span style="font-size:11px">{series.name}</span><br>',
+        pointFormat: '<span style="color:{point.color}">{point.name}</span>: <b>{point.y}</b><br/>'
+    },
+    series: [{
+        name: 'Production',
+        colorByPoint: true,
+        data: [
+                {
+                  "id": "900010055",
+                  "y": 5,
+                  "name": "8000500028 / MEGA-223-P01 (TC1)",
+                  "drilldown": "900010055"
+                }
+              ]
+    }],
+    drilldown: {
+        series: [
+                  {
+                    "name": "8000500028",
+                    "id": "900010055",
+                    "data": [
+                      [
+                        "6h",
+                        0
+                      ],
+                      [
+                        "7h",
+                        0
+                      ],
+                      [
+                        "8h",
+                        1
+                      ],
+                      [
+                        "9h",
+                        2
+                      ],
+                      [
+                        "10h",
+                        2
+                      ],
+                      [
+                        "11h",
+                        0
+                      ],
+                      [
+                        "12h",
+                        0
+                      ],
+                      [
+                        "13h",
+                        0
+                      ]
+                    ]
+                  }
+                ]
+    }
+});
+},
+loadMachineHourly:function(obj,msg){        /* Load Hourly Chart with Drilldown */
+debugger;
+  operBtn =  Highcharts.chart('hourlyProduction', {
+      chart: {
+          type: 'column'
+      },
+      title: {
+          text: msg
+      },
+      subtitle: {
+          text: ''
+      },
+      xAxis: {
+          categories:[
+                        "6h",
+                        "7h",
+                        "8h",
+                        "9h",
+                        "10h",
+                        "11h",
+                        "12h",
+                        "13h"
+                      ],
+          crosshair: true
+      },
+      yAxis: {
+          min: 0,
+          title: {
+              text: 'Parts'
+          }
+      },
+      tooltip: {
+          headerFormat: '<span style="font-size:10px">{point.key} Hour</span><table>',
+          pointFormat: '<tr><td style="font-size:14px;color:{series.color};padding:0">{series.name}: </td>' +
+              '<td style="padding:0;font-size:14px"><b>{point.y}</b></td></tr>',
+          footerFormat: '</table>',
+          shared: true,
+          useHTML: true
+      },
+      plotOptions: {
+          column: {
+              pointPadding: 0.2,
+              borderWidth: 0
+          },
+          series: {
+              borderWidth: 0,
+              dataLabels: {
+                  enabled: true,
+                  format: '{point.y}'
+              }
+          }
+      },
+      series:[
+                {
+                  "name": "TMC-1001",
+                  "data": [
+                    [
+                      "6h",
+                      0
+                    ],
+                    [
+                      "7h",
+                      0
+                    ],
+                    [
+                      "8h",
+                      0
+                    ],
+                    2,
+                    2,
+                    [
+                      "11h",
+                      0
+                    ],
+                    [
+                      "12h",
+                      0
+                    ],
+                    [
+                      "13h",
+                      0
+                    ]
+                  ]
+                }
+              ]
+      //[{"name":"TOOL12","data":[33,0,0,0,0,0,0,0,0,0,0,0,0,0,10,10,10,11]}]
+  });
+},
+checkData:function(){
+ //tempData.cpsData.changeDateFormat(); 
+    var tool = document.getElementById('tool');
+    var machine = document.getElementById('machine');
+    var overView = document.getElementById('production');
+
+    if(tool.checked){       
+      tempData.oeeDash.loadToolHourlyDrilldown(); 
+    }else if(machine.checked){        
+      tempData.oeeDash.loadMachineHourly();
+    }else{
+      $('#hourlyProduction').html('<h3> Under development </h3>');
+    }
+},
 
 };
 
@@ -49,6 +398,8 @@ visitMachine:function(){
 
 $(document).ready(function() {
 debugger; 
+
+
  $("#companyOEE").parent().addClass('active');
  $("#companyOEE").parent().parent().closest('.treeview').addClass('active menu-open');
  
@@ -60,15 +411,25 @@ tempData.oeeDash.oeeCirclePerc('oeePerc',75,'#E29C21');
 tempData.oeeDash.oeeCirclePerc('availPerc',40,'#FDCA6C');
 tempData.oeeDash.oeeCirclePerc('performPerc',20,'#DB4F31');
 tempData.oeeDash.oeeCirclePerc('qualityPerc',90,'#1AD34E');
+tempData.oeeDash.loadShiftData();
 
+$('#activityProgressDetails').click(function(e){
+    $('#activityProgressScreen').toggleClass('fullscreen'); 
+    $('#activityProgressScreen').removeAttr("style");
+    $('#activityProgress').toggleClass('fa-expand fa-caret-down'); 
+    $('#activityProgressScreen').find('.panel-default').toggleClass('expandAddCssDIV');
+    $('#activityProgressScreen').find('.panel-heading').toggleClass('topNavheight');
+     // tempData.oeeDash.loadOnExpand();
+});
 
-$('#compProfile').click(function(e){
-    $('#compProfileScreen').toggleClass('fullscreen'); 
-    $('#compProfileScreen').removeAttr("style");
-    $('#compProfile').toggleClass('fa-expand fa-caret-down'); 
-    $('#compProfileScreen').find('.panel-default').toggleClass('expandAddCssDIV');
-    $('#compProfileScreen').find('.panel-heading').toggleClass('topNavheight');
-     // tempData.cpsData.loadOnExpand();
+$('#expandHourlyChart').click(function(e){
+    $('#expandHourlyChartScreen').toggleClass('fullscreen'); 
+    $('#expandHourlyChartScreen').removeAttr("style");
+    $('#expandHourlyChart').toggleClass('fa-expand fa-caret-down'); 
+    $('#expandHourlyChartScreen').find('.panel-default').toggleClass('expandAddCssDIV');
+    $('#hourlyProduction').toggleClass('expandAddCssGraph');
+    operBtn.setSize($('#hourlyProduction').width(), $('#hourlyProduction').height());
+      //tempData.cpsData.loadOnExpand();
 });
 
 
@@ -95,7 +456,7 @@ $('#compProfile').click(function(e){
           
           <div class="col-md-6 col-xs-5">
             <select class="form-control" id="shiftDropdown" style="font-size: 12px; padding: 2px;"
-             onchange= "tempData.cpsData.shiftsdata();">
+             onchange= "tempData.oeeDash.shiftsdata();">
             </select>   
           </div>  
         
@@ -193,8 +554,8 @@ $('#compProfile').click(function(e){
             </div>
 
             <div class="col-md-12 col-xs-12" style="padding: 0px;">
-                <p class="col-md-7 col-xs-7 availTextRight">Breakdown Time</p>
-                <p class="col-md-5 col-xs-5 text-right availTextLeft">01:15</p>
+                <p class="col-md-8 col-xs-8 availTextRight">Breakdown Time</p>
+                <p class="col-md-4 col-xs-4 text-right availTextLeft">01:15</p>
                 <div class="col-md-12 col-xs-12" style="margin-top: -10px; margin-bottom: 4%;">    
                   <div class="progress progress-sm active" style="margin: auto;">
                     <div class="progress-bar progress-bar-primary progress-bar-striped" role="progressbar" aria-valuenow="20" aria-valuemin="0" aria-valuemax="100" style="width: 55%">
@@ -302,25 +663,28 @@ $('#compProfile').click(function(e){
 <!-- Quality Ends --> 
 
 <!-- Hourly Production -->
-    <div class="col-md-9 col-sm-12 col-xs-12">  
+    <div class="col-md-9 col-sm-12 col-xs-12" id="expandHourlyChartScreen">  
         <div class="panel panel-default dashFirstRow">
           <div class="panel-heading panelHeader">
             <div class="panel-title pull-left">
               <i class="fa fa-sliders fa-fw"></i> Hourly Production
             </div>
               <div class="panel-title pull-right">
-                <label> <input type="radio" name="order" class="minimal" checked> Machine </label>&nbsp;&nbsp;
-                <label> <input type="radio" name="order" class="minimal"> Production </label>&nbsp;&nbsp;
-                <label> <input type="radio" name="order" class="minimal"> Tool </label>
+                <label> <input type="radio" class="" name="order"  id="machine"  
+                  onclick="tempData.oeeDash.checkData();" checked> Machine </label>&nbsp;&nbsp;
+                <label> <input type="radio" class="" name="order" id="production" 
+                  onclick= "tempData.oeeDash.checkData();"> Production </label>&nbsp;&nbsp;
+                <label> <input type="radio" class="" name="order" id="tool" 
+                  onclick= "tempData.oeeDash.checkData();"> Tool </label>
 
-               <i id="compProfile" class="btn btn-xs fa fa-expand" aria-hidden="true"></i>
+               <i id="expandHourlyChart" class="btn btn-xs fa fa-expand" aria-hidden="true"></i>
               </div> 
             <div class="clearfix"></div>
           </div>
           <div class="panel-body">  
-            <div class="row">
+            <div class="table-responsive">
                 <!-- Load Machine & Production Order Chart --> <!-- class="widthClass"  -->
-                <div id="hourlyProduction" style="width:100%;height:270px;border: 1px solid;"></div>           
+                <div id="hourlyProduction" style="width:99%;height:270px;"></div>           
 
             </div>      
           </div>
@@ -330,7 +694,7 @@ $('#compProfile').click(function(e){
 
 
 <!-- Shift Details -->
-    <div class="col-md-3 col-sm-6 col-xs-12">  
+    <div class="col-md-3 col-sm-6 col-xs-12" id="expandShiftDetailsScreen">  
         <div class="panel panel-default dashFirstRow">
           <div class="panel-heading panelHeader">
             <div class="panel-title pull-left">
@@ -339,9 +703,9 @@ $('#compProfile').click(function(e){
             <div class="panel-title pull-right">
               <div id="statusImg"></div>
             </div>
-              <div class="panel-title pull-right">
-               <i id="compProfile" class="btn btn-xs fa fa-expand" aria-hidden="true"></i>
-              </div> 
+              <!-- <div class="panel-title pull-right">
+               <i id="expandShiftDetails" class="btn btn-xs fa fa-expand" aria-hidden="true"></i>
+              </div>  -->
             <div class="clearfix"></div>
           </div>
           <div class="panel-body">  
@@ -371,7 +735,7 @@ $('#compProfile').click(function(e){
 
 
 <!-- Activity Progress -->
-    <div class="col-md-9 col-sm-12 col-xs-12">  
+    <div class="col-md-9 col-sm-12 col-xs-12" id="activityProgressScreen">  
         <div class="panel panel-default dashFirstRow">
           <div class="panel-heading panelHeader">
             <div class="panel-title pull-left">
