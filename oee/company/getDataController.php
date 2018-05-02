@@ -128,7 +128,7 @@ if(isset($_POST['deleteCompany'])){
     mysqli_close($con);
 }
 
-/* ------------Plant DB Operation --------------------- */
+/* ------------------- Plant DB Operation --------------------- */
 
 if(isset($_POST['savePlant'])){
     $comp_id=$_POST['comp_id'];
