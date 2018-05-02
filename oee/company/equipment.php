@@ -66,6 +66,7 @@ var myData={getEquipmentDetails:"getEquipmentDetails", "wc_id":wc_id, "comp_id":
                   { data: "eq_protocol" },
                   { data: "eq_type_name" },
                   { data: "model_name" },
+                  { data: "mac_id" },
                   { data: "reason_code_name" ,className: "text-left",
                     render: function (data, type, row, meta) {
                       var a=row.reason_code_name;
@@ -220,8 +221,8 @@ saveEquipment:function(){
 	  var eq_protocol = $('#eq_protocol').val();
 	  var eqType = $('#eq_type').val();
 	  var model = $('#model').val();
+	  var mac_id = $('#mac_id').val();
 	  var reasons = $('#reason_codes').val();
-	  
 	    if(eq_code == "") {
 	        $('#eq_code').css('border-color', 'red');
 	        return false;
@@ -239,12 +240,19 @@ saveEquipment:function(){
       		  }else {
       			$('#msg').html('');
       		  }
-    	    if(eq_protocol == ""){
-    			 $('#eq_protocol').css('border-color', 'red');
+    		  
+    	    if(eq_protocol == 0){
+    	    	$('#msg').html('*Select Protocol Type');
     		     return false;
     		  }else {
-    			  $('#eq_protocol').css('border-color', '');
+    			  $('#msg').html('');
     		  }
+      		  if(mac_id == ""){
+      			 $('#mac_id').css('border-color', 'red');
+      			 return false;
+      	  	  }else{
+      	  		$('#mac_id').css('border-color', '');
+          	  }
 
     	    if(reasons == ""){
     	    	$('#msg').html('*Select Reason Codes');
@@ -252,6 +260,7 @@ saveEquipment:function(){
       		  }else {
       			$('#msg').html('');
       		  }
+
   		  
 	  $.ajax({
 	    type:"POST",
@@ -304,10 +313,11 @@ editEquipment:function (id, wcId, eqTypeId, modelId){
          $('#eq_id').val(globalEquipmentData[i].id);
          $('#eq_code').val(globalEquipmentData[i].eq_code);
          $('#eq_desc').val(globalEquipmentData[i].eq_desc);
-         $('#eq_protocol').val(globalEquipmentData[i].eq_protocol);
+         $('#mac_id').val(globalEquipmentData[i].mac_id);
          
          $('#eq_type_id').val(globalEquipmentData[i].eq_type_id);
          $('#eq_model_id').val(globalEquipmentData[i].eq_model_id);
+         $("#eq_protocol").val(globalEquipmentData[i].protocol_id).change();
          
          $('#model').val(modelId).change();
          $('#eq_type').val(eqTypeId).change();
@@ -585,6 +595,27 @@ getEQTypeForDropdown:function(){//reasonsArray
 	      } 
 	  });
 },
+getEQProtocolTypeForDropdown:function(){//reasonsArray
+	  var url="getDataController.php";
+	  var myData = {getEqProtocolType:'getEqProtocolType'};
+	  $.ajax({
+	    type:"POST",
+	    url:url,
+	    async: false,
+	    dataType: 'json',
+	    cache: false,
+	    data:myData,
+	    success: function(obj) {
+	    	 $("#eq_protocol").html('');
+	    	 $("#eq_protocol").append('<option value="0"> Select Protocol Type </option>');
+	      if(obj.protocolTypes !=null){
+          		for(var i=0; i< obj.protocolTypes.length; i++){
+      			   $("#eq_protocol").append('<option value="'+obj.protocolTypes[i].id+'">'+obj.protocolTypes[i].name+'</option>'); 
+          		}
+	        }
+	      } 
+	  });
+},
 getReasonsForDropdown:function(){
  	  var url="getDataController.php";
  	  var myData = {getReasons:'getReasons'};
@@ -619,6 +650,7 @@ clearForm:function(){
     $("#reason_codes").val('').change();
     $("#model").val(0).change();  
     $("#eq_type").val(0).change();
+    $("#eq_protocol").val(0).change();
     $("#img_id").val(''); 
     $("#eq_id").val('');      
 }
@@ -651,6 +683,7 @@ debugger;
       tempData.oeeEquipment.getModelNameForDropdown();
       tempData.oeeEquipment.getEQTypeForDropdown();
       tempData.oeeEquipment.getReasonsForDropdown();
+      tempData.oeeEquipment.getEQProtocolTypeForDropdown();
    
     $('#createEquipment').click(function(){
     	 tempData.oeeEquipment.clearForm();
@@ -669,8 +702,11 @@ debugger;
    	   $('#fromEquipmentType')[0].reset();
     });
     $('#eq_code').keyup(function(){
-       this.value = this.value.toUpperCase();
        $('#eq_code').css('border-color', '');
+    });
+
+    $('#mac_id').keyup(function(){
+    	$('#mac_id').css('border-color', '');
     });
 
     $('#model_name').keyup(function(){
@@ -684,7 +720,11 @@ debugger;
     
     $('#eq_type').change(function(){
         $('#msg').html('');
-    }); 
+    });
+
+    $('#eq_protocol').change(function(){
+        $('#msg').html('');
+    });  
         
     $('#reason_codes').change(function(){
          $('#msg').html('');
@@ -734,7 +774,7 @@ debugger;
                   <label class="control-label col-md-4 col-sm-6 col-xs-12">Code <span class="required">*</span></label>
                   <div class="col-md-6 col-sm-6 col-xs-12">
                     <input type="text" name="eq_code" id="eq_code" onkeyup=""
-                     placeholder="Equipment Code" maxlength="4" class="form-control" required="true" autofocus/>
+                     placeholder="Equipment Code" maxlength="10" class="form-control" required="true" autofocus/>
                   </div>
                 </div>
                 
@@ -777,21 +817,29 @@ debugger;
                         <i class="fa  fa-plus"></i>
                       </button>
                     </div>
-                    
                 </div>
               </div>
               
-              <div class="row" style="margin-top: 0px;">
+              <div class="row">
                    <div class="col-md-6">
                         <label class="control-label col-md-4 col-sm-6 col-xs-12">Protocol<span class="required">*</span></label>
                         <div class="col-md-6 col-sm-6 col-xs-12">
-                          <input type="text" name="eq_protocol" id="eq_protocol" onkeyup=""
-                           placeholder="Equipment Protocol" class="form-control" required="true"/>
+                            <div class="form-group">
+                                <select class="form-control select2"  id="eq_protocol" name="eq_protocol" style="width:100%;">
+                                </select>
+                            </div>
+                        </div>   
+                    </div>
+                    <div class="col-md-6">
+                        <label class="control-label col-md-4 col-sm-6 col-xs-12">Mac Id<span class="required">*</span></label>
+                        <div class="col-md-6 col-sm-6 col-xs-12">
+                          <input type="text" name="mac_id" id="mac_id" onkeyup=""
+                           placeholder="Mac Id" class="form-control" required="true"/>
                         </div>   
                     </div>
               </div>
               
-              <div class="row" style="margin-top: 10px;">
+              <div class="row">
                   <div class="col-md-6">
                       <label class="control-label col-md-4 col-sm-6 col-xs-12">Image Upload</label>
                       <div class="col-md-6 col-sm-6 col-xs-12">    
@@ -849,6 +897,7 @@ debugger;
               <th>Protocol</th>
               <th>Equipment Type</th>
               <th>Model</th>
+              <th>Mac Id</th>
               <th>Reason Code</th>
               <th>Action</th>
              </tr>

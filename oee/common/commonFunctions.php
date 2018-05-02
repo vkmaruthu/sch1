@@ -8,13 +8,13 @@ function mysqli_insert_array($table, $data, $exclude = array()) {
     foreach( array_keys($data) as $key ) {
         if( !in_array($key, $exclude) ) {
             $fields[] = "`$key`";
-
+            
             if($data[$key] == 'NULL'){
                 $values[] =$data[$key];
             }else{
                 $values[] ="'" .$data[$key]. "'";
             }
-
+            
             //$values[] = "'" .$data[$key]. "'";
         }
     }
@@ -30,7 +30,7 @@ function mysqli_update_array($table, $data, $exclude = array(),$cond) {
     if( !is_array($exclude) ) $exclude = array($exclude);
     foreach( array_keys($data) as $key ) {
         if( !in_array($key, $exclude) ) {
-
+            
             if($data[$key] == 'NULL'){
                 $dataA[]=$key."=".$data[$key];
             }else{
@@ -100,7 +100,7 @@ if(isset($_POST['getPlantDetails'])){
     $comp_id=$_POST['comp_id'];
     $plant_id =$_POST['plant_id'];
     if ($plant_id != "") {
-        $plantQ="SELECT p.id, p.code, p.descp, p.address, p.contact_person, p.contact_number, p.image_file_name, p.comp_id, c.code as comp_code FROM 
+        $plantQ="SELECT p.id, p.code, p.descp, p.address, p.contact_person, p.contact_number, p.image_file_name, p.comp_id, c.code as comp_code FROM
                  sfs_plant p, sfs_company c where p.comp_id=c.id and p.id=".$plant_id." and p.comp_id=".$comp_id;
     }elseif ($comp_id != ""){
         $plantQ="SELECT p.id, p.code, p.descp, p.address, p.contact_person, p.contact_number, p.image_file_name, p.comp_id, c.code as comp_code FROM
@@ -108,7 +108,7 @@ if(isset($_POST['getPlantDetails'])){
     }else {
         
     }
-   $plantDetails=mysqli_query($con,$plantQ) or die('Error:'.mysqli_error($con));
+    $plantDetails=mysqli_query($con,$plantQ) or die('Error:'.mysqli_error($con));
     
     while ($row=mysqli_fetch_array($plantDetails)){
         $id=$row['id'];
@@ -144,7 +144,7 @@ if(isset($_POST['getWCDetails'])){
     $plant_id=$_POST['plant_id'];
     $wc_id = $_POST['wc_id'];
     if ($wc_id != "") {
-        $plantQ="SELECT wc.id, wc.code, wc.descp, wc.contact_person, wc.contact_number, wc.image_file_name, wc.plant_id FROM sfs_workcenter wc, 
+        $plantQ="SELECT wc.id, wc.code, wc.descp, wc.contact_person, wc.contact_number, wc.image_file_name, wc.plant_id FROM sfs_workcenter wc,
                  sfs_plant p, sfs_company c where wc.plant_id=p.id and p.comp_id=c.id and wc.id=".$wc_id;
     }elseif ($plant_id != "") {
         $plantQ="SELECT wc.id, wc.code, wc.descp, wc.contact_person, wc.contact_number, wc.image_file_name, wc.plant_id FROM sfs_workcenter wc,
@@ -187,31 +187,33 @@ if(isset($_POST['getEquipmentDetails'])){
     $eq_id = $_POST['eq_id'];
     
     if ($eq_id != '') {
-        $eqQ="SELECT eq.id,eq.eq_code,eq.eq_desc,eq.image_file_name, eq.eq_protocol, eq.eq_type_id, eq.eq_model_id, eq.wc_id, 
-             eqm.name,eqt.eq_type_desc, eq.reason_code_arr FROM sfs_equipment eq, sfs_equipment_model eqm, sfs_equipment_type eqt 
-             where eq.eq_model_id=eqm.id and eq.eq_type_id=eqt.id and  wc_id=".$wc_id." and eq.id=".$eq_id;
+        $eqQ="SELECT eq.id,eq.code,eq.descp,eq.image_file_name, eq.protocol_id, eq.type_id, eq.model_id, eq.wc_id,
+             eqm.name,eqt.eq_type_desc, eq.reason_code_arr, eqp.name as eq_protocol, eq.mac_id FROM sfs_equipment eq, sfs_equipment_model eqm,
+             sfs_equipment_type eqt, sfs_equipment_protocol eqp where eq.model_id=eqm.id and eq.type_id=eqt.id and
+             eqp.id=eq.protocol_id and wc_id=".$wc_id." and eq.id=".$eq_id;
     }else{
-      $eqQ="SELECT eq.id,eq.eq_code,eq.eq_desc,eq.image_file_name, eq.eq_protocol, eq.eq_type_id, eq.eq_model_id, eq.wc_id,
-            eqm.name,eqt.eq_type_desc, eq.reason_code_arr FROM sfs_equipment eq, sfs_equipment_model eqm, sfs_equipment_type eqt
-            where eq.eq_model_id=eqm.id and eq.eq_type_id=eqt.id and  wc_id=".$wc_id;
+        $eqQ="SELECT eq.id, eq.code, eq.descp, eq.image_file_name, eq.protocol_id, eq.type_id, eq.model_id, eq.wc_id,
+             eqm.name, eqt.descp as eq_type_desc, eq.reason_code_arr, eqp.name as eq_protocol, eq.mac_id  FROM sfs_equipment eq, sfs_equipment_model eqm,
+             sfs_equipment_type eqt, sfs_equipment_protocol eqp where eq.model_id=eqm.id and
+             eq.type_id=eqt.id and eqp.id=eq.protocol_id and wc_id=".$wc_id;
     }
     
     $eqDetails=mysqli_query($con,$eqQ) or die('Error:'.mysqli_error($con));
     
     while ($row=mysqli_fetch_array($eqDetails)){
         $id=$row['id'];
-        $eq_code=$row['eq_code'];
-        $eq_desc=$row['eq_desc'];
+        $eq_code=$row['code'];
+        $eq_desc=$row['descp'];
         $eq_protocol=$row['eq_protocol'];
-        $eq_type_id=$row['eq_type_id'];
-        $eq_model_id=$row['eq_model_id'];
+        $protocol_id=$row['protocol_id'];
+        $eq_type_id=$row['type_id'];
+        $eq_model_id=$row['model_id'];
         $image_file_name=$row['image_file_name'];
         $wc_id=$row['wc_id'];
         $model_name=$row['name'];
         $eq_type_name=$row['eq_type_desc'];
         $reason_code_arr=$row['reason_code_arr'];
-        
-        //$reasonCodeName = getAllReasonCodeNames($reason_code_arr);
+        $mac_id=$row['mac_id'];
         $q="select message from sfs_reason_code where id IN(".$reason_code_arr.")";
         $res=mysqli_query($con,$q) or die('Error:'.mysqli_error($con));
         while ($row=mysqli_fetch_array($res)){
@@ -223,6 +225,7 @@ if(isset($_POST['getEquipmentDetails'])){
             'eq_code' =>"$eq_code",
             'eq_desc' =>"$eq_desc",
             'eq_protocol' => "$eq_protocol",
+            'protocol_id' => "$protocol_id",
             'eq_type_id' => "$eq_type_id",
             'eq_model_id' => "$eq_model_id",
             'image_file_name' =>"$image_file_name",
@@ -230,7 +233,8 @@ if(isset($_POST['getEquipmentDetails'])){
             'model_name' => "$model_name",
             'eq_type_name' => "$eq_type_name",
             'reason_code_arr' => "$reason_code_arr",
-            'reason_code_name' => "$strMsg"
+            'reason_code_name' => "$strMsg",
+            'mac_id' => "$mac_id"
         );
         $strMsg='';
     }
