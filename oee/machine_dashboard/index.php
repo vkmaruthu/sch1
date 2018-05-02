@@ -11,9 +11,29 @@
 <script src="../common/highchart/solid-gauge.js"></script>
 <script src="../common/highchart/bullet.js"></script>
 
+<style type="text/css">
+.expandAddCssDIV{
+  height: 100% !important;
+}
+.expandAddCssGraph{
+  height: 400px !important;
+}
+.expandAddCssGraphLineGraph {
+    height: 84% !important;
+}
+.fa:hover{
+  background-color: #c9cac9;
+}
+.progressCss{
+  height: 25px;
+}
+
+
+</style>
 <script type="text/javascript">
 /* highchart variable */
 var operBtn=null;
+var activity=null;
 
 /* Shift Variables */
 var Ghours=null;  
@@ -147,6 +167,7 @@ loadShiftData:function(){
       Ghours=90200;  GinTime='00:00:00';   GoutTime='23:59:59';  GtotalHour=24;  GstartHour=0;
 /*      tempData.oeeDash.loadEventGraph(Ghours,GinTime,GoutTime,GtotalHour,GstartHour);
       tempData.oeeDash.loadgraph_productivity_analysis1('00:00:00','23:59:59');*/
+      tempData.oeeDash.activityAnalysis();
       tempData.oeeDash.checkData();
     }else{
       var singalJosn=tempData.oeeDash.getObjects(ShiftGobalData,'id',shift);
@@ -377,6 +398,87 @@ debugger;
       //[{"name":"TOOL12","data":[33,0,0,0,0,0,0,0,0,0,0,0,0,0,10,10,10,11]}]
   });
 },
+activityAnalysis:function(obj,msg){
+debugger;  
+activity = Highcharts.chart('activityAnalysis', {
+    chart: {
+        plotBackgroundColor: null,
+        plotBorderWidth: null,
+        plotShadow: false,
+        type: 'pie'
+    },
+    title: {
+        text: msg
+    },
+    tooltip: {
+        pointFormat: '{series.name}: <b>{point.getHHMM}</b></b>'
+    },
+    plotOptions: {
+        pie: {
+            allowPointSelect: true,
+            cursor: 'pointer',
+            dataLabels: {
+                enabled: true,
+                format: '{point.getHHMM}',
+                style: {
+                    color: (Highcharts.theme && Highcharts.theme.contrastTextColor) || 'black'
+                },
+                connectorColor: 'silver'
+            },
+            showInLegend: true
+        }
+    },
+     legend: {
+            itemStyle: {
+                color: 'black',
+                fontSize: '10px'
+            }
+        },
+    series: [{
+        name: 'Productivity',
+        colorByPoint: true,
+        data: [
+                {
+                  "name": "Idle Production",
+                  "y": 3.13,
+                  "color": "#c6a43d",
+                  "getHHMM": "03:07"
+                },
+                {
+                  "name": "Setting",
+                  "y": 0.69,
+                  "color": "#FFA500",
+                  "getHHMM": "00:41"
+                },
+                {
+                  "name": "Idle No Production",
+                  "y": 0.37,
+                  "color": "#000",
+                  "getHHMM": "00:22"
+                },
+                {
+                  "name": "Productive",
+                  "y": 0.86,
+                  "color": "#50B432",
+                  "getHHMM": "00:51"
+                },
+                {
+                  "name": "Inspection",
+                  "y": 0.08,
+                  "color": "#ffff00",
+                  "getHHMM": "00:04"
+                },
+                {
+                  "name": "Maintenance",
+                  "y": 2.67,
+                  "color": "#ED561B",
+                  "getHHMM": "02:40"
+                }
+              ]
+    }]
+  });
+
+},
 checkData:function(){
  //tempData.cpsData.changeDateFormat(); 
     var tool = document.getElementById('tool');
@@ -413,15 +515,6 @@ tempData.oeeDash.oeeCirclePerc('performPerc',20,'#DB4F31');
 tempData.oeeDash.oeeCirclePerc('qualityPerc',90,'#1AD34E');
 tempData.oeeDash.loadShiftData();
 
-$('#activityProgressDetails').click(function(e){
-    $('#activityProgressScreen').toggleClass('fullscreen'); 
-    $('#activityProgressScreen').removeAttr("style");
-    $('#activityProgress').toggleClass('fa-expand fa-caret-down'); 
-    $('#activityProgressScreen').find('.panel-default').toggleClass('expandAddCssDIV');
-    $('#activityProgressScreen').find('.panel-heading').toggleClass('topNavheight');
-     // tempData.oeeDash.loadOnExpand();
-});
-
 $('#expandHourlyChart').click(function(e){
     $('#expandHourlyChartScreen').toggleClass('fullscreen'); 
     $('#expandHourlyChartScreen').removeAttr("style");
@@ -429,7 +522,15 @@ $('#expandHourlyChart').click(function(e){
     $('#expandHourlyChartScreen').find('.panel-default').toggleClass('expandAddCssDIV');
     $('#hourlyProduction').toggleClass('expandAddCssGraph');
     operBtn.setSize($('#hourlyProduction').width(), $('#hourlyProduction').height());
-      //tempData.cpsData.loadOnExpand();
+});
+
+$('#expandActivityAnalysis').click(function(e){
+    $('#activityAnalysisScreen').toggleClass('fullscreen'); 
+    $('#activityAnalysisScreen').removeAttr("style");
+    $('#expandActivityAnalysis').toggleClass('fa-expand fa-caret-down'); 
+    $('#activityAnalysisScreen').find('.panel-default').toggleClass('expandAddCssDIV');
+    $('#activityAnalysis').toggleClass('expandAddCssGraph');
+    activity.setSize($('#activityAnalysis').width(), $('#activityAnalysis').height());
 });
 
 
@@ -748,11 +849,39 @@ $('#expandHourlyChart').click(function(e){
             <div class="clearfix"></div>
           </div>
           <div class="panel-body">  
-            <div class="row">
-                <!-- Load Machine & Production Order Chart --> <!-- class="widthClass"  -->
-                <div id="hourlyProduction" style="width:100%;height:270px;border: 1px solid;"></div>           
+              <div class="table-responsive" style="height: 270px;">
+                  <!-- <div id="productivity_analysis" style="width: 100%; height: 400px;"></div> -->
+<table class="table table-striped col-lg-12 col-md-12 col-sm-12 col-xs-12">
+<!--       <thead>
+        <tr style="font-size: 13px;background-color: rgba(222, 219, 219, 0.42);">
+          <th>Productivity Trend</th>          
+          <th style="width:4%;"><span style="color:#50B432">Up</span></th>
+          <th style="width:4%;"><span style="color:#ED561B">Down</span></th>  
+          <th style="width:4%;"><span style="color:#8c7373">Idle</span></th>  
+          <th style="width:4%;"><span style="color:orange">Setting</span></th>          
+          <th style="width:1%;"><i class="fa fa-percent pointer" id="showPercent" aria-hidden="true"></i></th>          
+         </tr>
+      </thead> -->
+      <tbody class="productive-analysis"><tr id="TMC-1001">
+        <td><div class="progress progressCss" style="margin-bottom: 0px;">
+          <div class="progress-bar progress-bar-defalt" style="width:0.1840277777777778%" title="2018-04-27 06:00:00 to 2018-04-27 06:00:53"></div> <div class="progress-bar" style="width:3.75%;background-color:#c6a43d" title="Idle Production - 06:00:53 to 06:18:53"> </div><div class="progress-bar" style="width:8.666666666666666%;background-color:#FFA500" title="Setting - 06:18:53 to 07:00:29"> </div><div class="progress-bar" style="width:0%;background-color:#3248b4" title="Part End - 07:00:29 to 07:00:29"> </div><div class="progress-bar" style="width:0.34375%;background-color:#000" title="Idle No Production - 07:00:29 to 07:02:08"> </div><div class="progress-bar" style="width:0.3645833333333333%;background-color:#50B432" title="Productive - 07:02:08 to 07:03:53"> </div><div class="progress-bar" style="width:0%;background-color:#338abd" title="Part Start - 07:02:08 to 07:02:08"> </div><div class="progress-bar" style="width:1.1250000000000013%;background-color:#50B432" title="Productive - 07:03:53 to 07:09:25"> </div><div class="progress-bar" style="width:0.4097222222222222%;background-color:#c6a43d" title="Idle Production - 07:09:25 to 07:11:23"> </div><div class="progress-bar" style="width:0%;background-color:#50B432" title="Productive - 07:09:25 to 07:09:25"> </div><div class="progress-bar" style="width:0.9375%;background-color:#c6a43d" title="Idle Production - 07:11:23 to 07:15:53"> </div><div class="progress-bar" style="width:0.5381944444444444%;background-color:#ffff00" title="Inspection - 07:15:53 to 07:18:28"> </div><div class="progress-bar" style="width:0%;background-color:#3248b4" title="Part End - 07:18:28 to 07:18:28"> </div><div class="progress-bar" style="width:0.03819444444444445%;background-color:#338abd" title="Part Start - 07:18:29 to 07:18:40"> </div><div class="progress-bar" style="width:0.7152777777777775%;background-color:#50B432" title="Productive - 07:18:40 to 07:22:11"> </div><div class="progress-bar" style="width:2.4375%;background-color:#c6a43d" title="Idle Production - 07:22:11 to 07:33:53"> </div><div class="progress-bar" style="width:0.2708333333333333%;background-color:#3248b4" title="Part End - 07:33:53 to 07:35:11"> </div><div class="progress-bar" style="width:0.3576388888888889%;background-color:#000" title="Idle No Production - 07:35:11 to 07:36:54"> </div><div class="progress-bar" style="width:0.006944444444444444%;background-color:#338abd" title="Part Start - 07:36:54 to 07:36:56"> </div><div class="progress-bar" style="width:0.32638888888888873%;background-color:#50B432" title="Productive - 07:36:56 to 07:38:29"> </div><div class="progress-bar" style="width:0.6006944444444444%;background-color:#c6a43d" title="Idle Production - 07:38:31 to 07:41:24"> </div><div class="progress-bar" style="width:0%;background-color:#50B432" title="Productive - 07:38:31 to 07:38:31"> </div><div class="progress-bar" style="width:2.5%;background-color:#c6a43d" title="Idle Production - 07:41:24 to 07:53:24"> </div><div class="progress-bar" style="width:0.003472222222222222%;background-color:#3248b4" title="Part End - 07:53:24 to 07:53:25"> </div><div class="progress-bar" style="width:0.6215277777777778%;background-color:#000" title="Idle No Production - 07:53:25 to 07:56:24"> </div><div class="progress-bar" style="width:0.059027777777777776%;background-color:#338abd" title="Part Start - 07:56:24 to 07:56:41"> </div><div class="progress-bar" style="width:0.7291666666666663%;background-color:#50B432" title="Productive - 07:56:41 to 08:00:13"> </div><div class="progress-bar" style="width:2.642361111111111%;background-color:#c6a43d" title="Idle Production - 08:00:13 to 08:12:54"> </div><div class="progress-bar" style="width:0.059027777777777776%;background-color:#3248b4" title="Part End - 08:12:54 to 08:13:11"> </div><div class="progress-bar" style="width:0.5659722222222222%;background-color:#000" title="Idle No Production - 08:13:11 to 08:15:54"> </div><div class="progress-bar" style="width:0.020833333333333332%;background-color:#338abd" title="Part Start - 08:15:54 to 08:16:00"> </div><div class="progress-bar" style="width:0.6249999999999998%;background-color:#50B432" title="Productive - 08:16:00 to 08:19:05"> </div><div class="progress-bar" style="width:2.7743055555555554%;background-color:#c6a43d" title="Idle Production - 08:19:05 to 08:32:24"> </div><div class="progress-bar" style="width:0.024305555555555556%;background-color:#3248b4" title="Part End - 08:32:24 to 08:32:31"> </div><div class="progress-bar" style="width:0.6006944444444444%;background-color:#000" title="Idle No Production - 08:32:31 to 08:35:24"> </div><div class="progress-bar" style="width:0.2569444444444444%;background-color:#338abd" title="Part Start - 08:35:24 to 08:36:38"> </div><div class="progress-bar" style="width:0.5868055555555552%;background-color:#50B432" title="Productive - 08:36:38 to 08:39:27"> </div><div class="progress-bar" style="width:0.3958333333333333%;background-color:#c6a43d" title="Idle Production - 08:39:30 to 08:41:24"> </div><div class="progress-bar" style="width:0%;background-color:#50B432" title="Productive - 08:39:30 to 08:39:30"> </div><div class="progress-bar" style="width:1.5590277777777777%;background-color:#c6a43d" title="Idle Production - 08:41:25 to 08:48:54"> </div><div class="progress-bar" style="width:0.3333333333333332%;background-color:#50B432" title="Productive - 08:48:54 to 08:50:29"> </div><div class="progress-bar" style="width:0.4930555555555556%;background-color:#c6a43d" title="Idle Production - 08:50:30 to 08:52:52"> </div><div class="progress-bar" style="width:0.024305555555555556%;background-color:#50B432" title="Productive - 08:52:53 to 08:52:58"> </div><div class="progress-bar" style="width:0.2951388888888889%;background-color:#3248b4" title="Part End - 08:53:00 to 08:54:25"> </div><div class="progress-bar" style="width:0.44791666666666663%;background-color:#ffff00" title="Inspection - 08:54:25 to 08:56:34"> </div><div class="progress-bar" style="width:0%;background-color:#338abd" title="Part Start - 08:56:34 to 08:56:34"> </div><div class="progress-bar" style="width:0.4340277777777777%;background-color:#50B432" title="Productive - 08:56:34 to 08:58:38"> </div><div class="progress-bar" style="width:2.0243055555555554%;background-color:#c6a43d" title="Idle Production - 08:58:41 to 09:08:24"> </div><div class="progress-bar" style="width:0.11111111111111112%;background-color:#50B432" title="Productive - 09:08:24 to 09:08:56"> </div><div class="progress-bar" style="width:0.5138888888888888%;background-color:#c6a43d" title="Idle Production - 09:08:56 to 09:11:24"> </div><div class="progress-bar" style="width:0.21875%;background-color:#50B432" title="Productive - 09:11:24 to 09:12:27"> </div><div class="progress-bar" style="width:0.3402777777777778%;background-color:#c6a43d" title="Idle Production - 09:12:27 to 09:14:05"> </div><div class="progress-bar" style="width:0%;background-color:#50B432" title="Productive - 09:12:27 to 09:12:27"> </div><div class="progress-bar" style="width:0.3784722222222222%;background-color:#000" title="Idle No Production - 09:14:05 to 09:15:54"> </div><div class="progress-bar" style="width:0%;background-color:#3248b4" title="Part End - 09:14:05 to 09:14:05"> </div><div class="progress-bar" style="width:0.0625%;background-color:#338abd" title="Part Start - 09:15:54 to 09:16:12"> </div><div class="progress-bar" style="width:0.3506944444444443%;background-color:#50B432" title="Productive - 09:16:12 to 09:17:54"> </div><div class="progress-bar" style="width:2.7083333333333335%;background-color:#c6a43d" title="Idle Production - 09:17:54 to 09:30:54"> </div><div class="progress-bar" style="width:0.36805555555555547%;background-color:#50B432" title="Productive - 09:30:54 to 09:32:40"> </div><div class="progress-bar" style="width:0.5659722222222222%;background-color:#c6a43d" title="Idle Production - 09:32:41 to 09:35:24"> </div><div class="progress-bar" style="width:0.0763888888888889%;background-color:#3248b4" title="Part End - 09:35:24 to 09:35:46"> </div><div class="progress-bar" style="width:0.4340277777777778%;background-color:#000" title="Idle No Production - 09:35:46 to 09:37:51"> </div><div class="progress-bar" style="width:0%;background-color:#338abd" title="Part Start - 09:37:51 to 09:37:51"> </div><div class="progress-bar" style="width:0.4861111111111111%;background-color:#50B432" title="Productive - 09:37:51 to 09:40:13"> </div><div class="progress-bar" style="width:0.5590277777777778%;background-color:#c6a43d" title="Idle Production - 09:40:13 to 09:42:54"> </div><div class="progress-bar" style="width:0%;background-color:#50B432" title="Productive - 09:40:13 to 09:40:13"> </div><div class="progress-bar" style="width:0.625%;background-color:#c6a43d" title="Idle Production - 09:42:54 to 09:45:54"> </div><div class="progress-bar" style="width:0.26041666666666663%;background-color:#50B432" title="Productive - 09:45:54 to 09:47:09"> </div><div class="progress-bar" style="width:3.1770833333333335%;background-color:#c6a43d" title="Idle Production - 09:47:10 to 10:02:25"> </div><div class="progress-bar" style="width:0.0625%;background-color:#3248b4" title="Part End - 10:02:25 to 10:02:43"> </div><div class="progress-bar" style="width:0.2916666666666667%;background-color:#338abd" title="Part Start - 10:02:43 to 10:04:07"> </div><div class="progress-bar" style="width:1.9409722222222225%;background-color:#50B432" title="Productive - 10:04:07 to 10:13:29"> </div><div class="progress-bar" style="width:0.3472222222222222%;background-color:#c6a43d" title="Idle Production - 10:13:29 to 10:15:09"> </div><div class="progress-bar" style="width:0.3784722222222222%;background-color:#50B432" title="Productive - 10:13:29 to 10:16:58"> </div><div class="progress-bar" style="width:0.40625%;background-color:#c6a43d" title="Idle Production - 10:16:58 to 10:18:55"> </div><div class="progress-bar" style="width:0.6180555555555555%;background-color:#50B432" title="Productive - 10:18:55 to 10:21:54"> </div><div class="progress-bar" style="width:0.9409722222222222%;background-color:#c6a43d" title="Idle Production - 10:21:54 to 10:26:25"> </div><div class="progress-bar" style="width:0.34027777777777773%;background-color:#50B432" title="Productive - 10:26:25 to 10:28:03"> </div><div class="progress-bar" style="width:3.0972222222222223%;background-color:#c6a43d" title="Idle Production - 10:28:03 to 10:42:55"> </div><div class="progress-bar" style="width:0.2638888888888889%;background-color:#3248b4" title="Part End - 10:42:55 to 10:44:11"> </div><div class="progress-bar" style="width:1.2986111111111112%;background-color:#000" title="Idle No Production - 10:44:11 to 10:50:25"> </div><div class="progress-bar" style="width:0.21875%;background-color:#338abd" title="Part Start - 10:50:25 to 10:51:28"> </div><div class="progress-bar" style="width:0.3784722222222222%;background-color:#50B432" title="Productive - 10:51:28 to 10:53:17"> </div><div class="progress-bar" style="width:5.34375%;background-color:#c6a43d" title="Idle Production - 10:53:17 to 11:18:56"> </div><div class="progress-bar" style="width:33.43055555555556%;background-color:#ED561B" title="Maintenance - 11:18:56 to 13:59:27"> </div></div></td>
 
-            </div>      
+          <!-- <td><span class="showDetails" style="color:#50B432">01:05 </span><span class="showDetailsPer" style="color:#50B432;display:none;">13.71%</span></td><td><span class="showDetails" style="color:#ED561B">02:40</span><span class="showDetailsPer" style="color:#ED561B;display:none;">33.43%</span></td><td><span class="showDetails" style="color:#8c7373">03:32</span><span class="showDetailsPer" style="color:#8c7373;display:none;">44.19%</span></td><td><span class="showDetails" style="color:orange">00:41</span><span class="showDetailsPer" style="color:orange;display:none;">8.67%</span></td> --></tr></tbody>
+      <tbody>
+        <tr>
+          <td>
+            <!-- Utilization Analysis Data Loaded Here -->
+            <div class="progress" style="margin-bottom: 0px;" id="timeContentSeries"><div class="progress-bar progress-bar-defalt" style="width:12.5%;border: 1px solid #c0cac0;"> 6h</div><div class="progress-bar progress-bar-defalt" style="width:12.5%;border: 1px solid #c0cac0;"> 7h</div><div class="progress-bar progress-bar-defalt" style="width:12.5%;border: 1px solid #c0cac0;"> 8h</div><div class="progress-bar progress-bar-defalt" style="width:12.5%;border: 1px solid #c0cac0;"> 9h</div><div class="progress-bar progress-bar-defalt" style="width:12.5%;border: 1px solid #c0cac0;"> 10h</div><div class="progress-bar progress-bar-defalt" style="width:12.5%;border: 1px solid #c0cac0;"> 11h</div><div class="progress-bar progress-bar-defalt" style="width:12.5%;border: 1px solid #c0cac0;"> 12h</div><div class="progress-bar progress-bar-defalt" style="width:12.5%;border: 1px solid #c0cac0;"> 13h</div></div>
+          </td>  
+      </tr>
+      <tr class="legent-toggle-tr">
+        <td style="text-align:center;font-size: 12px;font-weight: 100;">
+        <span id="UtilizationLabel"><label id="labelProductive" class="pointer toggle-reason-bar" dataid="progress-bar-success" style="margin-right:10px;"><i style="background-color:#50B432; width:10px;height: 10px; display:inline-block; margin-right:5px;"></i>Productive</label><label id="labelSetting" class="pointer toggle-reason-bar" dataid="progress-bar-success" style="margin-right:10px;"><i style="background-color:#FFA500; width:10px;height: 10px; display:inline-block; margin-right:5px;"></i>Setting</label><label id="labelInspection" class="pointer toggle-reason-bar" dataid="progress-bar-success" style="margin-right:10px;"><i style="background-color:#ffff00; width:10px;height: 10px; display:inline-block; margin-right:5px;"></i>Inspection</label><label id="labelMaintenance" class="pointer toggle-reason-bar" dataid="progress-bar-success" style="margin-right:10px;"><i style="background-color:#ED561B; width:10px;height: 10px; display:inline-block; margin-right:5px;"></i>Maintenance</label><label id="labelIdleProduction" class="pointer toggle-reason-bar" dataid="progress-bar-success" style="margin-right:10px;"><i style="background-color:#c6a43d; width:10px;height: 10px; display:inline-block; margin-right:5px;"></i>Idle Production</label><label id="labelIdleNoProduction" class="pointer toggle-reason-bar" dataid="progress-bar-success" style="margin-right:10px;"><i style="background-color:#000; width:10px;height: 10px; display:inline-block; margin-right:5px;"></i>Idle No Production</label><br><label id="labelPartEnd" class="pointer toggle-reason-bar" dataid="progress-bar-success" style="margin-right:10px;"><i style="background-color:#3248b4; width:10px;height: 10px; display:inline-block; margin-right:5px;"></i>Part End</label><label id="labelPartStart" class="pointer toggle-reason-bar" dataid="progress-bar-success" style="margin-right:10px;"><i style="background-color:#338abd; width:10px;height: 10px; display:inline-block; margin-right:5px;"></i>Part Start</label></span>       
+      </td></tr>
+    </tbody>
+  </table>
+            </div>
+
           </div>
         </div>
       </div>
@@ -760,7 +889,7 @@ $('#expandHourlyChart').click(function(e){
 
 
 <!-- Activity Analysis -->
-    <div class="col-md-3 col-sm-6 col-xs-12">  
+    <div class="col-md-3 col-sm-6 col-xs-12" id="activityAnalysisScreen">  
         <div class="panel panel-default dashFirstRow">
           <div class="panel-heading panelHeader">
             <div class="panel-title pull-left">
@@ -770,16 +899,15 @@ $('#expandHourlyChart').click(function(e){
               <div id="statusImg"></div>
             </div>
               <div class="panel-title pull-right">
-               <i id="compProfile" class="btn btn-xs fa fa-expand" aria-hidden="true"></i>
+               <i id="expandActivityAnalysis" class="btn btn-xs fa fa-expand" aria-hidden="true"></i>
               </div> 
             <div class="clearfix"></div>
           </div>
           <div class="panel-body">  
             <div class="row">              
                 <!-- Load Activity Analysis pie Chart --> 
-                <div id="activityAnalysis" style="width:100%;height:270px;border: 1px solid;"></div>   
+                <div id="activityAnalysis" style="width:99%;height:270px;"></div>
             </div> 
-
           </div>
         </div>
       </div>
