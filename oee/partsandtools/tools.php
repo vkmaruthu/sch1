@@ -98,7 +98,7 @@ saveTool:function(action){
       
       var idType = $('#tool_opr_id_type').val();
       if(idType == 0){
-          $('#msg').html('*Select Tool Operation Id Type');
+          $('#msg').html('*Select Tool/Operation Type');
           return false;
 	     }else{
 	    	 $('#msg').html('');
@@ -356,7 +356,7 @@ getToolIdTypeForDropdown:function(){
 	        debugger;
 	      if(obj.toolIdTypes !=null){
      		 $("#tool_opr_id_type").html('');
-	    	 $("#tool_opr_id_type").append('<option value="0"> Select Tool Id Type </option>');
+	    	 $("#tool_opr_id_type").append('<option value="0"> Select  Type </option>');
     		 for(var i=0; i< obj.toolIdTypes.length; i++){
 			   $("#tool_opr_id_type").append('<option value="'+obj.toolIdTypes[i].id+'">'+obj.toolIdTypes[i].tool_id_type+'</option>'); 
     		 }
@@ -679,13 +679,13 @@ debugger;
           <div class="modal-header">
             <button type="button" class="close" data-dismiss="modal" aria-label="Close">
               <span aria-hidden="true">&times;</span></button>
-            <h4 class="modal-title">Add Tools Id Type</h4>
+            <h4 class="modal-title">Add Tool/Operation Type</h4>
           </div>
           <form id="fromToolIdType" enctype="multipart/form-data"> 
           <div class="modal-body">          
                <div class="row">
                     <div class="col-md-12">
-                      <label class="control-label col-md-4 col-sm-6 col-xs-12">Tools Id Type<span class="required">*</span></label>
+                      <label class="control-label col-md-4 col-sm-6 col-xs-12">Type<span class="required">*</span></label>
                         <div class="col-md-6 col-sm-6 col-xs-12">
                           <input type="text" id="tool_id_type" name="tool_id_type" onkeyup=""
                            placeholder="Tools Id Type" class="form-control" required="true"/>
@@ -701,6 +701,7 @@ debugger;
                     </div>
                 </div>
           </div>
+          <span> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Note: Tool/Operation type (example: Barcode, RFID) </span>
           <div class="modal-footer" style="text-align: center;">
             <button type="button" class="btn btn-default " data-dismiss="modal">Cancel</button>
             <button type="button" class="btn btn-success" onclick="tempData.oeeTools.saveToolsIDTypesType();">Save</button>

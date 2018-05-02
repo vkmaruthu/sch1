@@ -95,7 +95,6 @@ loadAllPO:function(){
 savePO:function(){
   var url="getDataController.php";
   $('#material_name').val($("#material option:selected" ).text());
-  alert($('#operation').val());
   var order_number=$('#order_number').val();
   if($('#plantSave').val() == 0){
       $('#msg').html('*Select Plant');
