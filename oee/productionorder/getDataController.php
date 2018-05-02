@@ -88,17 +88,17 @@ if(isset($_POST['getPODetails'])){
     
     if (($plant_id != "" && $plant_id != 0)) {
        $eqQ="SELECT dp.id, dp.operation, dp.order_number, dp.material, dp.target_qty, dp.line_feed_qty, dp.conf_no, dp.no_of_conf, 
-                dp.conf_yield_count, dp.conf_scarp_count, dp.is_final_confirmed, dp.plant_id, dp.eq_code, p.descp, eq.eq_desc
+                dp.conf_yield_count, dp.conf_scarp_count, dp.is_final_confirmed, dp.plant_id, dp.eq_code, p.descp, eq.descp as eq_desc
                 FROM  sfs_dc_po dp LEFT JOIN  sfs_plant p on dp.plant_id=p.id 
                                    LEFT JOIN sfs_company c on c.id=p.comp_id
-                                   LEFT JOIN sfs_equipment eq on dp.eq_code=eq.eq_code
+                                   LEFT JOIN sfs_equipment eq on dp.eq_code=eq.code
                 WHERE c.id=p.comp_id and p.id=dp.plant_id and dp.plant_id=".$plant_id;
       }else {
         $eqQ="SELECT dp.id, dp.operation, dp.order_number, dp.material, dp.target_qty, dp.line_feed_qty, dp.conf_no, dp.no_of_conf, 
-                dp.conf_yield_count, dp.conf_scarp_count, dp.is_final_confirmed, dp.plant_id, dp.eq_code, p.descp, eq.eq_desc
+                dp.conf_yield_count, dp.conf_scarp_count, dp.is_final_confirmed, dp.plant_id, dp.eq_code, p.descp, eq.descp as eq_desc
                 FROM  sfs_dc_po dp LEFT JOIN  sfs_plant p on dp.plant_id=p.id 
                                    LEFT JOIN sfs_company c on c.id=p.comp_id
-                                   LEFT JOIN sfs_equipment eq on dp.eq_code=eq.eq_code
+                                   LEFT JOIN sfs_equipment eq on dp.eq_code=eq.code
                 WHERE c.id=p.comp_id and p.id=dp.plant_id  and c.id=".$comp_id;
       }
 

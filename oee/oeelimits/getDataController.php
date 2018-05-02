@@ -116,11 +116,11 @@ if(isset($_POST['getOEELimitsDetails'])){
     $comp_id=$_POST['comp_id'];
     $eqQ="SELECT ol.id, ol.oee_high, ol.oee_low, ol.a_high, ol.a_low, ol.p_low, ol.p_high, ol.q_high, ol.q_low, 
           ol.company_id, ol.plant_id, ol.workcenter_id, ol.eq_code, c.descp as comp_desc, p.descp as plant_desc, 
-          wc.descp as wc_desc, eq.eq_desc
+          wc.descp as wc_desc, eq.descp as eq_desc
           FROM sfs_oee_limit ol LEFT JOIN sfs_company c on c.id=ol.company_id 
                       LEFT JOIN sfs_plant p on p.id=ol.plant_id
                       LEFT JOIN sfs_workcenter wc on wc.id=ol.workcenter_id
-                      LEFT JOIN sfs_equipment eq on eq.eq_code=ol.eq_code where ol.company_id=".$comp_id;
+                      LEFT JOIN sfs_equipment eq on eq.code=ol.eq_code where ol.company_id=".$comp_id;
     
     $eqDetails=mysqli_query($con,$eqQ) or die('Error:'.mysqli_error($con));
     while ($row=mysqli_fetch_array($eqDetails)){
