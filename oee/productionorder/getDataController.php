@@ -215,7 +215,7 @@ if(isset($_POST['assignPO'])){
             $response['infoRes']='E'; //Error
         }else {
             if(mysqli_errno() != 1062){
-                $sqlQuery = "UPDATE sfs_equipment SET order_id=".$po_id." where eq_code='".$equi_code."'";
+                $sqlQuery = "UPDATE sfs_equipment SET is_prod_list_updated=1, order_id=".$po_id." where code='".$equi_code."'";
                 $res=mysqli_query($con,$sqlQuery);
                 $response['info']="Equipment Successfully Assigned To PO:".$po_num." Operation:".$oper_no;
                 $response['infoRes']="S"; // success
@@ -251,7 +251,7 @@ if(isset($_POST['stopPO'])){
             $response['infoRes']='E'; //Error
         }else {
             if(mysqli_errno() != 1062){
-                $sqlQuery = "UPDATE sfs_equipment SET order_id=0 where eq_code='".$equi_code."'";
+                $sqlQuery = "UPDATE sfs_equipment SET is_prod_list_updated=1, order_id=0 where code='".$equi_code."'";
                 $res=mysqli_query($con,$sqlQuery);
                 $response['info']="Equipment Removed Successfully";
                 $response['infoRes']="S"; // success
@@ -287,7 +287,7 @@ if(isset($_POST['completePO'])){
             $response['infoRes']='E'; //Error
         }else {
             if(mysqli_errno() != 1062){
-                $sqlQuery = "UPDATE sfs_equipment SET order_id=0 where eq_code='".$equi_code."'";
+                $sqlQuery = "UPDATE sfs_equipment SET is_prod_list_updated=0, order_id=0 where code='".$equi_code."'";
                 $res=mysqli_query($con,$sqlQuery);
                 $response['info']="Production Order completed Successfully";
                 $response['infoRes']="S"; // success
