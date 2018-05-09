@@ -37,7 +37,7 @@ $(document).ready(function() {
         		$('#'+obj.screenArr[i]).show();
         	}
          	
-         	$('#comp_id').val(obj.userDetails.company_id);
+         	  $('#comp_id').val(obj.userDetails.company_id);
           	$('#compNameDB').html(obj.userDetails.compName);
           	$('#sidebarUserName').html(obj.userDetails.first_name);
           	if(obj.userDetails.img_file_name != ''){

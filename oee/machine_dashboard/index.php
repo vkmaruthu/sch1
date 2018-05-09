@@ -50,7 +50,29 @@ if(tempData===null||tempData===undefined){
   
 tempData.oeeDash=
 {
- oeeCirclePerc:function(id,val,fgColor) {  
+getEQDesc:function(){
+    var url="getDataController.php";
+    var comp_id=$('#comp_id').val();
+    var myData = {getEquipmentDetailsWithCompID:'getEquipmentDetailsWithCompID', comp_id:comp_id};
+    $.ajax({
+      type:"POST",
+      url:url,
+      async: false,
+      dataType: 'json',
+      cache: false,
+      data:myData,
+      success: function(obj) {
+        if( obj.equipmentDetails !=null){
+         $("#eq_desc").html('');
+         $("#eq_desc").append('<option value="none"> Select Equipment </option>');
+          for(var i=0; i< obj.equipmentDetails.length; i++){
+           $("#eq_desc").append('<option value="'+obj.equipmentDetails[i].eq_code+'">'+obj.equipmentDetails[i].eq_desc+'</option>'); 
+          }
+          }
+        } 
+    });
+},
+oeeCirclePerc:function(id,val,fgColor) {  
     debugger;
        $('#'+id).trigger('configure',{
             "min":0,
@@ -73,6 +95,36 @@ debugger;
         $("#showIobotImg").html('<img src="../common/img/machine/default.png" class="img-thumbnail dashMachineImg"/>');
         $("#statusImg").html('<img src="../common/img/online.png" class="img-responsive statusImg"/>');
 },
+loadOeeData:function(){
+    debugger;
+    var selDate = $("#userDateSel").val();
+    var url= "getDataController.php";
+
+/*    var comp_id=$('#comp_id').val();
+    var plant_id=$('#plant_id').val();
+    var workCenter_id=$('#workCenter_id').val();
+    var iobotMachine= $('#iobotMachine').val();
+*/
+    var comp_id=1;
+    var plant_id=1;
+    var workCenter_id=1;
+    var iobotMachine=1;
+
+    var myData = {loadOeeData:'loadOeeData',selDate:selDate,plant_id:plant_id,comp_id:comp_id,plant_id:plant_id,workCenter_id:workCenter_id,iobotMachine:iobotMachine };
+
+        $.ajax({
+            type:"POST",
+            url:url,
+            async: false,
+            dataType: 'json',
+            data:myData,
+            success: function(obj) {
+              debugger;
+             // alert();
+              //tempData.oeeDash.shiftsdata();                                     
+            }
+        });
+},   
 visitPlants:function(){
   window.location.href="../plants/index.php?selDate="+$('#userDateSel').val();
 },
@@ -88,11 +140,11 @@ loadShiftData:function(){
     var selDate = $("#userDateSel").val();
     var url= "getDataController.php";
 
-/*    var comp_id=$('#comp_id').val();
+/*  var comp_id=$('#comp_id').val();
     var plant_id=$('#plant_id').val();
     var workCenter_id=$('#workCenter_id').val();
-    var iobotMachine= $('#iobotMachine').val();
-*/
+    var iobotMachine= $('#iobotMachine').val();  */
+
     var comp_id=1;
     var plant_id=1;
     var workCenter_id=1;
@@ -144,6 +196,12 @@ loadShiftData:function(){
    // d.setSeconds(d.getSeconds() - 1);
     return tempData.oeeDash.addZero(d.getHours()) + ':'+tempData.oeeDash.addZero(d.getMinutes()) + ':' + tempData.oeeDash.addZero(d.getSeconds());
   },
+  addZero:function($num) {
+    if($num < 10) {
+        $num = "0".$num;
+    }
+    return $num;
+  },
   getCommonDataForShift:function(obj){
     debugger;
     var arr=[];
@@ -153,8 +211,8 @@ loadShiftData:function(){
    var d = new Date(obj.in_time);
     arr.push({"hour":hours,"inTime":inTime,"outTime":outTime,"startHour":d.getHours()});
     return arr;
-  },
-    shiftsdata:function(){
+},
+shiftsdata:function(){
      debugger;
      // tempData.oeeDash.changeDateFormat(); 
 
@@ -176,13 +234,14 @@ loadShiftData:function(){
       tempData.oeeDash.AfterShiftSelect(get3Data[0].hour,get3Data[0].inTime,get3Data[0].outTime,parseInt(singalJosn[0].num_hours),get3Data[0].startHour);
       
     }
-  },
-  AfterShiftSelect:function(hours,inTime,outTime,totalHour,startHour){
+},
+AfterShiftSelect:function(hours,inTime,outTime,totalHour,startHour){
         // hours,inTime,outTime,totalHour,startHour
         Ghours=hours;  GinTime=inTime;   GoutTime=outTime;  GtotalHour=totalHour;  GstartHour=startHour;
 
 /*        tempData.oeeDash.loadEventGraph(hours,inTime,outTime,totalHour,startHour); 
         tempData.oeeDash.loadgraph_productivity_analysis1(inTime,outTime); //inTime,outTime*/
+         tempData.oeeDash.activityAnalysis();
         tempData.oeeDash.checkData();
   },
    getObjects:function(obj, key, val) {  // JSON Search function
@@ -191,13 +250,13 @@ loadShiftData:function(){
     for (var i in obj) {
         if (!obj.hasOwnProperty(i)) continue;
         if (typeof obj[i] == 'object') {
-            objects = objects.concat(tempData.cpsData.getObjects(obj[i], key, val));
+            objects = objects.concat(tempData.oeeDash.getObjects(obj[i], key, val));
         } else if (i == key && obj[key] == val) {
             objects.push(obj);
         }
     }
     return objects;    
-  },
+},
 loadToolHourlyDrilldown:function(obj,msg){        /* Load Hourly Chart with Drilldown */
 debugger;
 operBtn = Highcharts.chart('hourlyProduction', {
@@ -500,20 +559,25 @@ checkData:function(){
 
 $(document).ready(function() {
 debugger; 
-
-
- $("#companyOEE").parent().addClass('active');
- $("#companyOEE").parent().parent().closest('.treeview').addClass('active menu-open');
- 
-var today="<?php echo $_GET['selDate']; ?>";
+  $("#companyOEE").parent().addClass('active');
+  $("#companyOEE").parent().parent().closest('.treeview').addClass('active menu-open');
+  
+/*  var today="<?php echo $_GET['selDate']; ?>";
+  $('.datepicker-me').datepicker('setDate', today);
+*/
+var date = new Date();
+var today = new Date(date.getFullYear(), date.getMonth(), date.getDate());
 $('.datepicker-me').datepicker('setDate', today);
 
+tempData.oeeDash.getEQDesc();
+tempData.oeeDash.loadShiftData();  // Load the shift
+
+tempData.oeeDash.loadOeeData();
 tempData.oeeDash.getImg();
 tempData.oeeDash.oeeCirclePerc('oeePerc',75,'#E29C21');
 tempData.oeeDash.oeeCirclePerc('availPerc',40,'#FDCA6C');
 tempData.oeeDash.oeeCirclePerc('performPerc',20,'#DB4F31');
 tempData.oeeDash.oeeCirclePerc('qualityPerc',90,'#1AD34E');
-tempData.oeeDash.loadShiftData();
 
 $('#expandHourlyChart').click(function(e){
     $('#expandHourlyChartScreen').toggleClass('fullscreen'); 
@@ -534,12 +598,11 @@ $('#expandActivityAnalysis').click(function(e){
 });
 
 
-
 });
 
 </script>
 
-
+<input type="hidden" name="comp_id" id="comp_id"/> 
   <!-- Content Wrapper. Contains page content -->
   <div class="content-wrapper">
 
@@ -548,9 +611,22 @@ $('#expandActivityAnalysis').click(function(e){
 
     <div class="btnsStyle btnsStyleDashboard" id="btns">
       <div class="col-md-5 col-sm-12 col-xs-12 pull-left headerTitle">
-        <a onclick="tempData.oeeDash.visitPlants();">Plants</a> / <a onclick="tempData.oeeDash.visitWorkcenter();">WorkCenter</a> / 
-        <a onclick="tempData.oeeDash.visitMachine();">Machine</a> / Name of Machine<br> 
-      <p style="font-size: 11px;">As on 24/04/2018 18:00:00 </p>
+       <!--  <a onclick="tempData.oeeDash.visitPlants();">Plants</a> / <a onclick="tempData.oeeDash.visitWorkcenter();">WorkCenter</a> / 
+        <a onclick="tempData.oeeDash.visitMachine();">Machine</a> / Name of Machine<br>  -->
+
+  <div class="col-md-5 col-sm-6 col-xs-12" style="padding:0px;">
+        <div class="form-group" style="margin-bottom:0px;">
+          <select class="form-control select2"  id="eq_desc" name="eq_desc" 
+          style="width: 100%;padding:0px !important;">
+            <option value="none"> Select Equipment </option>
+          </select>
+
+       <!--  <p style="font-size: 11px;"> As on 24/04/2018 18:00:00 </p> -->
+        </div>
+
+  </div>
+
+      
       </div>
 
       <div class="col-md-5 col-sm-12 col-xs-12 pull-right" style="margin-top:5px;">
@@ -572,6 +648,19 @@ $('#expandActivityAnalysis').click(function(e){
         </div>
       </div>      
     </div>
+
+<!-- Plant / Workcenter / Machine -->
+<!-- <div class="row">
+  <div class="col-md-3 col-sm-6 col-xs-12">
+       <div class="col-md-12 col-sm-12 col-xs-12">
+        <div class="form-group">
+          <select class="form-control select2"  id="eq_desc" name="eq_desc" style="width: 100%">
+            <option value="none"> Select Equipment </option>
+          </select>
+        </div>
+      </div>
+  </div>
+</div> -->
 
 <div class="row">
      <!-- OEE -->

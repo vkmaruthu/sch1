@@ -106,8 +106,9 @@ if(isset($_POST['getPlantDetails'])){
         $plantQ="SELECT p.id, p.code, p.descp, p.address, p.contact_person, p.contact_number, p.image_file_name, p.comp_id, c.code as comp_code FROM
                  sfs_plant p, sfs_company c where p.comp_id=c.id  and p.comp_id=".$comp_id;
     }else {
-        
+         $plantQ = "No data";
     }
+
     $plantDetails=mysqli_query($con,$plantQ) or die('Error:'.mysqli_error($con));
     
     while ($row=mysqli_fetch_array($plantDetails)){
@@ -121,7 +122,7 @@ if(isset($_POST['getPlantDetails'])){
         $comp_id=$row['comp_id'];
         $comp_code=$row['comp_code'];
         
-        $getCompData[]=array('id' =>"$id",
+        $getPlantDetails[]=array('id' =>"$id",
             'plant_code' =>"$plant_code",
             'plant_desc' =>"$plant_desc",
             'address' =>"$address",
@@ -133,8 +134,8 @@ if(isset($_POST['getPlantDetails'])){
         );
         
     }
-    
-    $status['plantDetails'] = $getCompData;
+
+    $status['plantDetails'] = $getPlantDetails;
     echo json_encode($status);
     mysqli_close($con);
 }
@@ -197,6 +198,62 @@ if(isset($_POST['getEquipmentDetails'])){
              sfs_equipment_type eqt, sfs_equipment_protocol eqp where eq.model_id=eqm.id and
              eq.type_id=eqt.id and eqp.id=eq.protocol_id and wc_id=".$wc_id;
     }
+    
+    $eqDetails=mysqli_query($con,$eqQ) or die('Error:'.mysqli_error($con));
+    
+    while ($row=mysqli_fetch_array($eqDetails)){
+        $id=$row['id'];
+        $eq_code=$row['code'];
+        $eq_desc=$row['descp'];
+        $eq_protocol=$row['eq_protocol'];
+        $protocol_id=$row['protocol_id'];
+        $eq_type_id=$row['type_id'];
+        $eq_model_id=$row['model_id'];
+        $image_file_name=$row['image_file_name'];
+        $wc_id=$row['wc_id'];
+        $model_name=$row['name'];
+        $eq_type_name=$row['eq_type_desc'];
+        $reason_code_arr=$row['reason_code_arr'];
+        $mac_id=$row['mac_id'];
+        $q="select message from sfs_reason_code where id IN(".$reason_code_arr.")";
+        $res=mysqli_query($con,$q) or die('Error:'.mysqli_error($con));
+        while ($row=mysqli_fetch_array($res)){
+            $message=$row['message'];
+            $strMsg.=$message.', ';
+        }
+        
+        $getEQData[]=array('id' =>"$id",
+            'eq_code' =>"$eq_code",
+            'eq_desc' =>"$eq_desc",
+            'eq_protocol' => "$eq_protocol",
+            'protocol_id' => "$protocol_id",
+            'eq_type_id' => "$eq_type_id",
+            'eq_model_id' => "$eq_model_id",
+            'image_file_name' =>"$image_file_name",
+            'wc_id' => "$wc_id",
+            'model_name' => "$model_name",
+            'eq_type_name' => "$eq_type_name",
+            'reason_code_arr' => "$reason_code_arr",
+            'reason_code_name' => "$strMsg",
+            'mac_id' => "$mac_id"
+        );
+        $strMsg='';
+    }
+    
+    $status['equipmentDetails'] = $getEQData;
+    echo json_encode($status);
+    mysqli_close($con);
+}
+
+if(isset($_POST['getEquipmentDetailsWithCompID'])){
+    $comp_id=$_POST['comp_id'];
+    
+    $eqQ="SELECT eq.id, eq.code, eq.descp, eq.image_file_name, eq.protocol_id, eq.type_id, eq.model_id, eq.wc_id,
+         eqm.name, eqt.descp as eq_type_desc, eq.reason_code_arr, eqp.name as eq_protocol, eq.mac_id  
+         FROM sfs_equipment eq, sfs_equipment_model eqm,
+         sfs_equipment_type eqt, sfs_equipment_protocol eqp ,
+         sfs_workcenter wc,sfs_plant sp,sfs_company sc
+         where eq.model_id=eqm.id and eq.type_id=eqt.id and eqp.id=eq.protocol_id and eq.wc_id=wc.id and wc.plant_id=sp.id and sp.comp_id=".$comp_id." and eq.image_file_name!=''";
     
     $eqDetails=mysqli_query($con,$eqQ) or die('Error:'.mysqli_error($con));
     

@@ -81,7 +81,7 @@ getLogin:function(){
                 $('#status2').hide();
                 $('#status3').hide();
                 window.setTimeout(function () { 
-                  window.location='../home';
+                  window.location='../machine_dashboard';
                 },3000);
             }else if(obj.login.infoRes=="D"){
                 $('#status3').slideDown(600);

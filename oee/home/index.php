@@ -24,7 +24,7 @@ tempData.oeehome=
     $('#'+id).val(val).trigger('change');
   },
   visitPlants:function(){
-    window.location.href="../plants/index.php?selDate="+$('#userDateSel').val();
+    window.location.href="../machine_dashboard/index.php?selDate="+$('#userDateSel').val();
   },
   getSelDate:function(){
     var date= $('#userDateSel').val();
@@ -113,7 +113,7 @@ tempData.oeehome.oeeCirclePerc('qualityPerc',90,'#1AD34E');
     <hr class="hr-primary"/>  
 
       <div class="col-xs-12 col-md-4 col-md-offset-4" style="margin-bottom: 2%;margin-top: -2%;">
-            <h2 class="btn btn-primary btn-lg btn-block" onclick="tempData.oeehome.visitPlants()">View Plants 
+            <h2 class="btn btn-primary btn-lg btn-block" onclick="tempData.oeehome.visitPlants()">View Details 
              <i class="fa fa-arrow-circle-right" style="font-size: 27px;float: right;"></i> </h2>
             
         </div> 

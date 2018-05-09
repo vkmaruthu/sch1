@@ -9,11 +9,11 @@
         </div>
         <div class="pull-left info">
           <p id="sidebarUserName"></p>
-          <a href="../logout.php">Logout <i class="fa fa-sign-out"></i></a> 
+          <!-- <a href="../logout.php">Logout <i class="fa fa-sign-out"></i></a>  -->
         </div>
       </div>
       <!-- search form -->
-      <form action="#" method="get" class="sidebar-form">
+      <!-- <form action="#" method="get" class="sidebar-form">
         <div class="input-group">
           <input type="text" id="myInput" onkeyup="myFunction()" class="form-control" placeholder="Search...">
           <span class="input-group-btn">
@@ -21,7 +21,7 @@
                 </span>
               </span>
         </div>
-      </form> 
+      </form>  -->
       <!-- /.search form -->
       <!-- sidebar menu: : style can be found in sidebar.less -->
       <ul class="sidebar-menu" data-widget="tree" id="myUL">
@@ -34,9 +34,11 @@
             </span>
           </a>
           <ul class="treeview-menu">
-            <li><a href="../home/index.php" id="companyOEE"><i class="fa fa-circle-o"></i> Company OEE</a></li>
+        <!--     <li><a href="../home/index.php" id="companyOEE"><i class="fa fa-circle-o"></i> Company OEE</a></li>
             <li><a href="../history/index.php" id="menuHistory"><i class="fa fa-circle-o"></i> History</a></li>
-            <li><a href="index2.html"><i class="fa fa-circle-o"></i> Pridiction</a></li>
+            <li><a href="index2.html"><i class="fa fa-circle-o"></i> Pridiction</a></li> -->
+            <li><a href="../machine_dashboard" id="companyOEE"><i class="fa fa-circle-o"></i>Overview</a></li>
+            <li><a href="../logout.php" id="logout"><i class="fa fa-sign-out"></i>Logout</a></li>
           </ul>
         </li>
         <li class="treeview" id="hideConfiguration">
