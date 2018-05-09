@@ -525,7 +525,7 @@ if(isset($_POST['saveEquipmentModel'])){
     $num_of_ai=$_POST['num_of_ai'];
     $num_of_ao=$_POST['num_of_ao'];
     $model_id=$_POST['model_id'];
-    $table = 'sfs_equipment_model';
+    $table = 'sfs_eq_model';
     $DataMarge=array('name'=>$name,
         'num_of_di'=>$num_of_di,
         'num_of_do'=>$num_of_do,
@@ -590,7 +590,7 @@ if(isset($_POST['saveEquipmentType'])){
     $is_afs_size_id=$_POST['is_afs_size_id'];
     $is_dc_po=$_POST['is_dc_po'];
     $is_tool=$_POST['is_tool'];
-    $table = 'sfs_equipment_type';
+    $table = 'sfs_eq_type';
     $DataMarge=array('descp'=>$eq_type_desc,
         'is_machine'=>$is_machine,
         'is_afs_size_id'=>$is_afs_size_id,
@@ -646,7 +646,7 @@ if(isset($_POST['saveEquipmentType'])){
 }
 
 if(isset($_POST['getEquipmentModel'])){
-    $eqQ="SELECT id,name, num_of_di, num_of_do, num_of_ai, num_of_ao FROM sfs_equipment_model";
+    $eqQ="SELECT id,name, num_of_di, num_of_do, num_of_ai, num_of_ao FROM sfs_eq_model";
     $eqDetails=mysqli_query($con,$eqQ) or die('Error:'.mysqli_error($con));
     
     while ($row=mysqli_fetch_array($eqDetails)){
@@ -671,7 +671,7 @@ if(isset($_POST['getEquipmentModel'])){
 }
 
 if(isset($_POST['getEquipmentType'])){
-    $eqQ="SELECT id,descp, is_machine, is_afs_size_id, is_dc_po, is_tool FROM sfs_equipment_type";
+    $eqQ="SELECT id,descp, is_machine, is_afs_size_id, is_dc_po, is_tool FROM sfs_eq_type";
     $eqDetails=mysqli_query($con,$eqQ) or die('Error:'.mysqli_error($con));
     while ($row=mysqli_fetch_array($eqDetails)){
         $id=$row['id'];
@@ -710,7 +710,7 @@ if(isset($_POST['getReasons'])){
 }
 
 if(isset($_POST['getEqProtocolType'])){
-    $eqQ="SELECT id,name, descp FROM sfs_equipment_protocol";
+    $eqQ="SELECT id,name, descp FROM sfs_eq_protocol";
     $eqDetails=mysqli_query($con,$eqQ) or die('Error:'.mysqli_error($con));
     while ($row=mysqli_fetch_array($eqDetails)){
         $id=$row['id'];
