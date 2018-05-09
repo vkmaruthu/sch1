@@ -44,9 +44,6 @@
     background-color: #ffffff9e;
     padding: 13px;
     border-radius: 10px;}
-
-
-}
 </style>
 
 <script type="text/javascript">

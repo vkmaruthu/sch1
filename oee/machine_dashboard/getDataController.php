@@ -80,10 +80,9 @@ if(isset($_POST['loadShiftData'])){     // getData for loadShiftData
 
     $result = mysqli_query($con,$ssq);
     if(mysqli_num_rows($result)>0){
-        $sqlQ="SELECT id, code, start_date, end_date, plant_id, in_time, out_time, total_minutes, num_hour, type, lb_starttime, lb_endtime, sb1_starttime, sb1_endtime, sb2_starttime, sb2_endtim,breakYN FROM sfs_shifts FROM  sfs_shifts where type='SPECIAL' and plant_id=".$plant_id." and start_date='".$final_date."'";
+        $sqlQ="SELECT id, code, start_date, end_date, plant_id, in_time, out_time, total_minutes, num_hour, type, lb_starttime, lb_endtime, sb1_starttime, sb1_endtime, sb2_starttime, sb2_endtim,is_break_availb FROM sfs_shifts FROM  sfs_shifts where type='SPECIAL' and plant_id=".$plant_id." and start_date='".$final_date."'";
     }else{
-        $sqlQ="SELECT id, code, start_date, end_date, plant_id, in_time, out_time, total_minutes, num_hour, type, lb_starttime, lb_endtime, sb1_starttime, sb1_endtime, sb2_starttime, sb2_endtime,breakYN  FROM  sfs_shifts 
-        where type='NORMAL' and plant_id=".$plant_id." and start_date=(SELECT MAX(DATE(start_date)) FROM  sfs_shifts WHERE DATE(start_date) <= '".$final_date."' and plant_id=".$plant_id."  and type='NORMAL')";  
+        $sqlQ="SELECT id, code, start_date, end_date, plant_id, in_time, out_time, total_minutes, num_hour, type, lb_starttime, lb_endtime, sb1_starttime, sb1_endtime, sb2_starttime, sb2_endtime,is_break_availb  FROM  sfs_shifts where type='NORMAL' and plant_id=".$plant_id." and start_date=(SELECT MAX(DATE(start_date)) FROM  sfs_shifts WHERE DATE(start_date) <= '".$final_date."' and plant_id=".$plant_id."  and type='NORMAL')";  
     }
 
     $sql=mysqli_query($con, $sqlQ) or die("Query fail: " .mysqli_error($con));
@@ -101,7 +100,7 @@ if(isset($_POST['loadShiftData'])){     // getData for loadShiftData
         $shift_type=$row['type'];
         $shift_state=$row['shift_state'];
         $plant_id=$row['plant_id'];
-        $breakYN=$row['breakYN'];
+        $breakYN=$row['is_break_availb'];
         $lbreak_startTime=$row['lb_starttime'];
         $lbreak_endTime=$row['lb_endtime'];
         $break1_startTime=$row['sb1_starttime'];
