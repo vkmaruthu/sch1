@@ -13,7 +13,7 @@ if(isset($_POST['saveParts'])){
     $part_id=$_POST['part_id'];
     
     $table = 'sfs_part_fg';
-    $DataMarge=array('number'=>"$part_num",
+    $DataMarge=array('code'=>"$part_num",
         'descp'=>"$part_desc",
         'plant_id'=>$plant_id
     );

@@ -105,9 +105,9 @@ saveTool:function(action){
 		 }
       var idName = $("#tool_opr_id_type option:selected").text();
       if(idName.toUpperCase() === "OPERATION"){
-    	    $('#tag_id').val($('#plant_id').val()+':'+$('#part_id').val()+':'+$('#opr_id').val());
+    	    $('#tag_id').val($('#comp_code').val()+':'+$('#plant_code').val()+':'+$('#part_code').val()+':'+$('#opr_id').val());
         }else{
-        	$('#tag_id').val($('#plant_id').val()+':'+$('#opr_id').val());
+            $('#tag_id').val($('#comp_code').val()+':'+$('#plant_code').val()+':'+$('#part_code').val()+':'+$('#opr_id').val());
         }
 	  var formEQData = new FormData($('#fromTool')[0]);
 	  formEQData.append("saveTool", "saveTool");
@@ -501,6 +501,8 @@ debugger;
           <input type="hidden" name="screen" id="screen"/>
           <input type="hidden" name="part_num" id="part_num"/> 
           <input type="hidden" name="plant_code" id="plant_code"/> 
+          <input type="hidden" name="part_code" id="part_code"/>
+          <input type="hidden" name="comp_code" id="comp_code"/>
           <input type="hidden" name="action" id="action"/> 
             <div class="form-group">
             

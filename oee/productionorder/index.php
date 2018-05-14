@@ -269,10 +269,10 @@ getParts:function(){
 	    data:myData,
 	    success: function(obj) {
     	 $("#material").html('');
-    	 $("#material").append('<option value="0"> Select Plant </option>');
+    	 $("#material").append('<option value="0"> Select Material </option>');
 	      if(obj.partsDetails !=null){
         		for(var i=0; i< obj.partsDetails.length; i++){
-    			   $("#material").append('<option value="'+obj.partsDetails[i].id+'">'+obj.partsDetails[i].part_desc+'</option>'); 
+    			   $("#material").append('<option value="'+obj.partsDetails[i].id+'">'+obj.partsDetails[i].part_num+'</option>'); 
         		}
 	        }
 	      } 
@@ -294,7 +294,7 @@ getOperation:function(){
   	     $("#operation").append('<option value="0"> Select Operation </option>');
 	      if(obj.oprDetails !=null){
       		for(var i=0; i< obj.oprDetails.length; i++){
-  			   $("#operation").append('<option value="'+obj.oprDetails[i].opr_num+'">'+obj.oprDetails[i].opr_name+'</option>'); 
+  			   $("#operation").append('<option value="'+obj.oprDetails[i].opr_num+'">'+obj.oprDetails[i].opr_num+'/'+obj.oprDetails[i].opr_name+'</option>'); 
       		}
 	        }
 	      } 

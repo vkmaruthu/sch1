@@ -306,9 +306,9 @@ if(isset($_POST['getPartsDetails'])){
     $plant_id=$_POST['plant_id'];
     $part_id=$_POST['part_id'];
     if ($part_id != '') {
-        $eqQ="SELECT id, number, descp from sfs_part_fg where id=".$part_id;
+        $eqQ="SELECT id, code as number, descp from sfs_part_fg where id=".$part_id;
     }else{
-        $eqQ="SELECT id, number, descp from sfs_part_fg where plant_id=".$plant_id;
+        $eqQ="SELECT id, code as number, descp from sfs_part_fg where plant_id=".$plant_id;
     }
     
     $partsDetails=mysqli_query($con,$eqQ) or die('Error:'.mysqli_error($con));
