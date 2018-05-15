@@ -178,7 +178,7 @@ if(isset($_POST['loadToolProcDrillData'])){     // getData for loadToolDrillData
     $group_type= $_POST['group_type'];
     $dbStartHour= $_POST['dbStartHour'];
 
-    $hourArr=array();
+   
     $final_data=array();
     $rowHourArr=array();
 
@@ -186,6 +186,8 @@ if(isset($_POST['loadToolProcDrillData'])){     // getData for loadToolDrillData
  
     while ($row=mysqli_fetch_array($sqlProceQ))
     {
+         $hourArr=array();
+        
         $name=$row['name'];
         $descp=$row['descp'];
         $no_of_hours=$row['no_of_hours'];
