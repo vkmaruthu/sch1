@@ -67,6 +67,17 @@ table > thead > tr > th {
       background: -webkit-gradient(linear,left top,left bottom,color-stop(0%,rgb(255, 255, 255)),color-stop(100%,rgb(212, 216, 212)));
 }
 
+.loader
+{
+ position: fixed;
+ left: 0px;
+ top: 0px;
+ width: 100%;
+ height: 100%;
+ z-index: 9999;
+ background: url(../common/img/load.gif) 50% 50% no-repeat rgba(222, 222, 222, 0.4);
+}
+
 .btnsStyle{
   border: 1px solid #e4e4e4;
   border-radius: 6px;
@@ -295,14 +306,14 @@ a {cursor: pointer;}
         min-height: 80px;
       }
       .btnsStyleDashboard{
-        min-height: 125px;
+        min-height: 90px;
       }
 
       .dashMachineImg{
         margin-left: 40%;
       }
       .statusImg{
-        width: 30%;
+        width: 24%;
         margin-top:-8%;
         float: right;
       }
@@ -320,9 +331,9 @@ a {cursor: pointer;}
         margin-bottom: -30px;
         margin-top: 30px;
       }
-
-
-
+      .mainSectionTop{
+        margin-top: 34%;
+      }
     }
 
     /* Extra Small Devices, Phones */ 
@@ -390,8 +401,8 @@ a {cursor: pointer;}
         width: 84%;
       }
       .statusImg{
-        width: 32%;
-        margin-top: -11%;
+        width: 26%;
+        margin-top: -9%;
         float: right;
       }
       .dashFirstRow{
@@ -408,7 +419,9 @@ a {cursor: pointer;}
         margin-bottom: -10px;
         margin-top: 20px;
        }
-
+      .mainSectionTop{
+        margin-top: 4%;
+      }
 
 
     }

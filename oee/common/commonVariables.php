@@ -47,13 +47,15 @@ $(document).ready(function() {
           	}	
 
           	if(obj.userDetails.compImg != ''){
-          		$('#compImg').html('<img src="../common/img/comp_logo/'+obj.userDetails.compImg+'" class="CustMobileLogo">');
-          		$('#compImgMini').html('<img src="../common/img/comp_logo/'+obj.userDetails.compImg+'" class="cust_logo">');
+          		$('#compImg').html('<img src="../common/img/comp_logo/'+obj.userDetails.compImg+'"  OnError="this.src=\'../common/img/comp_logo/d/eimsdefault.png\';" class="CustMobileLogo">');
+          		$('#compImgMini').html('<img src="../common/img/comp_logo/'+obj.userDetails.compImg+'" OnError="this.src=\'../common/img/comp_logo/d/eimsdefault.png\';" class="cust_logo">');
           	}else{
           		$('#compImg').html('<img src="../common/img/comp_logo/d/eimsdefault.png" class="CustMobileLogo">');
           		$('#compImgMini').html('<img src="../common/img/comp_logo/d/eimsdefault.png" class="cust_logo">');
           	}
 
+            $('#plant_id').val(1);
+            $('#workCenter_id').val(1);
           	/* Role Configuration */
          	/*$('#adminRole').val(obj.userDetails.rolename);
          	$('#companyName').val(obj.userDetails.company_id);*/

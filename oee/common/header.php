@@ -10,24 +10,12 @@
   <title>Dashboard</title>
   <!-- Tell the browser to be responsive to screen width -->
 
-
-
-<!-- <!DOCTYPE html>
-<html>
-<head>
-  <meta charset="utf-8">
-  <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <title>Dashboard</title>
- // Tell the browser to be responsive to screen width
-  <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport"> -->
-  
-  <style type="text/css">
-
+<style type="text/css">
 /*
  * Skin: Blue
  * ----------
  */
- .main-header .navbar {
+.main-header .navbar {
       background: linear-gradient(#f1f1f1eb, #8a535300, #e2e0e0);
     border-bottom: 1px solid #adadad;
 }
@@ -202,9 +190,10 @@
 <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,600,700,300italic,400italic,600italic">
 </head>
 <body class="skin-blue sidebar-mini sidebar-collapse" onload="window.history.forward();">
+   <div class="loader"></div>
 <div class="wrapper">
 
-  <header class="main-header">
+  <header class="main-header" style="position: fixed; width: 100%;">
     <!-- Logo -->
     <a href="javascript:void(0);" class="logo">
       <!-- mini logo for sidebar mini 50x50 pixels -->

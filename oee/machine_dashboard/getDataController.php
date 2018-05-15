@@ -8,10 +8,9 @@ if(isset($_POST['loadOeeData'])){     // getData for loadOeeData
     $plant_id= $_POST['plant_id'];
     $workCenter_id= $_POST['workCenter_id'];
     $iobotMachine= $_POST['iobotMachine'];
-    //$shift_num= $_POST['shift_num'];
-    $shift_num= 1;
+    $shift_num= $_POST['shift'];
 
-    $selDate= explode("/",$_POST['selDate']);// getting only yyyy-mm-dd fomate
+    $selDate= explode("/",$_POST['selDate']);// getting only yyyy-mm-dd formate
     $final_date= $selDate[2].'-'.$selDate[1].'-'.$selDate[0];
 
     $sqlProceQ = mysqli_query($con, "call sfsp_getMachineOee('".$comp_id."','".$plant_id."','".$workCenter_id."',".$iobotMachine.",".$final_date.",".$shift_num.")")or die("Query fail: " .mysqli_error($con));
@@ -35,6 +34,14 @@ if(isset($_POST['loadOeeData'])){     // getData for loadOeeData
         $total_Count=$row['total_Count'];
         $ok_Count=$row['ok_Count'];
         $rejected_Count=$row['rejected_Count'];
+        $oee_perc_color=$row['oee_perc_color'];
+        $availability_perc_color=$row['availability_perc_color'];
+        $performance_perc_color=$row['performance_perc_color'];
+        $quality_perc_color=$row['quality_perc_color'];
+        $run_time_perc=$row['run_time_perc'];
+        $idle_time_perc=$row['idle_time_perc'];
+        $quality_perc_color=$row['quality_perc_color'];
+        $breakdown_time_perc=$row['breakdown_time_perc'];
 
         $final_data=array('machine_status'=>"$machine_status",
                             'oee_perc'=>"$oee_perc",
@@ -52,7 +59,14 @@ if(isset($_POST['loadOeeData'])){     // getData for loadOeeData
                             'quality_perc'=>"$quality_perc",
                             'total_Count'=>"$total_Count",
                             'ok_Count'=>"$ok_Count",
-                            'rejected_Count'=>"$rejected_Count"
+                            'rejected_Count'=>"$rejected_Count",
+                            'oee_perc_color'=>"$oee_perc_color",
+                            'availability_perc_color'=>"$availability_perc_color",
+                            'performance_perc_color'=>"$performance_perc_color",
+                            'quality_perc_color'=>"$quality_perc_color",
+                            'run_time_perc'=>"$run_time_perc",
+                            'idle_time_perc'=>"$idle_time_perc",
+                            'breakdown_time_perc'=>"$breakdown_time_perc",
                             );
     }
 
@@ -80,10 +94,11 @@ if(isset($_POST['loadShiftData'])){     // getData for loadShiftData
 
     $result = mysqli_query($con,$ssq);
     if(mysqli_num_rows($result)>0){
-        $sqlQ="SELECT id, code, start_date, end_date, plant_id, in_time, out_time, total_minutes, num_hour, type, lb_starttime, lb_endtime, sb1_starttime, sb1_endtime, sb2_starttime, sb2_endtim,is_break_availb FROM sfs_shifts FROM  sfs_shifts where type='SPECIAL' and plant_id=".$plant_id." and start_date='".$final_date."'";
+        $sqlQ="SELECT id, code, start_date, end_date, plant_id, in_time, out_time, total_minutes, num_hours,hour_start, type, lb_starttime, lb_endtime, sb1_starttime, sb1_endtime, sb2_starttime, sb2_endtim,is_break_availb FROM sfs_shifts FROM  sfs_shifts where type='SPECIAL' and plant_id=".$plant_id." and start_date='".$final_date."'";
     }else{
-        $sqlQ="SELECT id, code, start_date, end_date, plant_id, in_time, out_time, total_minutes, num_hour, type, lb_starttime, lb_endtime, sb1_starttime, sb1_endtime, sb2_starttime, sb2_endtime,is_break_availb  FROM  sfs_shifts where type='NORMAL' and plant_id=".$plant_id." and start_date=(SELECT MAX(DATE(start_date)) FROM  sfs_shifts WHERE DATE(start_date) <= '".$final_date."' and plant_id=".$plant_id."  and type='NORMAL')";  
+        $sqlQ="SELECT id, code, start_date, end_date, plant_id, in_time, out_time, total_minutes, num_hours, hour_start,type, lb_starttime, lb_endtime, sb1_starttime, sb1_endtime, sb2_starttime, sb2_endtime,is_break_availb  FROM  sfs_shifts where type='NORMAL' and plant_id=".$plant_id." and start_date=(SELECT MAX(DATE(start_date)) FROM  sfs_shifts WHERE DATE(start_date) <= '".$final_date."' and plant_id=".$plant_id."  and type='NORMAL')";  
     }
+
 
     $sql=mysqli_query($con, $sqlQ) or die("Query fail: " .mysqli_error($con));
     while ($row=mysqli_fetch_array($sql))
@@ -95,7 +110,8 @@ if(isset($_POST['loadShiftData'])){     // getData for loadShiftData
         $in_time=$row['in_time'];
         $out_time=$row['out_time'];
         $dateFormat='('.getHours($row['in_time']).'h - '.getHours($row['out_time']).'h)';
-        $num_hourss=$row['num_hour'];
+        $num_hourss=$row['num_hours'];
+        $hour_start=$row['hour_start'];
         $total_minutes=$row['total_minutes'];
         $shift_type=$row['type'];
         $shift_state=$row['shift_state'];
@@ -116,6 +132,7 @@ if(isset($_POST['loadShiftData'])){     // getData for loadShiftData
                             'out_time'=>"$out_time",
                             'dateFormat'=>"$dateFormat",
                             'num_hourss'=>"$num_hourss",
+                            'hour_start'=>"$hour_start",
                             'total_minutes'=>"$total_minutes",
                             'shift_type'=>"$shift_type",
                             'shift_state'=>"$shift_state",
@@ -147,4 +164,63 @@ if(isset($_POST['loadShiftData'])){     // getData for loadShiftData
     echo json_encode($status);    
 }
 
+
+if(isset($_POST['loadToolProcDrillData'])){     // getData for loadToolDrillData
+    $comp_id= $_POST['comp_id'];
+    $plant_id= $_POST['plant_id'];
+    $workCenter_id= $_POST['workCenter_id'];
+    $iobotMachine= $_POST['iobotMachine'];
+
+    $selDate= explode("/",$_POST['selDate']);// getting only Dateval
+    $final_date= $selDate[2].'-'.$selDate[1].'-'.$selDate[0];
+    $total_hours= $_POST['total_hours'];
+    $start_hourUI= $_POST['start_hour'];
+    $group_type= $_POST['group_type'];
+    $dbStartHour= $_POST['dbStartHour'];
+
+    $hourArr=array();
+    $final_data=array();
+    $rowHourArr=array();
+
+    $sqlProceQ = mysqli_query($con, "call sfsp_getHourlyDrill('".$final_date."','".$group_type."',".$total_hours.",".$dbStartHour.",".$iobotMachine.")") or die("Query fail: " .mysqli_error($con));
+ 
+    while ($row=mysqli_fetch_array($sqlProceQ))
+    {
+        $name=$row['name'];
+        $descp=$row['descp'];
+        $no_of_hours=$row['no_of_hours'];
+        $start_hour=$row['start_hour'];
+        $total_count=$row['total_count'];
+
+        $getStartHour=$start_hourUI;
+        for($i=0;$i<$total_hours;$i++){
+            $rowHourArr[]=$getStartHour.'h';
+            $hourArr[]=array($getStartHour.'h',round($row['H'.$getStartHour]));
+            $getStartHour++;
+        }
+                  
+        if($group_type=='M'){            
+            $machineData[]=array('name'=>"$descp",
+                                 'data'=>$hourArr
+                                 );
+        }else{     
+            $firstPhaseData[]=array('id'=>"$name",
+                                    'y'=>round($total_count),
+                                    'name'=>"$descp",
+                                    'drilldown'=>"$name"
+                                    );
+
+            $secondPhaseData[]=array('name'=>"$descp",
+                                     'id'=>"$name",
+                                     'data'=>$hourArr
+                                     );
+        }
+    }
+
+    $status['secondPhaseData']=$secondPhaseData;
+    $status['firstPhaseData']=$firstPhaseData;
+    $status['machineData']=$machineData;
+    $status['rowHourArr']=$rowHourArr;
+    echo json_encode($status);  
+}
 ?>

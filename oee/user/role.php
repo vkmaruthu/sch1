@@ -398,19 +398,19 @@ debugger;
   tempData.oeeRoles.getCompanyForDropdown();
   tempData.oeeRoles.loadAllScreen();
 
-  var role=$('#adminRole').val();
-  if(role !='SUPERADMIN'){
+/*  var role=$('#adminRole').val();
+  if(role !='SUPERADMIN'){ 
     $('#companyName').prop("disabled", false);
   }else{
     $('#companyName').val()
     $('#companyName').prop("disabled", true);
-  }
+  }*/
 
 });
 
 </script>
 
-<input type="hiddden" name="adminRole" id="adminRole"/>
+<input type="hidden" name="adminRole" id="adminRole"/>
 
   <div class="content-wrapper">
     <!-- Main content -->

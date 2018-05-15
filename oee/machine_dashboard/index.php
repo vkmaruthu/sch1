@@ -21,15 +21,17 @@
 .expandAddCssGraphLineGraph {
     height: 84% !important;
 }
-.fa:hover{
+#expandHourlyChart:hover{
+  background-color: #c9cac9;
+}
+#expandActivityAnalysis:hover{
   background-color: #c9cac9;
 }
 .progressCss{
   height: 25px;
 }
-
-
 </style>
+
 <script type="text/javascript">
 /* highchart variable */
 var operBtn=null;
@@ -42,6 +44,7 @@ var GoutTime=null;
 var GtotalHour=null;  
 var GstartHour=null;
 var ShiftGobalData=null;
+var GdbStartHour=null;
 
 var tempData;
 if(tempData===null||tempData===undefined){
@@ -50,6 +53,21 @@ if(tempData===null||tempData===undefined){
   
 tempData.oeeDash=
 {
+getTimeHHMMSS:function(time){
+  var hours = Math.floor(time / 3600);
+  time -= hours * 3600;
+  var minutes = Math.floor(time / 60);
+  time -= minutes * 60;
+  var seconds = parseInt(time % 60, 10);
+  //console.log((hours < 10 ? '0' + hours : hours) + ':' + (minutes < 10 ? '0' + minutes : minutes) + ':' + (seconds < 10 ? '0' + seconds : seconds));
+  return (hours < 10 ? '0' + hours : hours) + ':' + (minutes < 10 ? '0' + minutes : minutes) + ':' + (seconds < 10 ? '0' + seconds : seconds);
+},  
+NumFormat:function(num){
+    var n = num.toString(), p = n.indexOf('.');
+    return n.replace(/\d(?=(?:\d{3})+(?:\.|$))/g, function($0, i){
+        return p<0 || i<p ? ($0+',') : $0;
+    });
+},
 getEQDesc:function(){
     var url="getDataController.php";
     var comp_id=$('#comp_id').val();
@@ -64,9 +82,9 @@ getEQDesc:function(){
       success: function(obj) {
         if( obj.equipmentDetails !=null){
          $("#eq_desc").html('');
-         $("#eq_desc").append('<option value="none"> Select Equipment </option>');
+         //$("#eq_desc").append('<option value="none"> Select Equipment </option>');
           for(var i=0; i< obj.equipmentDetails.length; i++){
-           $("#eq_desc").append('<option value="'+obj.equipmentDetails[i].eq_code+'">'+obj.equipmentDetails[i].eq_desc+'</option>'); 
+           $("#eq_desc").append('<option value="'+obj.equipmentDetails[i].id+'">'+obj.equipmentDetails[i].eq_desc+'</option>'); 
           }
           }
         } 
@@ -86,31 +104,37 @@ oeeCirclePerc:function(id,val,fgColor) {
     );      
     $('#'+id).val(val).trigger('change');
 }, 
-getImg:function() {  
+getImg:function(img,reason,status,reason_color) {  
 debugger;
     var dataSet;
-    dataSet='<label class="pointer toggle-reason-bar pull-right" style="margin-right:10px;"> Productive <i style="background-color: green; width:10px;height: 10px; display:inline-block;"></i></label>';
+    dataSet='<label class="pointer toggle-reason-bar pull-right" style="margin-right:10px;">'+reason+' <i style="background-color:'+reason_color+'; width:10px;height: 10px; display:inline-block;"></i></label>';
 
         $("#imgTitleInfo").html(dataSet);
-        $("#showIobotImg").html('<img src="../common/img/machine/default.png" class="img-thumbnail dashMachineImg"/>');
-        $("#statusImg").html('<img src="../common/img/online.png" class="img-responsive statusImg"/>');
+
+        if(img !=""){
+            $("#showIobotImg").html('<img src="../common/img/machine/'+img+'"  OnError="this.src=\'../common/img/machine/default.png\';" class="img-thumbnail dashMachineImg"/>');
+        }else{
+            $("#showIobotImg").html('<img src="../common/img/machine/default.png"  OnError="this.src=\'../common/img/machine/default.png\';" class="img-thumbnail dashMachineImg"/>');
+        }
+
+        if(status==1){
+          $("#statusImg").html('<img src="../common/img/online.png" class="img-responsive statusImg"/>');
+        }else{
+          $("#statusImg").html('<img src="../common/img/offline.png" class="img-responsive statusImg"/>');  
+        }
+        
 },
 loadOeeData:function(){
     debugger;
     var selDate = $("#userDateSel").val();
     var url= "getDataController.php";
-
-/*    var comp_id=$('#comp_id').val();
+    var comp_id=$('#comp_id').val();
     var plant_id=$('#plant_id').val();
     var workCenter_id=$('#workCenter_id').val();
-    var iobotMachine= $('#iobotMachine').val();
-*/
-    var comp_id=1;
-    var plant_id=1;
-    var workCenter_id=1;
-    var iobotMachine=1;
+    var iobotMachine= $('#eq_desc').val();
+    var shift= $('#shiftDropdown').val();
 
-    var myData = {loadOeeData:'loadOeeData',selDate:selDate,plant_id:plant_id,comp_id:comp_id,plant_id:plant_id,workCenter_id:workCenter_id,iobotMachine:iobotMachine };
+    var myData = {loadOeeData:'loadOeeData',selDate:selDate,comp_id:comp_id,plant_id:plant_id,workCenter_id:workCenter_id,iobotMachine:iobotMachine,shift:shift };
 
         $.ajax({
             type:"POST",
@@ -120,8 +144,24 @@ loadOeeData:function(){
             data:myData,
             success: function(obj) {
               debugger;
-             // alert();
-              //tempData.oeeDash.shiftsdata();                                     
+              tempData.oeeDash.getImg(obj.oeeDetails.image_filename,obj.oeeDetails.active_reason_code,parseInt(obj.oeeDetails.machine_status),obj.oeeDetails.active_reason_color);
+              tempData.oeeDash.oeeCirclePerc('oeePerc',parseInt(obj.oeeDetails.oee_perc),obj.oeeDetails.oee_perc_color);
+              tempData.oeeDash.oeeCirclePerc('availPerc',parseInt(obj.oeeDetails.availability_perc),obj.oeeDetails.availability_perc_color);
+              tempData.oeeDash.oeeCirclePerc('performPerc',parseInt(obj.oeeDetails.performance_perc),obj.oeeDetails.performance_perc_color);
+              tempData.oeeDash.oeeCirclePerc('qualityPerc',parseInt(obj.oeeDetails.quality_perc),obj.oeeDetails.quality_perc_color);
+              $('#PlannedProductionTime').html(tempData.oeeDash.getTimeHHMMSS(parseInt(obj.oeeDetails.planned_production_time)));
+              $('#RunTime').html(tempData.oeeDash.getTimeHHMMSS(parseInt(obj.oeeDetails.run_time)));
+              $('#RunTimePerc').css("width",parseInt(obj.oeeDetails.run_time_perc));
+              $('#IdleTime').html(tempData.oeeDash.getTimeHHMMSS(parseInt(obj.oeeDetails.idle_time)));
+              $('#IdleTimePerc').css("width",parseInt(obj.oeeDetails.idle_time_perc));
+              $('#BreakdownTime').html(tempData.oeeDash.getTimeHHMMSS(parseInt(obj.oeeDetails.breakdown_time)));
+              $('#BreakdownTimePerc').css("width",parseInt(obj.oeeDetails.breakdown_time_perc));
+              $('#IdealCycleTime').html(tempData.oeeDash.getTimeHHMMSS(parseInt(obj.oeeDetails.ideal_cycle_time)));
+              $('#AverageTimePart').html(tempData.oeeDash.getTimeHHMMSS(parseInt(obj.oeeDetails.average_time_per_part)));
+              $('#TotalCount').html(tempData.oeeDash.NumFormat(parseInt(obj.oeeDetails.total_Count)));
+              $('#OkCount').html(tempData.oeeDash.NumFormat(parseInt(obj.oeeDetails.ok_Count)));
+              $('#RejectedCount').html(tempData.oeeDash.NumFormat(parseInt(obj.oeeDetails.rejected_Count)));
+                                                              
             }
         });
 },   
@@ -140,17 +180,13 @@ loadShiftData:function(){
     var selDate = $("#userDateSel").val();
     var url= "getDataController.php";
 
-/*  var comp_id=$('#comp_id').val();
+    var comp_id=$('#comp_id').val();
     var plant_id=$('#plant_id').val();
     var workCenter_id=$('#workCenter_id').val();
-    var iobotMachine= $('#iobotMachine').val();  */
+    var iobotMachine= $('#iobotMachine').val();  
 
-    var comp_id=1;
-    var plant_id=1;
-    var workCenter_id=1;
-    var iobotMachine=1;
 
-    var myData = {loadShiftData:'loadShiftData',selDate:selDate,plant_id:plant_id,comp_id:comp_id,plant_id:plant_id,workCenter_id:workCenter_id,iobotMachine:iobotMachine };
+    var myData = {loadShiftData:'loadShiftData',selDate:selDate,comp_id:comp_id,plant_id:plant_id,workCenter_id:workCenter_id,iobotMachine:iobotMachine };
 
         $.ajax({
             type:"POST",
@@ -172,57 +208,56 @@ loadShiftData:function(){
                   }
                   else{
                      if(obj.shiftData.length>2){
-                        $("#shiftDropdown").append('<option value="'+obj.shiftData[i].id+'"> All Shift '+obj.shiftData[i].dateFormat+'</option>'); 
+                       // $("#shiftDropdown").append('<option value="'+obj.shiftData[i].id+'"> All Shift '+obj.shiftData[i].dateFormat+'</option>'); 
                       }
                   }
                 } 
               }else{
-                $("#shiftDropdown").html('<option value="default">Default Shift</option>');
+                //$("#shiftDropdown").html('<option value="default">Default Shift</option>');
               }            
               
               tempData.oeeDash.shiftsdata();                                     
             }
         });
-  },   
-  convertTime:function(time){
+},   
+convertTime:function(time){
     var d;
     d = new Date(time);
     d.setSeconds(d.getSeconds() - 1);
     return tempData.oeeDash.addZero(d.getHours()) + ':'+tempData.oeeDash.addZero(d.getMinutes()) + ':' + tempData.oeeDash.addZero(d.getSeconds());
-  },
-  convertTimeWithOutOneSec:function(time){
+},
+convertTimeWithOutOneSec:function(time){
     var d;
     d = new Date(time);
    // d.setSeconds(d.getSeconds() - 1);
     return tempData.oeeDash.addZero(d.getHours()) + ':'+tempData.oeeDash.addZero(d.getMinutes()) + ':' + tempData.oeeDash.addZero(d.getSeconds());
-  },
-  addZero:function($num) {
+},
+addZero:function($num) {
     if($num < 10) {
         $num = "0".$num;
     }
     return $num;
-  },
-  getCommonDataForShift:function(obj){
+},
+getCommonDataForShift:function(obj){
     debugger;
-    var arr=[];
-   var hours = parseInt(obj.num_hours)*60*60;
-   var inTime = tempData.oeeDash.convertTimeWithOutOneSec(obj.in_time);
-   var outTime = tempData.oeeDash.convertTime(obj.out_time);
-   var d = new Date(obj.in_time);
+  var arr=[];
+  var hours = parseInt(obj.num_hours)*60*60;
+  var inTime = tempData.oeeDash.convertTimeWithOutOneSec(obj.in_time);
+  var outTime = tempData.oeeDash.convertTime(obj.out_time);
+  var d = new Date(obj.in_time);
     arr.push({"hour":hours,"inTime":inTime,"outTime":outTime,"startHour":d.getHours()});
     return arr;
 },
 shiftsdata:function(){
      debugger;
      // tempData.oeeDash.changeDateFormat(); 
-
     var shift= $('#shiftDropdown').val();
     var ShiftName = $("#shiftDropdown option:selected").text();
 
     $('#ShiftLabel').html(ShiftName);
 
     if(shift=='default'){ // if no shift are aviable it takes default.
-      Ghours=90200;  GinTime='00:00:00';   GoutTime='23:59:59';  GtotalHour=24;  GstartHour=0;
+      Ghours=90200;  GinTime='00:00:00';   GoutTime='23:59:59';  GtotalHour=24;  GstartHour=1; GdbStartHour=1;
 /*      tempData.oeeDash.loadEventGraph(Ghours,GinTime,GoutTime,GtotalHour,GstartHour);
       tempData.oeeDash.loadgraph_productivity_analysis1('00:00:00','23:59:59');*/
       tempData.oeeDash.activityAnalysis();
@@ -230,21 +265,22 @@ shiftsdata:function(){
     }else{
       var singalJosn=tempData.oeeDash.getObjects(ShiftGobalData,'id',shift);
       var get3Data= tempData.oeeDash.getCommonDataForShift(singalJosn[0]); // Passing all Selected Shift Data
+      //console.log(singalJosn);
       // hours,inTime,outTime,totalHour,startHour
-      tempData.oeeDash.AfterShiftSelect(get3Data[0].hour,get3Data[0].inTime,get3Data[0].outTime,parseInt(singalJosn[0].num_hours),get3Data[0].startHour);
+      tempData.oeeDash.AfterShiftSelect(get3Data[0].hour,get3Data[0].inTime,get3Data[0].outTime,parseInt(singalJosn[0].num_hourss),get3Data[0].startHour,singalJosn[0].hour_start);
       
     }
 },
-AfterShiftSelect:function(hours,inTime,outTime,totalHour,startHour){
+AfterShiftSelect:function(hours,inTime,outTime,totalHour,startHour,dbStartHour){
         // hours,inTime,outTime,totalHour,startHour
         Ghours=hours;  GinTime=inTime;   GoutTime=outTime;  GtotalHour=totalHour;  GstartHour=startHour;
-
+        GdbStartHour=dbStartHour;
 /*        tempData.oeeDash.loadEventGraph(hours,inTime,outTime,totalHour,startHour); 
         tempData.oeeDash.loadgraph_productivity_analysis1(inTime,outTime); //inTime,outTime*/
-         tempData.oeeDash.activityAnalysis();
+        tempData.oeeDash.activityAnalysis();
         tempData.oeeDash.checkData();
-  },
-   getObjects:function(obj, key, val) {  // JSON Search function
+},
+getObjects:function(obj, key, val) {  // JSON Search function
     debugger;
     var objects = [];
     for (var i in obj) {
@@ -256,6 +292,54 @@ AfterShiftSelect:function(hours,inTime,outTime,totalHour,startHour){
         }
     }
     return objects;    
+},
+loadToolProcDrillData:function(mode){        /* Load Hourly Chart with Drilldown */
+  // Ghours=90200;  GinTime='00:00:00';   GoutTime='23:59:59';  GtotalHour=24;  GstartHour=0;
+    var selDate = $("#userDateSel").val();
+    var url= "getDataController.php";
+
+    var comp_id=$('#comp_id').val();
+    var plant_id=$('#plant_id').val();
+    var workCenter_id=$('#workCenter_id').val();
+    var iobotMachine= $('#eq_desc').val();  
+    var group_type=mode;
+    var msg;
+
+    var myData = {loadToolProcDrillData:'loadToolProcDrillData',selDate:selDate,comp_id:comp_id,plant_id:plant_id,workCenter_id:workCenter_id,iobotMachine:iobotMachine,total_hours:GtotalHour,start_hour:GstartHour,dbStartHour:GdbStartHour,group_type:group_type};
+
+    if(mode=='T'){
+      msg = 'Tool Hourly Production';
+    }else if(mode=='P'){
+      msg = 'Hourly Production';
+    }else{
+      msg = 'Machine Hourly Production';
+    }
+
+    $.ajax({
+      type:"POST",
+      url:url,
+      async: false,
+      dataType: 'json',
+      cache: false,
+      data:myData,
+      success: function(obj) {
+        if(mode=='M'){
+          if(obj.machineData!=null){          
+            tempData.oeeDash.loadMachineHourly(obj,msg);
+          }else{
+            msg = 'Data Not Available';
+            tempData.oeeDash.loadMachineHourly(obj,msg);
+          } 
+        }else{
+          if(obj.firstPhaseData!=null){          
+            tempData.oeeDash.loadToolHourlyDrilldown(obj,msg); 
+          }else{
+            msg = 'Data Not Available';
+            tempData.oeeDash.loadToolHourlyDrilldown(obj,msg); 
+          }     
+        }             
+      } 
+    });
 },
 loadToolHourlyDrilldown:function(obj,msg){        /* Load Hourly Chart with Drilldown */
 debugger;
@@ -279,7 +363,7 @@ operBtn = Highcharts.chart('hourlyProduction', {
             }
     },
     title: {
-        text: 'Hourly Production'
+        text: msg
     },
     subtitle: {
         text: ''
@@ -289,7 +373,7 @@ operBtn = Highcharts.chart('hourlyProduction', {
     },
     yAxis: {
         title: {
-            text: 'Parts / PO'
+            text: 'Count'
         }
     },
     legend: {
@@ -316,56 +400,10 @@ operBtn = Highcharts.chart('hourlyProduction', {
     series: [{
         name: 'Production',
         colorByPoint: true,
-        data: [
-                {
-                  "id": "900010055",
-                  "y": 5,
-                  "name": "8000500028 / MEGA-223-P01 (TC1)",
-                  "drilldown": "900010055"
-                }
-              ]
+        data: obj.firstPhaseData
     }],
     drilldown: {
-        series: [
-                  {
-                    "name": "8000500028",
-                    "id": "900010055",
-                    "data": [
-                      [
-                        "6h",
-                        0
-                      ],
-                      [
-                        "7h",
-                        0
-                      ],
-                      [
-                        "8h",
-                        1
-                      ],
-                      [
-                        "9h",
-                        2
-                      ],
-                      [
-                        "10h",
-                        2
-                      ],
-                      [
-                        "11h",
-                        0
-                      ],
-                      [
-                        "12h",
-                        0
-                      ],
-                      [
-                        "13h",
-                        0
-                      ]
-                    ]
-                  }
-                ]
+        series:obj.secondPhaseData
     }
 });
 },
@@ -382,22 +420,13 @@ debugger;
           text: ''
       },
       xAxis: {
-          categories:[
-                        "6h",
-                        "7h",
-                        "8h",
-                        "9h",
-                        "10h",
-                        "11h",
-                        "12h",
-                        "13h"
-                      ],
+          categories:obj.rowHourArr,
           crosshair: true
       },
       yAxis: {
           min: 0,
           title: {
-              text: 'Parts'
+              text: 'Count'
           }
       },
       tooltip: {
@@ -421,39 +450,7 @@ debugger;
               }
           }
       },
-      series:[
-                {
-                  "name": "TMC-1001",
-                  "data": [
-                    [
-                      "6h",
-                      0
-                    ],
-                    [
-                      "7h",
-                      0
-                    ],
-                    [
-                      "8h",
-                      0
-                    ],
-                    2,
-                    2,
-                    [
-                      "11h",
-                      0
-                    ],
-                    [
-                      "12h",
-                      0
-                    ],
-                    [
-                      "13h",
-                      0
-                    ]
-                  ]
-                }
-              ]
+      series:obj.machineData
       //[{"name":"TOOL12","data":[33,0,0,0,0,0,0,0,0,0,0,0,0,0,10,10,10,11]}]
   });
 },
@@ -545,13 +542,20 @@ checkData:function(){
     var overView = document.getElementById('production');
 
     if(tool.checked){       
-      tempData.oeeDash.loadToolHourlyDrilldown(); 
+      tempData.oeeDash.loadToolProcDrillData('T');  
     }else if(machine.checked){        
-      tempData.oeeDash.loadMachineHourly();
-    }else{
-      $('#hourlyProduction').html('<h3> Under development </h3>');
+      tempData.oeeDash.loadToolProcDrillData('M');  
+    }else{          
+      tempData.oeeDash.loadToolProcDrillData('P');
     }
 },
+reload:function(){
+  $(".loader").fadeIn("slow");
+  tempData.oeeDash.shiftsdata();
+
+  tempData.oeeDash.loadOeeData();
+  $(".loader").fadeOut("slow");
+}
 
 };
 
@@ -559,6 +563,7 @@ checkData:function(){
 
 $(document).ready(function() {
 debugger; 
+//$(".loader").fadeIn("slow");
   $("#companyOEE").parent().addClass('active');
   $("#companyOEE").parent().parent().closest('.treeview').addClass('active menu-open');
   
@@ -571,13 +576,8 @@ $('.datepicker-me').datepicker('setDate', today);
 
 tempData.oeeDash.getEQDesc();
 tempData.oeeDash.loadShiftData();  // Load the shift
+tempData.oeeDash.reload();  // Load the shift
 
-tempData.oeeDash.loadOeeData();
-tempData.oeeDash.getImg();
-tempData.oeeDash.oeeCirclePerc('oeePerc',75,'#E29C21');
-tempData.oeeDash.oeeCirclePerc('availPerc',40,'#FDCA6C');
-tempData.oeeDash.oeeCirclePerc('performPerc',20,'#DB4F31');
-tempData.oeeDash.oeeCirclePerc('qualityPerc',90,'#1AD34E');
 
 $('#expandHourlyChart').click(function(e){
     $('#expandHourlyChartScreen').toggleClass('fullscreen'); 
@@ -597,55 +597,64 @@ $('#expandActivityAnalysis').click(function(e){
     activity.setSize($('#activityAnalysis').width(), $('#activityAnalysis').height());
 });
 
-
+$(".loader").fadeOut("slow");
 });
 
 </script>
 
 <input type="hidden" name="comp_id" id="comp_id"/> 
+<input type="hidden" name="plant_id" id="plant_id"/> 
+<input type="hidden" name="workCenter_id" id="workCenter_id"/> 
+
   <!-- Content Wrapper. Contains page content -->
   <div class="content-wrapper">
 
     <!-- Main content -->
-    <section class="content">
+    <section class="content mainSectionTop">
 
     <div class="btnsStyle btnsStyleDashboard" id="btns">
       <div class="col-md-5 col-sm-12 col-xs-12 pull-left headerTitle">
        <!--  <a onclick="tempData.oeeDash.visitPlants();">Plants</a> / <a onclick="tempData.oeeDash.visitWorkcenter();">WorkCenter</a> / 
         <a onclick="tempData.oeeDash.visitMachine();">Machine</a> / Name of Machine<br>  -->
 
-  <div class="col-md-5 col-sm-6 col-xs-12" style="padding:0px;">
-        <div class="form-group" style="margin-bottom:0px;">
-          <select class="form-control select2"  id="eq_desc" name="eq_desc" 
-          style="width: 100%;padding:0px !important;">
-            <option value="none"> Select Equipment </option>
-          </select>
-
-       <!--  <p style="font-size: 11px;"> As on 24/04/2018 18:00:00 </p> -->
-        </div>
-
-  </div>
-
-      
+          <div class="col-md-4 col-sm-6 col-xs-12" style="padding:0px;">
+                <div class="form-group" style="margin-bottom:0px;">
+                  <select class="form-control select2"  id="eq_desc" name="eq_desc" 
+                  style="width: 100%;padding:0px !important;">
+                    <option value="none"> Select Equipment </option>
+                  </select>
+               <!--  <p style="font-size: 11px;"> As on 24/04/2018 18:00:00 </p> -->
+                </div>
+          </div>      
       </div>
 
-      <div class="col-md-5 col-sm-12 col-xs-12 pull-right" style="margin-top:5px;">
+      <div class="col-md-5 col-sm-12 col-xs-12 pull-right" style="margin-top:7px;">
           
-          <div class="col-md-6 col-xs-5">
-            <select class="form-control" id="shiftDropdown" style="font-size: 12px; padding: 2px;"
-             onchange= "tempData.oeeDash.shiftsdata();">
-            </select>   
-          </div>  
-        
-        <div class="col-md-6 col-xs-7 pull-right">  
+
+         
+        <div class="col-md-1 col-sm-1 col-xs-1 pull-right">
+          <button type="button" onclick="tempData.oeeDash.reload();" class="btn btn-sm btn-info"
+           style="">   <i class="fa  fa-refresh"> </i>
+          </button>
+        </div> 
+
+        <div class="col-md-5 col-xs-5 pull-right">  
           <div class='input-group date datepicker-me' data-provide="datepicker">
-            <input type='text' class="form-control" id='userDateSel' name="userDateSel"  onchange=""
-            style="cursor: pointer;" readonly="readonly"/>
+            <input type='text' class="form-control" id='userDateSel' name="userDateSel" 
+                   style="cursor: pointer;" readonly="readonly"/>
               <label class="input-group-addon btn" for="userDateSel">
                   <span class="glyphicon glyphicon-calendar"></span>               
               </label>
           </div>  
         </div>
+
+        <div class="col-md-5 col-xs-5 pull-right">
+          <select class="form-control" id="shiftDropdown" style="font-size: 12px; padding: 2px;">
+          </select>   <!-- onchange= "tempData.oeeDash.shiftsdata(); -->
+        </div> 
+
+     
+
       </div>      
     </div>
 
@@ -717,15 +726,16 @@ $('#expandActivityAnalysis').click(function(e){
               </div>
                
             <p class="text-center"> Planned Production Time </p>
-            <p class="text-center" style="font-size: 25px;margin: -5%;font-weight: bold;color: #013885;">07:00</p> 
+            <p class="text-center" style="font-size: 25px;margin: -5%;font-weight: bold;color: #013885;"
+             id="PlannedProductionTime"></p> 
             
             <div class="col-md-12 col-xs-12" style="margin-top:8%;    padding: 0px;">
                 <p class="col-md-7 col-xs-7 availTextRight">Run Time</p>
-                <p class="col-md-5 col-xs-5 text-right availTextLeft">04:17</p>
+                <p class="col-md-5 col-xs-5 text-right availTextLeft" id="RunTime"></p>
                 <div class="col-md-12 col-xs-12" style="margin-top: -10px; margin-bottom: 4%;">    
                   <div class="progress progress-sm active" style="margin: auto;">
-                    <div class="progress-bar progress-bar-primary progress-bar-striped" role="progressbar" aria-valuenow="20" aria-valuemin="0" aria-valuemax="100" style="width: 60%">
-                      <span class="sr-only">20% Complete</span>
+                    <div class="progress-bar progress-bar-primary progress-bar-striped" role="progressbar" aria-valuenow="20" aria-valuemin="0" aria-valuemax="100" id="RunTimePerc">
+                      <!-- <span class="sr-only">20% Complete</span> -->
                     </div>
                   </div>
                 </div>
@@ -733,11 +743,11 @@ $('#expandActivityAnalysis').click(function(e){
 
             <div class="col-md-12 col-xs-12" style="padding: 0px;">
                 <p class="col-md-7 col-xs-7 availTextRight">Idle Time</p>
-                <p class="col-md-5 col-xs-5 text-right availTextLeft">01:33</p>
+                <p class="col-md-5 col-xs-5 text-right availTextLeft" id="IdleTime"></p>
                 <div class="col-md-12 col-xs-12" style="margin-top: -10px; margin-bottom: 4%;">    
                   <div class="progress progress-sm active" style="margin: auto;">
-                    <div class="progress-bar progress-bar-primary progress-bar-striped" role="progressbar" aria-valuenow="20" aria-valuemin="0" aria-valuemax="100" style="width: 22%">
-                      <span class="sr-only">20% Complete</span>
+                    <div class="progress-bar progress-bar-primary progress-bar-striped" role="progressbar" aria-valuenow="20" aria-valuemin="0" aria-valuemax="100" id="IdleTimePerc">
+                      <!-- <span class="sr-only">20% Complete</span> -->
                     </div>
                   </div>
                 </div>
@@ -745,11 +755,11 @@ $('#expandActivityAnalysis').click(function(e){
 
             <div class="col-md-12 col-xs-12" style="padding: 0px;">
                 <p class="col-md-8 col-xs-8 availTextRight">Breakdown Time</p>
-                <p class="col-md-4 col-xs-4 text-right availTextLeft">01:15</p>
+                <p class="col-md-4 col-xs-4 text-right availTextLeft" id="BreakdownTime"></p>
                 <div class="col-md-12 col-xs-12" style="margin-top: -10px; margin-bottom: 4%;">    
                   <div class="progress progress-sm active" style="margin: auto;">
-                    <div class="progress-bar progress-bar-primary progress-bar-striped" role="progressbar" aria-valuenow="20" aria-valuemin="0" aria-valuemax="100" style="width: 55%">
-                      <span class="sr-only">20% Complete</span>
+                    <div class="progress-bar progress-bar-primary progress-bar-striped" role="progressbar" aria-valuenow="20" aria-valuemin="0" aria-valuemax="100" id="BreakdownTimePerc">
+                      <!-- <span class="sr-only">20% Complete</span> -->
                     </div>
                   </div>
                 </div>
@@ -783,13 +793,13 @@ $('#expandActivityAnalysis').click(function(e){
               </div>
 
             <div class="col-md-12 col-xs-12" style="padding: 0px;margin-top:5%;">
-                <p class="text-center timeFontStyle">04:12:01</p>
+                <p class="text-center timeFontStyle" id="IdealCycleTime"></p>
                 <p class="text-center">Ideal Cycle Time</p>
             </div>
 
 
             <div class="col-md-12 col-xs-12" style="padding: 0px;">
-                <p class="text-center timeFontStyle">04:12:01</p>
+                <p class="text-center timeFontStyle" id="AverageTimePart"></p>
                 <p class="text-center">Average Time / Part</p>
             </div>
 
@@ -822,7 +832,7 @@ $('#expandActivityAnalysis').click(function(e){
                 <p class="col-md-4 col-xs-4 availTextRight">
                   <img src="../common/img/m_dashboard/sum_sigma.png" style="margin-top: 25%;"/> </p>
               <div class="col-md-8 col-xs-8 ">
-                <p class="text-right timeFontStyle">10,854</p>
+                <p class="text-right timeFontStyle" id="TotalCount"></p>
                 <p class="text-right">Total Count</p>
               </div>
             </div>
@@ -831,7 +841,7 @@ $('#expandActivityAnalysis').click(function(e){
                 <p class="col-md-4 col-xs-4 availTextRight">
                   <img src="../common/img/m_dashboard/hand_up.png" style="margin-top: 25%;"/> </p>
               <div class="col-md-8 col-xs-8 ">
-                <p class="text-right timeFontStyle">9,854</p>
+                <p class="text-right timeFontStyle" id="OkCount"></p>
                 <p class="text-right">OK Count</p>
               </div>
             </div>
@@ -841,7 +851,7 @@ $('#expandActivityAnalysis').click(function(e){
                 <p class="col-md-4 col-xs-4 availTextRight">
                   <img src="../common/img/m_dashboard/hand_down.png" style="margin-top: 25%;"/> </p>
               <div class="col-md-8 col-xs-8 ">
-                <p class="text-right timeFontStyle">949</p>
+                <p class="text-right timeFontStyle" id="RejectedCount"></p>
                 <p class="text-right">Rejected Count</p>
               </div>
             </div>
@@ -851,77 +861,6 @@ $('#expandActivityAnalysis').click(function(e){
         </div>
       </div>
 <!-- Quality Ends --> 
-
-<!-- Hourly Production -->
-    <div class="col-md-9 col-sm-12 col-xs-12" id="expandHourlyChartScreen">  
-        <div class="panel panel-default dashFirstRow">
-          <div class="panel-heading panelHeader">
-            <div class="panel-title pull-left">
-              <i class="fa fa-sliders fa-fw"></i> Hourly Production
-            </div>
-              <div class="panel-title pull-right">
-                <label> <input type="radio" class="" name="order"  id="machine"  
-                  onclick="tempData.oeeDash.checkData();" checked> Machine </label>&nbsp;&nbsp;
-                <label> <input type="radio" class="" name="order" id="production" 
-                  onclick= "tempData.oeeDash.checkData();"> Production </label>&nbsp;&nbsp;
-                <label> <input type="radio" class="" name="order" id="tool" 
-                  onclick= "tempData.oeeDash.checkData();"> Tool </label>
-
-               <i id="expandHourlyChart" class="btn btn-xs fa fa-expand" aria-hidden="true"></i>
-              </div> 
-            <div class="clearfix"></div>
-          </div>
-          <div class="panel-body">  
-            <div class="table-responsive">
-                <!-- Load Machine & Production Order Chart --> <!-- class="widthClass"  -->
-                <div id="hourlyProduction" style="width:99%;height:270px;"></div>           
-
-            </div>      
-          </div>
-        </div>
-      </div>
-<!-- Hourly Production Ends --> 
-
-
-<!-- Shift Details -->
-    <div class="col-md-3 col-sm-6 col-xs-12" id="expandShiftDetailsScreen">  
-        <div class="panel panel-default dashFirstRow">
-          <div class="panel-heading panelHeader">
-            <div class="panel-title pull-left">
-              <i class="fa fa-sliders fa-fw"></i> Shift Details
-            </div>
-            <div class="panel-title pull-right">
-              <div id="statusImg"></div>
-            </div>
-              <!-- <div class="panel-title pull-right">
-               <i id="expandShiftDetails" class="btn btn-xs fa fa-expand" aria-hidden="true"></i>
-              </div>  -->
-            <div class="clearfix"></div>
-          </div>
-          <div class="panel-body">  
-            <div class="row">              
-              <div class="col-md-12 col-xs-12" style="padding: 0px;">              
-                  <p class="text-center">Total Production Period</p>
-                  <p class="text-center shiftDetailsTime">06:00 - 14:00</p>
-              </div>
-              <div class="col-md-12 col-xs-12" style="padding: 0px;">              
-                  <p class="text-center">Long Break</p>
-                  <p class="text-center shiftDetailsTime">10:00 - 10:30</p>
-              </div>
-              <div class="col-md-12 col-xs-12" style="padding: 0px;">              
-                  <p class="text-center">Short Break - 01</p>
-                  <p class="text-center shiftDetailsTime">08:00 - 08:15</p>
-              </div>
-              <div class="col-md-12 col-xs-12" style="padding: 0px;">              
-                  <p class="text-center">Short Break - 02</p>
-                  <p class="text-center shiftDetailsTime">12:00 - 12:15</p>
-              </div>
-            </div> 
-
-          </div>
-        </div>
-      </div>
-<!-- Shift Details Ends -->  
 
 
 <!-- Activity Progress -->
@@ -1001,6 +940,79 @@ $('#expandActivityAnalysis').click(function(e){
         </div>
       </div>
 <!-- Activity Analysis Ends -->  
+
+<!-- Hourly Production -->
+    <div class="col-md-9 col-sm-12 col-xs-12" id="expandHourlyChartScreen">  
+        <div class="panel panel-default dashFirstRow">
+          <div class="panel-heading panelHeader">
+            <div class="panel-title pull-left">
+              <i class="fa fa-sliders fa-fw"></i> Hourly Production
+            </div>
+              <div class="panel-title pull-right">
+                <label> <input type="radio" class="" name="order"  id="machine"  
+                  onclick="tempData.oeeDash.checkData();" checked> Machine </label>&nbsp;&nbsp;
+                <label> <input type="radio" class="" name="order" id="production" 
+                  onclick= "tempData.oeeDash.checkData();"> Production </label>&nbsp;&nbsp;
+                <label> <input type="radio" class="" name="order" id="tool" 
+                  onclick= "tempData.oeeDash.checkData();"> Tool </label>
+
+               <i id="expandHourlyChart" class="btn btn-xs fa fa-expand" aria-hidden="true"></i>
+              </div> 
+            <div class="clearfix"></div>
+          </div>
+          <div class="panel-body">  
+            <div class="table-responsive">
+                <!-- Load Machine & Production Order Chart --> <!-- class="widthClass"  -->
+                <div id="hourlyProduction" style="width:99%;height:270px;"></div>           
+
+            </div>      
+          </div>
+        </div>
+      </div>
+<!-- Hourly Production Ends --> 
+
+
+<!-- Shift Details -->
+    <div class="col-md-3 col-sm-6 col-xs-12" id="expandShiftDetailsScreen">  
+        <div class="panel panel-default dashFirstRow">
+          <div class="panel-heading panelHeader">
+            <div class="panel-title pull-left">
+              <i class="fa fa-sliders fa-fw"></i> Shift Details
+            </div>
+            <div class="panel-title pull-right">
+              <div id="statusImg"></div>
+            </div>
+              <!-- <div class="panel-title pull-right">
+               <i id="expandShiftDetails" class="btn btn-xs fa fa-expand" aria-hidden="true"></i>
+              </div>  -->
+            <div class="clearfix"></div>
+          </div>
+          <div class="panel-body">  
+            <div class="row">              
+              <div class="col-md-12 col-xs-12" style="padding: 0px;">              
+                  <p class="text-center">Total Production Period</p>
+                  <p class="text-center shiftDetailsTime">06:00 - 14:00</p>
+              </div>
+              <div class="col-md-12 col-xs-12" style="padding: 0px;">              
+                  <p class="text-center">Long Break</p>
+                  <p class="text-center shiftDetailsTime">10:00 - 10:30</p>
+              </div>
+              <div class="col-md-12 col-xs-12" style="padding: 0px;">              
+                  <p class="text-center">Short Break - 01</p>
+                  <p class="text-center shiftDetailsTime">08:00 - 08:15</p>
+              </div>
+              <div class="col-md-12 col-xs-12" style="padding: 0px;">              
+                  <p class="text-center">Short Break - 02</p>
+                  <p class="text-center shiftDetailsTime">12:00 - 12:15</p>
+              </div>
+            </div> 
+
+          </div>
+        </div>
+      </div>
+<!-- Shift Details Ends -->  
+
+
 
     </section>
     <!-- /.content -->
