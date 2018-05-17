@@ -180,14 +180,16 @@ if(isset($_POST['loadToolProcDrillData'])){     // getData for loadToolDrillData
 
    
     $final_data=array();
-    $rowHourArr=array();
+    //$rowHourArr=array();
 
     $sqlProceQ = mysqli_query($con, "call sfsp_getHourlyDrill('".$final_date."','".$group_type."',".$total_hours.",".$dbStartHour.",".$iobotMachine.")") or die("Query fail: " .mysqli_error($con));
  
     while ($row=mysqli_fetch_array($sqlProceQ))
     {
          $hourArr=array();
-        
+         $y_axisData=array();
+         //$total_count='';
+
         $name=$row['name'];
         $descp=$row['descp'];
         $no_of_hours=$row['no_of_hours'];
@@ -195,12 +197,22 @@ if(isset($_POST['loadToolProcDrillData'])){     // getData for loadToolDrillData
         $total_count=$row['total_count'];
 
         $getStartHour=$start_hourUI;
-        for($i=0;$i<$total_hours;$i++){
-            $rowHourArr[]=$getStartHour.'h';
-            $hourArr[]=array($getStartHour.'h',round($row['H'.$getStartHour]));
-            $getStartHour++;
+
+    $jk=0;
+    for($ii=0;$ii<$total_hours;$ii++){
+      $startHourTime=($getStartHour+$ii);
+        if($startHourTime>=24){
+          $startHourTime=$jk; 
+          $jk=$jk+1;
         }
-                  
+       $y_axisData[]=$startHourTime."h";
+    }
+        $dbStartHour=$_POST['dbStartHour'];
+        for($i=0;$i<$total_hours;$i++){
+            $hourArr[]=array($y_axisData[$i],round($row['H'.$dbStartHour]));
+            $dbStartHour++;
+        }
+                   
         if($group_type=='M'){            
             $machineData[]=array('name'=>"$descp",
                                  'data'=>$hourArr
@@ -222,7 +234,7 @@ if(isset($_POST['loadToolProcDrillData'])){     // getData for loadToolDrillData
     $status['secondPhaseData']=$secondPhaseData;
     $status['firstPhaseData']=$firstPhaseData;
     $status['machineData']=$machineData;
-    $status['rowHourArr']=$rowHourArr;
+    $status['rowHourArr']=$y_axisData;
     echo json_encode($status);  
 }
 ?>
