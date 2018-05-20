@@ -220,7 +220,6 @@ loadShiftData:function(){
         });
 },   
 shiftDetails:function(obj){
-  console.log(obj);
   $('#productionPeriod').html(tempData.oeeDash.getOnlyTime(obj.in_time)+' - '+tempData.oeeDash.getOnlyTime(obj.out_time));
   $('#longBreak').html(tempData.oeeDash.getOnlyTime(obj.lbreak_startTime)+' - '+tempData.oeeDash.getOnlyTime(obj.lbreak_endTime));
   $('#ShortBreak1').html(tempData.oeeDash.getOnlyTime(obj.break1_startTime)+' - '+tempData.oeeDash.getOnlyTime(obj.break1_endTime));
@@ -468,7 +467,7 @@ getActivityAnalysis:function(){
     var iobotMachine= $('#eq_desc').val();  
     var shift= $('#shiftDropdown').val();
 
-    var myData = {getActivityAnalysis:'getActivityAnalysis', selDate:selDate, comp_id:comp_id,plant_id:plant_id,workCenter_id:workCenter_id,iobotMachine:iobotMachine,total_hours:GtotalHour,start_hour:GstartHour,shift:shift};
+    var myData = {getActivityAnalysis:'getActivityAnalysis', selDate:selDate, comp_id:comp_id,plant_id:plant_id,workCenter_id:workCenter_id,iobotMachine:iobotMachine,total_hours:GtotalHour,start_hour:GstartHour,shift:shift,sTime:GinTime,eTime:GoutTime};
     var msg="";
 
     $.ajax({
@@ -545,7 +544,7 @@ getActivityProgress:function(){ // bar chart
     var iobotMachine= $('#eq_desc').val();  
     var shift= $('#shiftDropdown').val();
 
-    var myData = {getActivityProgress:'getActivityProgress', selDate:selDate, comp_id:comp_id,plant_id:plant_id,workCenter_id:workCenter_id,iobotMachine:iobotMachine,total_hours:GtotalHour,start_hour:GstartHour,shift:shift};
+    var myData = {getActivityProgress:'getActivityProgress', selDate:selDate, comp_id:comp_id,plant_id:plant_id,workCenter_id:workCenter_id,iobotMachine:iobotMachine,total_hours:GtotalHour,start_hour:GstartHour,shift:shift,sTime:GinTime,eTime:GoutTime};
     $.ajax({
       type:"POST",
       url:url,
@@ -644,7 +643,7 @@ for(var q=0;q<obj.activityData.length;q++){        // Main Loop
 insertBlankEvent:function(startT,EndT){
   debugger;
   var defaultTime= tempData.oeeDash.getRation(tempData.oeeDash.timeDiff(startT,EndT));
-  return '<div class="progress-bar progress-bar-defalt" style="width:'+parseFloat(defaultTime) +'%" title="'+startT+' to '+EndT+'"></div>';
+  return '<div class="progress-bar progress-bar-defalt" style="width:'+parseFloat(defaultTime) +'%"></div>';
 }, 
 getRation:function(t){
   debugger;

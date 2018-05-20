@@ -255,6 +255,23 @@ if(isset($_POST['getActivityProgress'])){     // getData for getActivityProgress
 
     $y_axisData=array();    
     
+
+    $sTime=$_POST['sTime'];
+    $eTime=$_POST['eTime'];
+    
+    $startDateTime=$final_date." ".$sTime; 
+    $endDateTime=$final_date;
+
+    $start = strtotime($startDateTime);
+    $end = strtotime($endDateTime);
+
+    if($start-$end >= 0)
+    $ModifideEndDate = date('Y-m-d', strtotime("+1 day", strtotime($endDateTime)));
+    else
+    $ModifideEndDate = $endDateTime;
+
+
+
     $jk=0;
     for($ii=0;$ii<$total_hours;$ii++){
       $startHourTime=($start_hourUI+$ii);
@@ -281,7 +298,7 @@ if(isset($_POST['getActivityProgress'])){     // getData for getActivityProgress
         DATE(se.start_time)='".$final_date."' AND
         shf.id=".$shift." AND
         se.start_time >= TIMESTAMP('".$final_date."',TIME(shf.in_time)) AND
-        se.end_time <= TIMESTAMP('".$final_date."',TIME(shf.out_time))";  
+        se.end_time <= TIMESTAMP('".$ModifideEndDate."',TIME(shf.out_time))";  
 
     $sql=mysqli_query($con, $sqlQ) or die("Query fail: " .mysqli_error($con));
     while ($row=mysqli_fetch_array($sql))
@@ -317,7 +334,7 @@ if(isset($_POST['getActivityProgress'])){     // getData for getActivityProgress
         DATE(se.start_time)='".$final_date."' AND
         shf.id=".$shift." AND
         se.start_time >= TIMESTAMP('".$final_date."',TIME(shf.in_time)) AND
-        se.end_time <= TIMESTAMP('".$final_date."',TIME(shf.out_time))
+        se.end_time <= TIMESTAMP('".$ModifideEndDate."',TIME(shf.out_time))
         group by message"; 
 //echo $sqlR;
     $sqlRes=mysqli_query($con, $sqlR) or die("Query fail: " .mysqli_error($con));
@@ -352,6 +369,23 @@ if(isset($_POST['getActivityAnalysis'])){     // getData for getActivityAnalysis
     $shift= $_POST['shift'];
 
    
+
+    $sTime=$_POST['sTime'];
+    $eTime=$_POST['eTime'];
+    
+    $startDateTime=$final_date." ".$sTime; 
+    $endDateTime=$final_date;
+
+    $start = strtotime($startDateTime);
+    $end = strtotime($endDateTime);
+
+    if($start-$end >= 0)
+    $ModifideEndDate = date('Y-m-d', strtotime("+1 day", strtotime($endDateTime)));
+    else
+    $ModifideEndDate = $endDateTime;
+
+
+
     $sqlQ=" SELECT SUM(TIMESTAMPDIFF(SECOND,se.start_time,se.end_time)) as time_diff, se.reason_code_id as reason_code_id, src.message as message, src.color_code as color_code,DATE_FORMAT(SEC_TO_TIME(SUM(TIMESTAMPDIFF(SECOND,se.start_time, se.end_time))),'%H:%i') AS getHHMM FROM
         sfs_event se,
            sfs_data_info sdi,
@@ -366,9 +400,9 @@ if(isset($_POST['getActivityAnalysis'])){     // getData for getActivityAnalysis
            DATE(se.start_time)='".$final_date."' AND
            shf.id=".$shift." AND
            se.start_time >= TIMESTAMP('".$final_date."',TIME(shf.in_time)) AND
-           se.end_time <= TIMESTAMP('".$final_date."',TIME(shf.out_time))
+           se.end_time <= TIMESTAMP('".$ModifideEndDate."',TIME(shf.out_time))
         GROUP BY se.reason_code_id";  
-//echo $sqlQ;
+
     $sql=mysqli_query($con, $sqlQ) or die("Query fail: " .mysqli_error($con));
     while ($row=mysqli_fetch_array($sql))
     {
