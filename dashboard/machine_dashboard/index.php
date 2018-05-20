@@ -219,6 +219,24 @@ loadShiftData:function(){
             }
         });
 },   
+shiftDetails:function(obj){
+  console.log(obj);
+  $('#productionPeriod').html(tempData.oeeDash.getOnlyTime(obj.in_time)+' - '+tempData.oeeDash.getOnlyTime(obj.out_time));
+  $('#longBreak').html(tempData.oeeDash.getOnlyTime(obj.lbreak_startTime)+' - '+tempData.oeeDash.getOnlyTime(obj.lbreak_endTime));
+  $('#ShortBreak1').html(tempData.oeeDash.getOnlyTime(obj.break1_startTime)+' - '+tempData.oeeDash.getOnlyTime(obj.break1_endTime));
+  $('#ShortBreak2').html(tempData.oeeDash.getOnlyTime(obj.break2_startTime)+' - '+tempData.oeeDash.getOnlyTime(obj.break2_endTime));
+},
+getOnlyTime:function(time){
+  var val;
+
+  if(time!=''){
+    var onlyTime = time.split(' ');
+    val = onlyTime[1].slice(0, -3);
+  }else{
+    val= "00:00"
+  }
+  return val;
+}, 
 convertTime:function(time){
     var d;
     d = new Date(time);
@@ -261,7 +279,9 @@ shiftsdata:function(){
     }else{
       var singalJosn=tempData.oeeDash.getObjects(ShiftGobalData,'id',shift);
       var get3Data= tempData.oeeDash.getCommonDataForShift(singalJosn[0]); // Passing all Selected Shift Data
-      //console.log(get3Data);
+      
+      tempData.oeeDash.shiftDetails(singalJosn[0]);
+      
       // hours,inTime,outTime,totalHour,startHour
       tempData.oeeDash.AfterShiftSelect(get3Data[0].hour,get3Data[0].inTime,get3Data[0].outTime,parseInt(singalJosn[0].num_hourss),get3Data[0].startHour,singalJosn[0].hour_start);
       
@@ -1179,19 +1199,19 @@ $(".loader").fadeOut("slow");
             <div class="row">              
               <div class="col-md-12 col-xs-12" style="padding: 0px;">              
                   <p class="text-center">Total Production Period</p>
-                  <p class="text-center shiftDetailsTime">06:00 - 14:00</p>
+                  <p class="text-center shiftDetailsTime" id="productionPeriod"></p>
               </div>
               <div class="col-md-12 col-xs-12" style="padding: 0px;">              
                   <p class="text-center">Long Break</p>
-                  <p class="text-center shiftDetailsTime">10:00 - 10:30</p>
+                  <p class="text-center shiftDetailsTime" id="longBreak"></p>
               </div>
               <div class="col-md-12 col-xs-12" style="padding: 0px;">              
                   <p class="text-center">Short Break - 01</p>
-                  <p class="text-center shiftDetailsTime">08:00 - 08:15</p>
+                  <p class="text-center shiftDetailsTime" id="ShortBreak1"></p>
               </div>
               <div class="col-md-12 col-xs-12" style="padding: 0px;">              
                   <p class="text-center">Short Break - 02</p>
-                  <p class="text-center shiftDetailsTime">12:00 - 12:15</p>
+                  <p class="text-center shiftDetailsTime" id="ShortBreak2"></p>
               </div>
             </div> 
 
