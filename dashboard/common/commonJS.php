@@ -56,6 +56,8 @@
 <!-- Range Selection -->
 <script src="../common/js/jquery-asRange.js"></script>
 
+<!-- Export To Xls -->
+<script type="text/javascript" src="../common/js/jquery.table2excel.js"></script>
 
 <script type="text/javascript">
 $(document).ready(function() {

@@ -30,6 +30,10 @@
 .progressCss{
   height: 25px;
 }
+
+.progress-bar.progress-bar-defalt {
+    background-color: #e2e4e2;
+}
 </style>
 
 <script type="text/javascript">
@@ -46,6 +50,9 @@ var GstartHour=null;
 var ShiftGobalData=null;
 var GdbStartHour=null;
 
+/* Event Chart*/
+var globalUtilizationData=null;
+
 var tempData;
 if(tempData===null||tempData===undefined){
    tempData={};
@@ -59,7 +66,6 @@ getTimeHHMMSS:function(time){
   var minutes = Math.floor(time / 60);
   time -= minutes * 60;
   var seconds = parseInt(time % 60, 10);
-  //console.log((hours < 10 ? '0' + hours : hours) + ':' + (minutes < 10 ? '0' + minutes : minutes) + ':' + (seconds < 10 ? '0' + seconds : seconds));
   return (hours < 10 ? '0' + hours : hours) + ':' + (minutes < 10 ? '0' + minutes : minutes) + ':' + (seconds < 10 ? '0' + seconds : seconds);
 },  
 NumFormat:function(num){
@@ -91,7 +97,6 @@ getEQDesc:function(){
     });
 },
 oeeCirclePerc:function(id,val,fgColor) {  
-    debugger;
        $('#'+id).trigger('configure',{
             "min":0,
             "max":100,
@@ -105,7 +110,6 @@ oeeCirclePerc:function(id,val,fgColor) {
     $('#'+id).val(val).trigger('change');
 }, 
 getImg:function(img,reason,status,reason_color) {  
-debugger;
     var dataSet;
     dataSet='<label class="pointer toggle-reason-bar pull-right" style="margin-right:10px;">'+reason+' <i style="background-color:'+reason_color+'; width:10px;height: 10px; display:inline-block;"></i></label>';
 
@@ -125,7 +129,6 @@ debugger;
         
 },
 loadOeeData:function(){
-    debugger;
     var selDate = $("#userDateSel").val();
     var url= "getDataController.php";
     var comp_id=$('#comp_id').val();
@@ -143,7 +146,6 @@ loadOeeData:function(){
             dataType: 'json',
             data:myData,
             success: function(obj) {
-              debugger;
               tempData.oeeDash.getImg(obj.oeeDetails.image_filename,obj.oeeDetails.active_reason_code,parseInt(obj.oeeDetails.machine_status),obj.oeeDetails.active_reason_color);
               tempData.oeeDash.oeeCirclePerc('oeePerc',parseInt(obj.oeeDetails.oee_perc),obj.oeeDetails.oee_perc_color);
               tempData.oeeDash.oeeCirclePerc('availPerc',parseInt(obj.oeeDetails.availability_perc),obj.oeeDetails.availability_perc_color);
@@ -175,8 +177,6 @@ visitMachine:function(){
   window.location.href="../machine/index.php?selDate="+$('#userDateSel').val();
 },   
 loadShiftData:function(){
-    debugger;
-
     var selDate = $("#userDateSel").val();
     var url= "getDataController.php";
 
@@ -195,7 +195,6 @@ loadShiftData:function(){
             dataType: 'json',
             data:myData,
             success: function(obj) {
-              debugger;
               ShiftGobalData=obj.shiftData;
              // $("#shiftDropdown").html('<option value="default">Default Shift</option>');
               $("#shiftDropdown").html(' ');
@@ -216,7 +215,7 @@ loadShiftData:function(){
                 //$("#shiftDropdown").html('<option value="default">Default Shift</option>');
               }            
               
-              tempData.oeeDash.shiftsdata();                                     
+              //tempData.oeeDash.shiftsdata();                                     
             }
         });
 },   
@@ -229,19 +228,17 @@ convertTime:function(time){
 convertTimeWithOutOneSec:function(time){
     var d;
     d = new Date(time);
-   // d.setSeconds(d.getSeconds() - 1);
     return tempData.oeeDash.addZero(d.getHours()) + ':'+tempData.oeeDash.addZero(d.getMinutes()) + ':' + tempData.oeeDash.addZero(d.getSeconds());
 },
-addZero:function($num) {
-    if($num < 10) {
-        $num = "0".$num;
+addZero:function(num) {
+    if(num < 10) {
+        num = "0"+num;
     }
-    return $num;
+    return num;
 },
 getCommonDataForShift:function(obj){
-    debugger;
   var arr=[];
-  var hours = parseInt(obj.num_hours)*60*60;
+  var hours = parseInt(obj.num_hourss)*60*60;
   var inTime = tempData.oeeDash.convertTimeWithOutOneSec(obj.in_time);
   var outTime = tempData.oeeDash.convertTime(obj.out_time);
   var d = new Date(obj.in_time);
@@ -249,7 +246,6 @@ getCommonDataForShift:function(obj){
     return arr;
 },
 shiftsdata:function(){
-     debugger;
      // tempData.oeeDash.changeDateFormat(); 
     var shift= $('#shiftDropdown').val();
     var ShiftName = $("#shiftDropdown option:selected").text();
@@ -265,7 +261,7 @@ shiftsdata:function(){
     }else{
       var singalJosn=tempData.oeeDash.getObjects(ShiftGobalData,'id',shift);
       var get3Data= tempData.oeeDash.getCommonDataForShift(singalJosn[0]); // Passing all Selected Shift Data
-      //console.log(singalJosn);
+      //console.log(get3Data);
       // hours,inTime,outTime,totalHour,startHour
       tempData.oeeDash.AfterShiftSelect(get3Data[0].hour,get3Data[0].inTime,get3Data[0].outTime,parseInt(singalJosn[0].num_hourss),get3Data[0].startHour,singalJosn[0].hour_start);
       
@@ -277,11 +273,8 @@ AfterShiftSelect:function(hours,inTime,outTime,totalHour,startHour,dbStartHour){
         GdbStartHour=dbStartHour;
 /*        tempData.oeeDash.loadEventGraph(hours,inTime,outTime,totalHour,startHour); 
         tempData.oeeDash.loadgraph_productivity_analysis1(inTime,outTime); //inTime,outTime*/
-        tempData.oeeDash.activityAnalysis();
-        tempData.oeeDash.checkData();
 },
 getObjects:function(obj, key, val) {  // JSON Search function
-    debugger;
     var objects = [];
     for (var i in obj) {
         if (!obj.hasOwnProperty(i)) continue;
@@ -294,7 +287,7 @@ getObjects:function(obj, key, val) {  // JSON Search function
     return objects;    
 },
 loadToolProcDrillData:function(mode){        /* Load Hourly Chart with Drilldown */
-  // Ghours=90200;  GinTime='00:00:00';   GoutTime='23:59:59';  GtotalHour=24;  GstartHour=0;
+  // Ghours=90200;  GinTime='00:00:00';   GoutTime='23:59:59';  GtotalHour=24;  GstartHour=0; GdbStartHour=fromShift
     var selDate = $("#userDateSel").val();
     var url= "getDataController.php";
 
@@ -342,7 +335,6 @@ loadToolProcDrillData:function(mode){        /* Load Hourly Chart with Drilldown
     });
 },
 loadToolHourlyDrilldown:function(obj,msg){        /* Load Hourly Chart with Drilldown */
-debugger;
 operBtn = Highcharts.chart('hourlyProduction', {
   lang: {
         drillUpText: '<',
@@ -352,13 +344,6 @@ operBtn = Highcharts.chart('hourlyProduction', {
         events: {
                 drillup: function (e) {
                   //alert();
-                  //debugger; 
-                  /*globalOrderNum='';
-                  tempData.cpsData.checkHourlyGraph('','');
-                  
-                  $('#hourlyLineGraphName').html('');
-                  $("#avgCountPerPartCycle").hide();
-                  $("#avgCountPerPartSetting").hide();*/
               }
             }
     },
@@ -383,7 +368,7 @@ operBtn = Highcharts.chart('hourlyProduction', {
         series: {
             events: {
               click: function (e){
-                 // tempData.cpsData.checkHourlyGraph(e.point.drilldown); 
+                  //alert(); 
               }
             },
             borderWidth: 0,
@@ -408,7 +393,6 @@ operBtn = Highcharts.chart('hourlyProduction', {
 });
 },
 loadMachineHourly:function(obj,msg){        /* Load Hourly Chart with Drilldown */
-debugger;
   operBtn =  Highcharts.chart('hourlyProduction', {
       chart: {
           type: 'column'
@@ -451,10 +435,42 @@ debugger;
           }
       },
       series:obj.machineData
-      //[{"name":"TOOL12","data":[33,0,0,0,0,0,0,0,0,0,0,0,0,0,10,10,10,11]}]
   });
 },
-activityAnalysis:function(obj,msg){
+getActivityAnalysis:function(){
+  // Ghours=90200;  GinTime='00:00:00';   GoutTime='23:59:59';  GtotalHour=24;  GstartHour=0; GdbStartHour=fromShift
+    var selDate = $("#userDateSel").val();
+    var url= "getDataController.php";
+
+    var comp_id=$('#comp_id').val();
+    var plant_id=$('#plant_id').val();
+    var workCenter_id=$('#workCenter_id').val();
+    var iobotMachine= $('#eq_desc').val();  
+    var shift= $('#shiftDropdown').val();
+
+    var myData = {getActivityAnalysis:'getActivityAnalysis', selDate:selDate, comp_id:comp_id,plant_id:plant_id,workCenter_id:workCenter_id,iobotMachine:iobotMachine,total_hours:GtotalHour,start_hour:GstartHour,shift:shift};
+    var msg="";
+
+    $.ajax({
+      type:"POST",
+      url:url,
+      async: false,
+      dataType: 'json',
+      cache: false,
+      data:myData,
+      success: function(obj) {
+        if(obj.analysisData !=null){
+          msg=""
+          tempData.oeeDash.activityAnalysisChat(obj,msg);
+        }else{
+          msg=" Data Not Available"
+          tempData.oeeDash.activityAnalysisChat(obj,msg);
+        }
+          
+      } 
+    });
+},
+activityAnalysisChat:function(obj,msg){ // pie chart
 debugger;  
 activity = Highcharts.chart('activityAnalysis', {
     chart: {
@@ -493,50 +509,150 @@ activity = Highcharts.chart('activityAnalysis', {
     series: [{
         name: 'Productivity',
         colorByPoint: true,
-        data: [
-                {
-                  "name": "Idle Production",
-                  "y": 3.13,
-                  "color": "#c6a43d",
-                  "getHHMM": "03:07"
-                },
-                {
-                  "name": "Setting",
-                  "y": 0.69,
-                  "color": "#FFA500",
-                  "getHHMM": "00:41"
-                },
-                {
-                  "name": "Idle No Production",
-                  "y": 0.37,
-                  "color": "#000",
-                  "getHHMM": "00:22"
-                },
-                {
-                  "name": "Productive",
-                  "y": 0.86,
-                  "color": "#50B432",
-                  "getHHMM": "00:51"
-                },
-                {
-                  "name": "Inspection",
-                  "y": 0.08,
-                  "color": "#ffff00",
-                  "getHHMM": "00:04"
-                },
-                {
-                  "name": "Maintenance",
-                  "y": 2.67,
-                  "color": "#ED561B",
-                  "getHHMM": "02:40"
-                }
-              ]
+        data:obj.analysisData
+          
     }]
   });
+},
+getActivityProgress:function(){ // bar chart
+  // Ghours=90200;  GinTime='00:00:00';   GoutTime='23:59:59';  GtotalHour=24;  GstartHour=0; GdbStartHour=fromShift
+    var selDate = $("#userDateSel").val();
+    var url= "getDataController.php";
 
+    var comp_id=$('#comp_id').val();
+    var plant_id=$('#plant_id').val();
+    var workCenter_id=$('#workCenter_id').val();
+    var iobotMachine= $('#eq_desc').val();  
+    var shift= $('#shiftDropdown').val();
+
+    var myData = {getActivityProgress:'getActivityProgress', selDate:selDate, comp_id:comp_id,plant_id:plant_id,workCenter_id:workCenter_id,iobotMachine:iobotMachine,total_hours:GtotalHour,start_hour:GstartHour,shift:shift};
+    $.ajax({
+      type:"POST",
+      url:url,
+      async: false,
+      dataType: 'json',
+      cache: false,
+      data:myData,
+      success: function(obj) {
+        //alert();
+debugger;
+    globalUtilizationData=obj.activityData;
+
+/* Bulding progressBar Time Series */  //totalHour:GtotalHour,startHour:GstartHour
+    var totalHour=GtotalHour;
+    var startHour=GstartHour;
+    var timeContent='';
+    var widthPer=100/totalHour;
+    var jk=0;
+
+    for(var ii=0;ii<totalHour;ii++){
+      var startHourTime=(startHour+ii);
+        if(startHourTime>=24){
+          startHourTime=jk; 
+          jk=jk+1;
+        }
+       timeContent+='<div class="progress-bar progress-bar-defalt" style="width:'+widthPer+'%;color:#000000;border: 1px solid #c0cac0;"> '+startHourTime+'h</div>';
+    }
+    $('#timeContentSeries').html(timeContent);
+
+
+/* Bulding progressBar */
+  if(obj.activityData ==null){
+    $('#UtilizationLabel').html('');
+    $('.productive-analysis').html('');
+    $('.productive-analysis').html('<div class="progress" style="margin-bottom: 0px;"><div class="progress-bar progress-bar-defalt" style="width:100%"></div></div>');
+    $('#UtilizationLabel').html('<center><p> Data Not Available !! <p></center>');
+  }else{
+
+    var labelContent='';
+    var divData='';
+    var stTime='';
+    var enTime='';
+    var status=1;
+
+for(var q=0;q<obj.reasonCode.length;q++){ 
+   /* Bulding UtilizationLabel */
+   labelContent+='<label id="label'+obj.reasonCode[q].message.replace(/\s/g, "")+'" class="pointer toggle-reason-bar" dataid="progress-bar-success" style="margin-right:10px;"><i style="background-color:'+obj.reasonCode[q].color_code+'; width:10px;height: 10px; display:inline-block; margin-right:5px;"></i>'+obj.reasonCode[q].message+'</label>';
+   if(q==5){
+    labelContent+='<br>';
+   }
+}
+
+
+for(var q=0;q<obj.activityData.length;q++){        // Main Loop
+
+  /* Formatting Date Time dd/mm/yyyy hh:mm:ss */
+  var stTime = tempData.oeeDash.dbDateTimeSeparate(obj.activityData[q].start_time);
+  var enTime = tempData.oeeDash.dbDateTimeSeparate(obj.activityData[q].end_time);
+  
+  var selDate = $("#userDateSel").val().split('/')
+  selDateF=selDate[2]+'-'+selDate[1]+'-'+selDate[0];
+
+  var selDate2 = (stTime.date).split('/')
+  selDateF2=selDate2[2]+'-'+selDate2[1]+'-'+selDate2[0];
+
+  var d1 = selDateF+" "+GinTime;
+  var d2 = selDateF2+" "+stTime.time;
+
+  var uiStDate = new Date(d1); //yyyy-mm-dd
+  var dbStDate = new Date(d2); 
+  debugger;
+  if(status==1){
+    if(uiStDate<dbStDate){
+     divData+=tempData.oeeDash.insertBlankEvent(d1,d2); 
+    }
+    status=0;
+  }   
+ // 
+
+
+  /* Bulding main progress bar */    
+  var widthVal=tempData.oeeDash.getRation(parseInt(obj.activityData[q].duration));
+  divData+='<div class="progress-bar" style="width:'+parseFloat(widthVal)+'%;background-color:'+obj.activityData[q].color_code+'" title="'+obj.activityData[q].message+' - '+stTime.time+' to '+enTime.time+'"> </div>';
+
+} // end of FOR LOOP
+
+  var finalDiv='<div class="progress" style="margin-bottom: 0px;">'+divData+'</div>';
+    $('#UtilizationLabel').html(labelContent);
+    $('.productive-analysis').html(finalDiv);
+
+  } // else ends 
+
+       } 
+    });
+},
+insertBlankEvent:function(startT,EndT){
+  debugger;
+  var defaultTime= tempData.oeeDash.getRation(tempData.oeeDash.timeDiff(startT,EndT));
+  return '<div class="progress-bar progress-bar-defalt" style="width:'+parseFloat(defaultTime) +'%" title="'+startT+' to '+EndT+'"></div>';
+}, 
+getRation:function(t){
+  debugger;
+  var e=GtotalHour*3600;
+  var per = (100 * t) / e;
+  return per;
+},
+timeDiff:function(time1,time2){
+  t1=new Date(time1);
+  t2=new Date(time2);
+  var dif = t1-t2;
+  var finalVal =Math.abs((t1-t2)/1000);
+  return finalVal;
+},
+dbDateTimeSeparate:function(time){
+  debugger;
+  var dateTimeArr = new Array();
+
+  var dateTime = time.split(' ');
+  var onlyDate=dateTime[0].split('-');
+  var date=onlyDate[2]+'/'+onlyDate[1]+'/'+onlyDate[0]
+
+  dateTimeArr['date']=date;
+  dateTimeArr['time']=dateTime[1];
+  return dateTimeArr;
 },
 checkData:function(){
- //tempData.cpsData.changeDateFormat(); 
+ //tempData.oeeDash.changeDateFormat(); 
     var tool = document.getElementById('tool');
     var machine = document.getElementById('machine');
     var overView = document.getElementById('production');
@@ -552,10 +668,91 @@ checkData:function(){
 reload:function(){
   $(".loader").fadeIn("slow");
   tempData.oeeDash.shiftsdata();
-
   tempData.oeeDash.loadOeeData();
+
+  tempData.oeeDash.getActivityProgress();
+  tempData.oeeDash.getActivityAnalysis();
+  tempData.oeeDash.checkData();
   $(".loader").fadeOut("slow");
-}
+},
+loadUtilizationReport:function(){
+    debugger
+    $('#loadUtilizationReport').modal({show:true});
+      setTimeout(function(){
+         tempData.oeeDash.loadUtilizationReportPopData(); 
+      }, 200);
+},
+loadUtilizationReportPopData:function(){
+    debugger
+    $('#loadUtilizationReportTable').hide();
+    $('#table_disGraph7').show();
+
+/*        $.ajax({
+            type:"POST",
+            url:"loadData.json",
+            async: false,
+            dataType: 'json',
+            success: function(obj){*/
+              //debugger;
+
+              $('#loadUtilizationReportTable').show();
+              $('#table_disGraph7').hide();
+
+   var DataTableProject = $('#loadUtilizationReportTable').DataTable( {
+            "paging":false,
+            "ordering":true,
+            "info":true,
+            "searching":true,         
+            "destroy":true,
+            "scrollX": true,
+            "scrollY": 350,
+            "data":globalUtilizationData,   
+            "columns": [
+              {data:null,"SlNo":false,className: "text-center"},
+              { data: "start_time",
+                render: function (data, type, row, meta) {
+                    return tempData.oeeDash.getDateFormate(row.start_time);
+                }
+              },             
+              { data: "end_time",
+                render: function (data, type, row, meta) {
+                    return tempData.oeeDash.getDateFormate(row.end_time);
+                }
+              },
+              { data: null,"duration":false,className: "text-right",
+                render: function (data, type, row, meta) {
+                    return tempData.oeeDash.getDiffHourMin(row.start_time,row.end_time);
+                }
+              }, 
+              { data: "message",
+                render: function (data, type, row, meta) {
+                    return '<span style=color:'+row.color_code+';font-weight:bold;>'+row.message+'</sanp>';
+                }
+              }          
+            ]
+           });   
+        DataTableProject.on( 'order.dt search.dt', function () {
+          DataTableProject.column(0, {search:'applied', order:'applied'}).nodes().each( function (cell, i) {
+                  cell.innerHTML = i+1;
+              } );
+          } ).draw(); 
+},
+getDateFormate:function(date){
+  debugger;
+  var dt=date.split(' ');
+  var onlyDate=dt[0].split('-');
+  return onlyDate[2]+'-'+onlyDate[1]+'-'+onlyDate[0]+'  '+dt[1];
+},
+getDiffHourMin:function(startDate,endDate){
+  var startDate = new Date(startDate);
+  var endDate = new Date(endDate);
+  var difference = Math.abs(startDate.getTime() - endDate.getTime())/1000;
+  var hourDifference = parseInt(difference / 3600);
+  var minDiff = parseInt(Math.abs(difference / 60) % 60);
+  var secDiff = (difference % 60);
+
+  return tempData.oeeDash.addZero(hourDifference)+':'+tempData.oeeDash.addZero(minDiff)+':'+tempData.oeeDash.addZero(secDiff);
+},
 
 };
 
@@ -596,6 +793,10 @@ $('#expandActivityAnalysis').click(function(e){
     $('#activityAnalysis').toggleClass('expandAddCssGraph');
     activity.setSize($('#activityAnalysis').width(), $('#activityAnalysis').height());
 });
+
+$("#btnExport1").click(function(e) {
+    $('#loadUtilizationReportTable').table2excel();
+}); 
 
 $(".loader").fadeOut("slow");
 });
@@ -872,7 +1073,7 @@ $(".loader").fadeOut("slow");
             </div>
               <div class="panel-title pull-right">
               <!--  <i id="compProfile" class="btn btn-xs fa fa-expand" aria-hidden="true"></i> -->
-              <button class="btn btn-xs bg-purple btn-flat"><i class="fa fa-file-text-o" aria-hidden="true"></i> &nbsp; Report</button>
+              <button class="btn btn-xs bg-purple btn-flat" onclick="tempData.oeeDash.loadUtilizationReport();"><i class="fa fa-file-text-o" aria-hidden="true"></i> &nbsp; Report</button>
               </div>
             <div class="clearfix"></div>
           </div>
@@ -880,31 +1081,18 @@ $(".loader").fadeOut("slow");
               <div class="table-responsive" style="height: 270px;">
                   <!-- <div id="productivity_analysis" style="width: 100%; height: 400px;"></div> -->
 <table class="table table-striped col-lg-12 col-md-12 col-sm-12 col-xs-12">
-<!--       <thead>
-        <tr style="font-size: 13px;background-color: rgba(222, 219, 219, 0.42);">
-          <th>Productivity Trend</th>          
-          <th style="width:4%;"><span style="color:#50B432">Up</span></th>
-          <th style="width:4%;"><span style="color:#ED561B">Down</span></th>  
-          <th style="width:4%;"><span style="color:#8c7373">Idle</span></th>  
-          <th style="width:4%;"><span style="color:orange">Setting</span></th>          
-          <th style="width:1%;"><i class="fa fa-percent pointer" id="showPercent" aria-hidden="true"></i></th>          
-         </tr>
-      </thead> -->
-      <tbody class="productive-analysis"><tr id="TMC-1001">
-        <td><div class="progress progressCss" style="margin-bottom: 0px;">
-          <div class="progress-bar progress-bar-defalt" style="width:0.1840277777777778%" title="2018-04-27 06:00:00 to 2018-04-27 06:00:53"></div> <div class="progress-bar" style="width:3.75%;background-color:#c6a43d" title="Idle Production - 06:00:53 to 06:18:53"> </div><div class="progress-bar" style="width:8.666666666666666%;background-color:#FFA500" title="Setting - 06:18:53 to 07:00:29"> </div><div class="progress-bar" style="width:0%;background-color:#3248b4" title="Part End - 07:00:29 to 07:00:29"> </div><div class="progress-bar" style="width:0.34375%;background-color:#000" title="Idle No Production - 07:00:29 to 07:02:08"> </div><div class="progress-bar" style="width:0.3645833333333333%;background-color:#50B432" title="Productive - 07:02:08 to 07:03:53"> </div><div class="progress-bar" style="width:0%;background-color:#338abd" title="Part Start - 07:02:08 to 07:02:08"> </div><div class="progress-bar" style="width:1.1250000000000013%;background-color:#50B432" title="Productive - 07:03:53 to 07:09:25"> </div><div class="progress-bar" style="width:0.4097222222222222%;background-color:#c6a43d" title="Idle Production - 07:09:25 to 07:11:23"> </div><div class="progress-bar" style="width:0%;background-color:#50B432" title="Productive - 07:09:25 to 07:09:25"> </div><div class="progress-bar" style="width:0.9375%;background-color:#c6a43d" title="Idle Production - 07:11:23 to 07:15:53"> </div><div class="progress-bar" style="width:0.5381944444444444%;background-color:#ffff00" title="Inspection - 07:15:53 to 07:18:28"> </div><div class="progress-bar" style="width:0%;background-color:#3248b4" title="Part End - 07:18:28 to 07:18:28"> </div><div class="progress-bar" style="width:0.03819444444444445%;background-color:#338abd" title="Part Start - 07:18:29 to 07:18:40"> </div><div class="progress-bar" style="width:0.7152777777777775%;background-color:#50B432" title="Productive - 07:18:40 to 07:22:11"> </div><div class="progress-bar" style="width:2.4375%;background-color:#c6a43d" title="Idle Production - 07:22:11 to 07:33:53"> </div><div class="progress-bar" style="width:0.2708333333333333%;background-color:#3248b4" title="Part End - 07:33:53 to 07:35:11"> </div><div class="progress-bar" style="width:0.3576388888888889%;background-color:#000" title="Idle No Production - 07:35:11 to 07:36:54"> </div><div class="progress-bar" style="width:0.006944444444444444%;background-color:#338abd" title="Part Start - 07:36:54 to 07:36:56"> </div><div class="progress-bar" style="width:0.32638888888888873%;background-color:#50B432" title="Productive - 07:36:56 to 07:38:29"> </div><div class="progress-bar" style="width:0.6006944444444444%;background-color:#c6a43d" title="Idle Production - 07:38:31 to 07:41:24"> </div><div class="progress-bar" style="width:0%;background-color:#50B432" title="Productive - 07:38:31 to 07:38:31"> </div><div class="progress-bar" style="width:2.5%;background-color:#c6a43d" title="Idle Production - 07:41:24 to 07:53:24"> </div><div class="progress-bar" style="width:0.003472222222222222%;background-color:#3248b4" title="Part End - 07:53:24 to 07:53:25"> </div><div class="progress-bar" style="width:0.6215277777777778%;background-color:#000" title="Idle No Production - 07:53:25 to 07:56:24"> </div><div class="progress-bar" style="width:0.059027777777777776%;background-color:#338abd" title="Part Start - 07:56:24 to 07:56:41"> </div><div class="progress-bar" style="width:0.7291666666666663%;background-color:#50B432" title="Productive - 07:56:41 to 08:00:13"> </div><div class="progress-bar" style="width:2.642361111111111%;background-color:#c6a43d" title="Idle Production - 08:00:13 to 08:12:54"> </div><div class="progress-bar" style="width:0.059027777777777776%;background-color:#3248b4" title="Part End - 08:12:54 to 08:13:11"> </div><div class="progress-bar" style="width:0.5659722222222222%;background-color:#000" title="Idle No Production - 08:13:11 to 08:15:54"> </div><div class="progress-bar" style="width:0.020833333333333332%;background-color:#338abd" title="Part Start - 08:15:54 to 08:16:00"> </div><div class="progress-bar" style="width:0.6249999999999998%;background-color:#50B432" title="Productive - 08:16:00 to 08:19:05"> </div><div class="progress-bar" style="width:2.7743055555555554%;background-color:#c6a43d" title="Idle Production - 08:19:05 to 08:32:24"> </div><div class="progress-bar" style="width:0.024305555555555556%;background-color:#3248b4" title="Part End - 08:32:24 to 08:32:31"> </div><div class="progress-bar" style="width:0.6006944444444444%;background-color:#000" title="Idle No Production - 08:32:31 to 08:35:24"> </div><div class="progress-bar" style="width:0.2569444444444444%;background-color:#338abd" title="Part Start - 08:35:24 to 08:36:38"> </div><div class="progress-bar" style="width:0.5868055555555552%;background-color:#50B432" title="Productive - 08:36:38 to 08:39:27"> </div><div class="progress-bar" style="width:0.3958333333333333%;background-color:#c6a43d" title="Idle Production - 08:39:30 to 08:41:24"> </div><div class="progress-bar" style="width:0%;background-color:#50B432" title="Productive - 08:39:30 to 08:39:30"> </div><div class="progress-bar" style="width:1.5590277777777777%;background-color:#c6a43d" title="Idle Production - 08:41:25 to 08:48:54"> </div><div class="progress-bar" style="width:0.3333333333333332%;background-color:#50B432" title="Productive - 08:48:54 to 08:50:29"> </div><div class="progress-bar" style="width:0.4930555555555556%;background-color:#c6a43d" title="Idle Production - 08:50:30 to 08:52:52"> </div><div class="progress-bar" style="width:0.024305555555555556%;background-color:#50B432" title="Productive - 08:52:53 to 08:52:58"> </div><div class="progress-bar" style="width:0.2951388888888889%;background-color:#3248b4" title="Part End - 08:53:00 to 08:54:25"> </div><div class="progress-bar" style="width:0.44791666666666663%;background-color:#ffff00" title="Inspection - 08:54:25 to 08:56:34"> </div><div class="progress-bar" style="width:0%;background-color:#338abd" title="Part Start - 08:56:34 to 08:56:34"> </div><div class="progress-bar" style="width:0.4340277777777777%;background-color:#50B432" title="Productive - 08:56:34 to 08:58:38"> </div><div class="progress-bar" style="width:2.0243055555555554%;background-color:#c6a43d" title="Idle Production - 08:58:41 to 09:08:24"> </div><div class="progress-bar" style="width:0.11111111111111112%;background-color:#50B432" title="Productive - 09:08:24 to 09:08:56"> </div><div class="progress-bar" style="width:0.5138888888888888%;background-color:#c6a43d" title="Idle Production - 09:08:56 to 09:11:24"> </div><div class="progress-bar" style="width:0.21875%;background-color:#50B432" title="Productive - 09:11:24 to 09:12:27"> </div><div class="progress-bar" style="width:0.3402777777777778%;background-color:#c6a43d" title="Idle Production - 09:12:27 to 09:14:05"> </div><div class="progress-bar" style="width:0%;background-color:#50B432" title="Productive - 09:12:27 to 09:12:27"> </div><div class="progress-bar" style="width:0.3784722222222222%;background-color:#000" title="Idle No Production - 09:14:05 to 09:15:54"> </div><div class="progress-bar" style="width:0%;background-color:#3248b4" title="Part End - 09:14:05 to 09:14:05"> </div><div class="progress-bar" style="width:0.0625%;background-color:#338abd" title="Part Start - 09:15:54 to 09:16:12"> </div><div class="progress-bar" style="width:0.3506944444444443%;background-color:#50B432" title="Productive - 09:16:12 to 09:17:54"> </div><div class="progress-bar" style="width:2.7083333333333335%;background-color:#c6a43d" title="Idle Production - 09:17:54 to 09:30:54"> </div><div class="progress-bar" style="width:0.36805555555555547%;background-color:#50B432" title="Productive - 09:30:54 to 09:32:40"> </div><div class="progress-bar" style="width:0.5659722222222222%;background-color:#c6a43d" title="Idle Production - 09:32:41 to 09:35:24"> </div><div class="progress-bar" style="width:0.0763888888888889%;background-color:#3248b4" title="Part End - 09:35:24 to 09:35:46"> </div><div class="progress-bar" style="width:0.4340277777777778%;background-color:#000" title="Idle No Production - 09:35:46 to 09:37:51"> </div><div class="progress-bar" style="width:0%;background-color:#338abd" title="Part Start - 09:37:51 to 09:37:51"> </div><div class="progress-bar" style="width:0.4861111111111111%;background-color:#50B432" title="Productive - 09:37:51 to 09:40:13"> </div><div class="progress-bar" style="width:0.5590277777777778%;background-color:#c6a43d" title="Idle Production - 09:40:13 to 09:42:54"> </div><div class="progress-bar" style="width:0%;background-color:#50B432" title="Productive - 09:40:13 to 09:40:13"> </div><div class="progress-bar" style="width:0.625%;background-color:#c6a43d" title="Idle Production - 09:42:54 to 09:45:54"> </div><div class="progress-bar" style="width:0.26041666666666663%;background-color:#50B432" title="Productive - 09:45:54 to 09:47:09"> </div><div class="progress-bar" style="width:3.1770833333333335%;background-color:#c6a43d" title="Idle Production - 09:47:10 to 10:02:25"> </div><div class="progress-bar" style="width:0.0625%;background-color:#3248b4" title="Part End - 10:02:25 to 10:02:43"> </div><div class="progress-bar" style="width:0.2916666666666667%;background-color:#338abd" title="Part Start - 10:02:43 to 10:04:07"> </div><div class="progress-bar" style="width:1.9409722222222225%;background-color:#50B432" title="Productive - 10:04:07 to 10:13:29"> </div><div class="progress-bar" style="width:0.3472222222222222%;background-color:#c6a43d" title="Idle Production - 10:13:29 to 10:15:09"> </div><div class="progress-bar" style="width:0.3784722222222222%;background-color:#50B432" title="Productive - 10:13:29 to 10:16:58"> </div><div class="progress-bar" style="width:0.40625%;background-color:#c6a43d" title="Idle Production - 10:16:58 to 10:18:55"> </div><div class="progress-bar" style="width:0.6180555555555555%;background-color:#50B432" title="Productive - 10:18:55 to 10:21:54"> </div><div class="progress-bar" style="width:0.9409722222222222%;background-color:#c6a43d" title="Idle Production - 10:21:54 to 10:26:25"> </div><div class="progress-bar" style="width:0.34027777777777773%;background-color:#50B432" title="Productive - 10:26:25 to 10:28:03"> </div><div class="progress-bar" style="width:3.0972222222222223%;background-color:#c6a43d" title="Idle Production - 10:28:03 to 10:42:55"> </div><div class="progress-bar" style="width:0.2638888888888889%;background-color:#3248b4" title="Part End - 10:42:55 to 10:44:11"> </div><div class="progress-bar" style="width:1.2986111111111112%;background-color:#000" title="Idle No Production - 10:44:11 to 10:50:25"> </div><div class="progress-bar" style="width:0.21875%;background-color:#338abd" title="Part Start - 10:50:25 to 10:51:28"> </div><div class="progress-bar" style="width:0.3784722222222222%;background-color:#50B432" title="Productive - 10:51:28 to 10:53:17"> </div><div class="progress-bar" style="width:5.34375%;background-color:#c6a43d" title="Idle Production - 10:53:17 to 11:18:56"> </div><div class="progress-bar" style="width:33.43055555555556%;background-color:#ED561B" title="Maintenance - 11:18:56 to 13:59:27"> </div></div></td>
-
-          <!-- <td><span class="showDetails" style="color:#50B432">01:05 </span><span class="showDetailsPer" style="color:#50B432;display:none;">13.71%</span></td><td><span class="showDetails" style="color:#ED561B">02:40</span><span class="showDetailsPer" style="color:#ED561B;display:none;">33.43%</span></td><td><span class="showDetails" style="color:#8c7373">03:32</span><span class="showDetailsPer" style="color:#8c7373;display:none;">44.19%</span></td><td><span class="showDetails" style="color:orange">00:41</span><span class="showDetailsPer" style="color:orange;display:none;">8.67%</span></td> --></tr></tbody>
+      <tbody class="productive-analysis">
+        <!-- productive-analysis Progress Chart here -->
       <tbody>
         <tr>
-          <td>
+          <td style="padding: 0px !important;">
             <!-- Utilization Analysis Data Loaded Here -->
-            <div class="progress" style="margin-bottom: 0px;" id="timeContentSeries"><div class="progress-bar progress-bar-defalt" style="width:12.5%;border: 1px solid #c0cac0;"> 6h</div><div class="progress-bar progress-bar-defalt" style="width:12.5%;border: 1px solid #c0cac0;"> 7h</div><div class="progress-bar progress-bar-defalt" style="width:12.5%;border: 1px solid #c0cac0;"> 8h</div><div class="progress-bar progress-bar-defalt" style="width:12.5%;border: 1px solid #c0cac0;"> 9h</div><div class="progress-bar progress-bar-defalt" style="width:12.5%;border: 1px solid #c0cac0;"> 10h</div><div class="progress-bar progress-bar-defalt" style="width:12.5%;border: 1px solid #c0cac0;"> 11h</div><div class="progress-bar progress-bar-defalt" style="width:12.5%;border: 1px solid #c0cac0;"> 12h</div><div class="progress-bar progress-bar-defalt" style="width:12.5%;border: 1px solid #c0cac0;"> 13h</div></div>
+            <div class="progress" style="margin-bottom: 0px;" id="timeContentSeries">
           </td>  
       </tr>
       <tr class="legent-toggle-tr">
         <td style="text-align:center;font-size: 12px;font-weight: 100;">
-        <span id="UtilizationLabel"><label id="labelProductive" class="pointer toggle-reason-bar" dataid="progress-bar-success" style="margin-right:10px;"><i style="background-color:#50B432; width:10px;height: 10px; display:inline-block; margin-right:5px;"></i>Productive</label><label id="labelSetting" class="pointer toggle-reason-bar" dataid="progress-bar-success" style="margin-right:10px;"><i style="background-color:#FFA500; width:10px;height: 10px; display:inline-block; margin-right:5px;"></i>Setting</label><label id="labelInspection" class="pointer toggle-reason-bar" dataid="progress-bar-success" style="margin-right:10px;"><i style="background-color:#ffff00; width:10px;height: 10px; display:inline-block; margin-right:5px;"></i>Inspection</label><label id="labelMaintenance" class="pointer toggle-reason-bar" dataid="progress-bar-success" style="margin-right:10px;"><i style="background-color:#ED561B; width:10px;height: 10px; display:inline-block; margin-right:5px;"></i>Maintenance</label><label id="labelIdleProduction" class="pointer toggle-reason-bar" dataid="progress-bar-success" style="margin-right:10px;"><i style="background-color:#c6a43d; width:10px;height: 10px; display:inline-block; margin-right:5px;"></i>Idle Production</label><label id="labelIdleNoProduction" class="pointer toggle-reason-bar" dataid="progress-bar-success" style="margin-right:10px;"><i style="background-color:#000; width:10px;height: 10px; display:inline-block; margin-right:5px;"></i>Idle No Production</label><br><label id="labelPartEnd" class="pointer toggle-reason-bar" dataid="progress-bar-success" style="margin-right:10px;"><i style="background-color:#3248b4; width:10px;height: 10px; display:inline-block; margin-right:5px;"></i>Part End</label><label id="labelPartStart" class="pointer toggle-reason-bar" dataid="progress-bar-success" style="margin-right:10px;"><i style="background-color:#338abd; width:10px;height: 10px; display:inline-block; margin-right:5px;"></i>Part Start</label></span>       
+        <span id="UtilizationLabel"></span>       
       </td></tr>
     </tbody>
   </table>
@@ -921,7 +1109,7 @@ $(".loader").fadeOut("slow");
         <div class="panel panel-default dashFirstRow">
           <div class="panel-heading panelHeader">
             <div class="panel-title pull-left">
-              <i class="fa fa-sliders fa-fw"></i> Activity Analysis
+              <i class="fa fa-sliders fa-fw"></i> Activity Analysis (hh:mm)
             </div>
             <div class="panel-title pull-right">
               <div id="statusImg"></div>
@@ -1023,6 +1211,54 @@ $(".loader").fadeOut("slow");
   <!-- <div class="control-sidebar-bg"></div> -->
 </div>
 <!-- ./wrapper -->
+
+
+
+<!-- Load load Utilization Report -->
+<div id="loadUtilizationReport" class="modal fade"  role="dialog" data-keyboard="false" data-backdrop="static">
+  <div class="modal-dialog" style="width:90%;">
+    <div class="modal-content">
+      <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                <h4 class="modal-title"><i class="fa fa-list-alt" aria-hidden="true"></i> Utilization Report :  <span id="ShiftLabel"></span></h4>
+            </div>
+            <div class="modal-body">
+              <div id="moreInfoBody">              
+
+                  <div class="table-responsive">
+                    <button type="button" id="btnExport1" class="btn btn-success btn-sm pull-left">
+                      <i class="glyphicon glyphicon-save"></i> Export
+                    </button>
+
+                  <div id="table_disGraph7" style="text-align: center;">
+                       <i class="fa fa-refresh fa-spin" style="font-size:35px"></i>
+                  </div>
+
+                    <!-- <span class="pull-right"> <b>* Time in (hh:mm:ss) </b> </span> -->
+                       <table id="loadUtilizationReportTable" class="table table-hover table-bordered table-responsive" style="width:100%">
+                           <thead>
+                            <tr>
+                              <th style="width: 10%;">Sl No</th>
+                              <th>Start Time <!-- <SUB>(yyyy-mm-dd)</SUB> --></th>
+                              <th>End Time <!-- <SUB>(yyyy-mm-dd)</SUB> --> </th>                               
+                              <th>Duration <!-- <SUB>(hh:mm:ss)</SUB> --></th>                               
+                              <th style="width: 30%;">Reason</th>                         
+                            </tr>
+                            </thead>
+                        </table>
+                    </div>          
+
+
+              </div>
+            
+            </div>
+            <div class="modal-footer" style="border-top:none;">
+               
+            </div>
+    </div>
+  </div>
+</div> 
+
 
 </body>
 </html>

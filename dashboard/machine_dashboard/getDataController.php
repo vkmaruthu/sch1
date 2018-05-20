@@ -71,7 +71,8 @@ if(isset($_POST['loadOeeData'])){     // getData for loadOeeData
     }
 
     $status['oeeDetails']=$final_data;
-    echo json_encode($status);    
+    echo json_encode($status);   
+    mysqli_close($con); 
 }
 
 
@@ -161,7 +162,8 @@ if(isset($_POST['loadShiftData'])){     // getData for loadShiftData
     }
   
     $status['shiftData']=$final_data;
-    echo json_encode($status);    
+    echo json_encode($status);  
+    mysqli_close($con);   
 }
 
 
@@ -236,5 +238,155 @@ if(isset($_POST['loadToolProcDrillData'])){     // getData for loadToolDrillData
     $status['machineData']=$machineData;
     $status['rowHourArr']=$y_axisData;
     echo json_encode($status);  
+    mysqli_close($con); 
+}
+
+if(isset($_POST['getActivityProgress'])){     // getData for getActivityProgress
+    $comp_id= $_POST['comp_id'];
+    $plant_id= $_POST['plant_id'];
+    $workCenter_id= $_POST['workCenter_id'];
+    $iobotMachine= $_POST['iobotMachine'];
+
+    $selDate= explode("/",$_POST['selDate']);// getting only Dateval
+    $final_date= $selDate[2].'-'.$selDate[1].'-'.$selDate[0];
+    $total_hours= $_POST['total_hours'];
+    $start_hourUI= $_POST['start_hour'];
+    $shift= $_POST['shift'];
+
+    $y_axisData=array();    
+    
+    $jk=0;
+    for($ii=0;$ii<$total_hours;$ii++){
+      $startHourTime=($start_hourUI+$ii);
+        if($startHourTime>=24){
+          $startHourTime=$jk; 
+          $jk=$jk+1;
+        }
+       $y_axisData[]=$startHourTime."h";
+    }
+
+    
+    $sqlQ="SELECT DISTINCT se.start_time as start_time, se.end_time as end_time, TIMESTAMPDIFF(SECOND,se.start_time,se.end_time) as duration, se.reason_code_id as reason_code_id, src.message as message, src.color_code as color_code  
+        FROM
+        sfs_event se,
+        sfs_data_info sdi,
+        sfs_equipment seq,
+        sfs_reason_code src,
+        sfs_shifts shf
+        WHERE
+        se.data_info_id=sdi.id AND
+        sdi.eq_code=seq.code AND
+        src.id=se.reason_code_id AND
+        seq.id=".$iobotMachine." AND
+        DATE(se.start_time)='".$final_date."' AND
+        shf.id=".$shift." AND
+        se.start_time >= TIMESTAMP('".$final_date."',TIME(shf.in_time)) AND
+        se.end_time <= TIMESTAMP('".$final_date."',TIME(shf.out_time))";  
+
+    $sql=mysqli_query($con, $sqlQ) or die("Query fail: " .mysqli_error($con));
+    while ($row=mysqli_fetch_array($sql))
+    {
+        $start_time=$row['start_time'];
+        $end_time=$row['end_time'];
+        $duration=$row['duration'];
+        $reason_code_id=$row['reason_code_id'];
+        $message=$row['message'];
+        $color_code=$row['color_code'];
+
+        $final_data[]=array('start_time'=>"$start_time",
+                            'end_time'=>"$end_time",
+                            'duration'=>"$duration",
+                            'reason_code_id'=>"$reason_code_id",
+                            'message'=>"$message",
+                            'color_code'=>"$color_code",
+                            );
+    }
+
+    $sqlR="SELECT DISTINCT src.message as message, src.color_code as color_code  
+        FROM
+        sfs_event se,
+        sfs_data_info sdi,
+        sfs_equipment seq,
+        sfs_reason_code src,
+        sfs_shifts shf
+        WHERE
+        se.data_info_id=sdi.id AND
+        sdi.eq_code=seq.code AND
+        src.id=se.reason_code_id AND
+        seq.id=".$iobotMachine." AND
+        DATE(se.start_time)='".$final_date."' AND
+        shf.id=".$shift." AND
+        se.start_time >= TIMESTAMP('".$final_date."',TIME(shf.in_time)) AND
+        se.end_time <= TIMESTAMP('".$final_date."',TIME(shf.out_time))
+        group by message"; 
+//echo $sqlR;
+    $sqlRes=mysqli_query($con, $sqlR) or die("Query fail: " .mysqli_error($con));
+    while ($row=mysqli_fetch_array($sqlRes))
+    {
+        $message=$row['message'];
+        $color_code=$row['color_code'];
+
+         $reasonCode[]=array('message'=>"$message",
+                             'color_code'=>"$color_code");
+    }   
+
+    $status['rowHourArr']=$y_axisData;
+    $status['activityData']=$final_data;
+    $status['reasonCode']=$reasonCode;
+    echo json_encode($status);  
+    mysqli_close($con); 
+}
+
+
+
+if(isset($_POST['getActivityAnalysis'])){     // getData for getActivityAnalysis
+    $comp_id= $_POST['comp_id'];
+    $plant_id= $_POST['plant_id'];
+    $workCenter_id= $_POST['workCenter_id'];
+    $iobotMachine= $_POST['iobotMachine'];
+
+    $selDate= explode("/",$_POST['selDate']);// getting only Dateval
+    $final_date= $selDate[2].'-'.$selDate[1].'-'.$selDate[0];
+    $total_hours= $_POST['total_hours'];
+    $start_hourUI= $_POST['start_hour'];
+    $shift= $_POST['shift'];
+
+   
+    $sqlQ=" SELECT SUM(TIMESTAMPDIFF(SECOND,se.start_time,se.end_time)) as time_diff, se.reason_code_id as reason_code_id, src.message as message, src.color_code as color_code,DATE_FORMAT(SEC_TO_TIME(SUM(TIMESTAMPDIFF(SECOND,se.start_time, se.end_time))),'%H:%i') AS getHHMM FROM
+        sfs_event se,
+           sfs_data_info sdi,
+        sfs_equipment seq,
+           sfs_reason_code src,
+           sfs_shifts shf
+        WHERE
+        se.data_info_id=sdi.id AND
+           sdi.eq_code=seq.code AND
+           src.id=se.reason_code_id AND
+           seq.id=".$iobotMachine." AND
+           DATE(se.start_time)='".$final_date."' AND
+           shf.id=".$shift." AND
+           se.start_time >= TIMESTAMP('".$final_date."',TIME(shf.in_time)) AND
+           se.end_time <= TIMESTAMP('".$final_date."',TIME(shf.out_time))
+        GROUP BY se.reason_code_id";  
+//echo $sqlQ;
+    $sql=mysqli_query($con, $sqlQ) or die("Query fail: " .mysqli_error($con));
+    while ($row=mysqli_fetch_array($sql))
+    {
+        $duration=$row['time_diff'];
+        $reason_code_id=$row['reason_code_id'];
+        $message=$row['message'];
+        $color_code=$row['color_code'];
+        $getHHMM=$row['getHHMM'];
+
+        $final_data[]=array('name'=>"$message",
+                            'y'=>round($duration),
+                            'color'=>"$color_code",
+                            'getHHMM'=>"$getHHMM"
+                            );
+    }
+
+    $status['analysisData']=$final_data;
+    echo json_encode($status);  
+    mysqli_close($con); 
 }
 ?>
