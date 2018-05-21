@@ -260,7 +260,7 @@ if(isset($_POST['getActivityProgress'])){     // getData for getActivityProgress
     $eTime=$_POST['eTime'];
     
     $startDateTime=$final_date." ".$sTime; 
-    $endDateTime=$final_date;
+    $endDateTime=$final_date." ".$eTime;;
 
     $start = strtotime($startDateTime);
     $end = strtotime($endDateTime);
@@ -268,7 +268,7 @@ if(isset($_POST['getActivityProgress'])){     // getData for getActivityProgress
     if($start-$end >= 0)
     $ModifideEndDate = date('Y-m-d', strtotime("+1 day", strtotime($endDateTime)));
     else
-    $ModifideEndDate = $endDateTime;
+    $ModifideEndDate = $final_date;
 
 
 
@@ -300,6 +300,7 @@ if(isset($_POST['getActivityProgress'])){     // getData for getActivityProgress
         se.start_time >= TIMESTAMP('".$final_date."',TIME(shf.in_time)) AND
         se.end_time <= TIMESTAMP('".$ModifideEndDate."',TIME(shf.out_time))";  
 
+//echo $sqlQ;
     $sql=mysqli_query($con, $sqlQ) or die("Query fail: " .mysqli_error($con));
     while ($row=mysqli_fetch_array($sql))
     {
@@ -368,13 +369,11 @@ if(isset($_POST['getActivityAnalysis'])){     // getData for getActivityAnalysis
     $start_hourUI= $_POST['start_hour'];
     $shift= $_POST['shift'];
 
-   
-
     $sTime=$_POST['sTime'];
     $eTime=$_POST['eTime'];
     
     $startDateTime=$final_date." ".$sTime; 
-    $endDateTime=$final_date;
+    $endDateTime=$final_date." ".$eTime;;
 
     $start = strtotime($startDateTime);
     $end = strtotime($endDateTime);
@@ -382,7 +381,7 @@ if(isset($_POST['getActivityAnalysis'])){     // getData for getActivityAnalysis
     if($start-$end >= 0)
     $ModifideEndDate = date('Y-m-d', strtotime("+1 day", strtotime($endDateTime)));
     else
-    $ModifideEndDate = $endDateTime;
+    $ModifideEndDate = $final_date;
 
 
 
