@@ -1,3 +1,16 @@
+<?php 
+error_reporting(0);
+session_start();  
+
+if(isset($_SESSION['schAdminSession'])) {
+  //echo "test";
+  echo "<script> window.location='../machine_dashboard';</script>";
+}else{
+  //echo $_SESSION['schAdminSession']."_Not working";
+}
+
+?>
+
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN"
   "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="zh-CN" xmlns:epub="http://www.idpf.org/2007/ops">
@@ -47,7 +60,7 @@
 </style>
 
 <script type="text/javascript">
-window.history.forward();
+//window.history.forward();
 
 var tempData;
 if(tempData===null||tempData===undefined){
@@ -124,8 +137,8 @@ $(document).ready(function() {
 
 
 </script>
-
-<body onload="window.history.forward();">
+<!-- onload="window.history.forward();" -->
+<body>
 
 <section class="login-block">
     <div class="container">

@@ -1,3 +1,7 @@
+<?php 
+error_reporting(0);
+session_start(); 
+?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN"
   "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="zh-CN" xmlns:epub="http://www.idpf.org/2007/ops">
@@ -190,8 +194,8 @@
   <!-- Google Font -->
 <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,600,700,300italic,400italic,600italic">
 </head>
-<!--  -->
-<body class="skin-blue sidebar-mini sidebar-collapse" onload="window.history.forward();">
+<!-- onload="window.history.forward();" -->
+<body class="skin-blue sidebar-mini sidebar-collapse">
    <div class="loader"></div>
 <div class="wrapper">
 <!--  style="position: fixed; width: 100%;" -->

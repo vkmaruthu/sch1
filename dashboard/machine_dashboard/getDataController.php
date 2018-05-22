@@ -13,20 +13,24 @@ if(isset($_POST['loadOeeData'])){     // getData for loadOeeData
     $selDate= explode("/",$_POST['selDate']);// getting only yyyy-mm-dd formate
     $final_date= $selDate[2].'-'.$selDate[1].'-'.$selDate[0];
 
-    $sqlProceQ = mysqli_query($con, "call sfsp_getMachineOee('".$comp_id."','".$plant_id."','".$workCenter_id."',".$iobotMachine.",".$final_date.",".$shift_num.")")or die("Query fail: " .mysqli_error($con));
+//echo $final_date;
+    $sqlProceQRes = mysqli_query($con, "call sfsp_getMachineOee(".$comp_id.",".$plant_id.",".$workCenter_id.",".$iobotMachine.",'".$final_date."',".$shift_num.")")or die("Query fail: " .mysqli_error($con));
  
-    while ($row=mysqli_fetch_array($sqlProceQ))
-    {
+   while($row=mysqli_fetch_array($sqlProceQRes)) {
+
         $machine_status=$row['machine_status'];
-        $oee_perc=$row['oee_perc'];
+        $oee_perc=$row['oee_per'];
         $image_filename=$row['image_filename'];
         $active_reason_code=$row['active_reason_code'];
         $active_reason_color=$row['active_reason_color'];
         $availability_perc=$row['availability_perc'];
         $planned_production_time=$row['planned_production_time'];
         $run_time=$row['run_time'];
+        $run_time_perc=$row['run_time_perc'];
         $idle_time=$row['idle_time'];
+        $idle_time_perc=$row['idle_time_perc'];
         $breakdown_time=$row['breakdown_time'];
+        $breakdown_time_perc=$row['breakdown_time_perc'];
         $performance_perc=$row['performance_perc'];
         $ideal_cycle_time=$row['ideal_cycle_time'];
         $average_time_per_part=$row['average_time_per_part'];
@@ -38,39 +42,36 @@ if(isset($_POST['loadOeeData'])){     // getData for loadOeeData
         $availability_perc_color=$row['availability_perc_color'];
         $performance_perc_color=$row['performance_perc_color'];
         $quality_perc_color=$row['quality_perc_color'];
-        $run_time_perc=$row['run_time_perc'];
-        $idle_time_perc=$row['idle_time_perc'];
-        $quality_perc_color=$row['quality_perc_color'];
-        $breakdown_time_perc=$row['breakdown_time_perc'];
+              
 
-        $final_data=array('machine_status'=>"$machine_status",
-                            'oee_perc'=>"$oee_perc",
-                            'image_filename'=>"$image_filename",
-                            'active_reason_code'=>"$active_reason_code",
-                            'active_reason_color'=>"$active_reason_color",
-                            'availability_perc'=>"$availability_perc",
-                            'planned_production_time'=>"$planned_production_time",
-                            'run_time'=>"$run_time",
-                            'idle_time'=>"$idle_time",
-                            'breakdown_time'=>"$breakdown_time",
-                            'performance_perc'=>"$performance_perc",
-                            'ideal_cycle_time'=>"$ideal_cycle_time",
-                            'average_time_per_part'=>"$average_time_per_part",
-                            'quality_perc'=>"$quality_perc",
-                            'total_Count'=>"$total_Count",
-                            'ok_Count'=>"$ok_Count",
-                            'rejected_Count'=>"$rejected_Count",
-                            'oee_perc_color'=>"$oee_perc_color",
-                            'availability_perc_color'=>"$availability_perc_color",
-                            'performance_perc_color'=>"$performance_perc_color",
-                            'quality_perc_color'=>"$quality_perc_color",
-                            'run_time_perc'=>"$run_time_perc",
-                            'idle_time_perc'=>"$idle_time_perc",
-                            'breakdown_time_perc'=>"$breakdown_time_perc",
+        $final_info=array('machine_status'=>$machine_status,
+                            'oee_perc'=>round($oee_perc),
+                            'image_filename'=>$image_filename,
+                            'active_reason_code'=>round($active_reason_code),
+                            'active_reason_color'=>$active_reason_color,
+                            'availability_perc'=>round($availability_perc,10),
+                            'planned_production_time'=>round($planned_production_time),
+                            'run_time'=>round($run_time),
+                            'idle_time'=>round($idle_time),
+                            'breakdown_time'=>round($breakdown_time),
+                            'performance_perc'=>round($performance_perc,10),
+                            'ideal_cycle_time'=>round($ideal_cycle_time),
+                            'average_time_per_part'=>round($average_time_per_part),
+                            'quality_perc'=>round($quality_perc,10),
+                            'total_Count'=>round($total_Count),
+                            'ok_Count'=>round($ok_Count),
+                            'rejected_Count'=>round($rejected_Count),
+                            'oee_perc_color'=>round($oee_perc_color),
+                            'availability_perc_color'=>$availability_perc_color,
+                            'performance_perc_color'=>$performance_perc_color,
+                            'quality_perc_color'=>$quality_perc_color,
+                            'run_time_perc'=>round($run_time_perc,10),
+                            'idle_time_perc'=>round($idle_time_perc,10),
+                            'breakdown_time_perc'=>round($breakdown_time_perc,10)
                             );
     }
 
-    $status['oeeDetails']=$final_data;
+    $status['oeeDetails']=$final_info;
     echo json_encode($status);   
     mysqli_close($con); 
 }
@@ -297,6 +298,7 @@ if(isset($_POST['getActivityProgress'])){     // getData for getActivityProgress
         seq.id=".$iobotMachine." AND
         DATE(se.start_time)='".$final_date."' AND
         shf.id=".$shift." AND
+        se.reason_code_id <> 0 AND
         se.start_time >= TIMESTAMP('".$final_date."',TIME(shf.in_time)) AND
         se.end_time <= TIMESTAMP('".$ModifideEndDate."',TIME(shf.out_time))";  
 
@@ -334,6 +336,7 @@ if(isset($_POST['getActivityProgress'])){     // getData for getActivityProgress
         seq.id=".$iobotMachine." AND
         DATE(se.start_time)='".$final_date."' AND
         shf.id=".$shift." AND
+        se.reason_code_id <> 0 AND
         se.start_time >= TIMESTAMP('".$final_date."',TIME(shf.in_time)) AND
         se.end_time <= TIMESTAMP('".$ModifideEndDate."',TIME(shf.out_time))
         group by message"; 
@@ -398,6 +401,7 @@ if(isset($_POST['getActivityAnalysis'])){     // getData for getActivityAnalysis
            seq.id=".$iobotMachine." AND
            DATE(se.start_time)='".$final_date."' AND
            shf.id=".$shift." AND
+           se.reason_code_id <> 0 AND
            se.start_time >= TIMESTAMP('".$final_date."',TIME(shf.in_time)) AND
            se.end_time <= TIMESTAMP('".$ModifideEndDate."',TIME(shf.out_time))
         GROUP BY se.reason_code_id";  

@@ -146,6 +146,8 @@ loadOeeData:function(){
             dataType: 'json',
             data:myData,
             success: function(obj) {
+              if(obj.oeeDetails !=null){
+
               tempData.oeeDash.getImg(obj.oeeDetails.image_filename,obj.oeeDetails.active_reason_code,parseInt(obj.oeeDetails.machine_status),obj.oeeDetails.active_reason_color);
               tempData.oeeDash.oeeCirclePerc('oeePerc',parseInt(obj.oeeDetails.oee_perc),obj.oeeDetails.oee_perc_color);
               tempData.oeeDash.oeeCirclePerc('availPerc',parseInt(obj.oeeDetails.availability_perc),obj.oeeDetails.availability_perc_color);
@@ -163,7 +165,29 @@ loadOeeData:function(){
               $('#TotalCount').html(tempData.oeeDash.NumFormat(parseInt(obj.oeeDetails.total_Count)));
               $('#OkCount').html(tempData.oeeDash.NumFormat(parseInt(obj.oeeDetails.ok_Count)));
               $('#RejectedCount').html(tempData.oeeDash.NumFormat(parseInt(obj.oeeDetails.rejected_Count)));
-                                                              
+
+            }else{
+
+              tempData.oeeDash.getImg("default.png",'',0,"#FFFFFF");
+              tempData.oeeDash.oeeCirclePerc('oeePerc',0,"#000000");
+              tempData.oeeDash.oeeCirclePerc('availPerc',0,"#000000");
+              tempData.oeeDash.oeeCirclePerc('performPerc',0,"#000000");
+              tempData.oeeDash.oeeCirclePerc('qualityPerc',0,"#000000");
+              $('#PlannedProductionTime').html('00:00:00');
+              $('#RunTime').html("00:00:00");
+              $('#RunTimePerc').css("width",parseInt(0));
+              $('#IdleTime').html("00:00:00");
+              $('#IdleTimePerc').css("width",parseInt(0));
+              $('#BreakdownTime').html("00:00:00");
+              $('#BreakdownTimePerc').css("width",parseInt(0));
+              $('#IdealCycleTime').html("00:00:00");
+              $('#AverageTimePart').html("00:00:00");
+              $('#TotalCount').html(tempData.oeeDash.NumFormat(parseInt(0)));
+              $('#OkCount').html(tempData.oeeDash.NumFormat(parseInt(0)));
+              $('#RejectedCount').html(tempData.oeeDash.NumFormat(parseInt(0)));
+              
+            }
+
             }
         });
 },   
@@ -631,7 +655,7 @@ for(var q=0;q<obj.activityData.length;q++){        // Main Loop
 
 } // end of FOR LOOP
 
-  var finalDiv='<div class="progress" style="margin-bottom: 0px;">'+divData+'</div>';
+  var finalDiv='<div class="progress" style="margin-bottom: 0px;height:30px;">'+divData+'</div>';
     $('#UtilizationLabel').html(labelContent);
     $('.productive-analysis').html(finalDiv);
 
@@ -1082,72 +1106,6 @@ $(".loader").fadeOut("slow");
       </div>
 <!-- Quality Ends --> 
 
-
-<!-- Activity Progress -->
-    <div class="col-md-9 col-sm-12 col-xs-12" id="activityProgressScreen">  
-        <div class="panel panel-default dashFirstRow">
-          <div class="panel-heading panelHeader">
-            <div class="panel-title pull-left">
-              <i class="fa fa-sliders fa-fw"></i> Activity Progress
-            </div>
-              <div class="panel-title pull-right">
-              <!--  <i id="compProfile" class="btn btn-xs fa fa-expand" aria-hidden="true"></i> -->
-              <button class="btn btn-xs bg-purple btn-flat" onclick="tempData.oeeDash.loadUtilizationReport();"><i class="fa fa-file-text-o" aria-hidden="true"></i> &nbsp; Report</button>
-              </div>
-            <div class="clearfix"></div>
-          </div>
-          <div class="panel-body">  
-              <div class="table-responsive" style="height: 270px;">
-                  <!-- <div id="productivity_analysis" style="width: 100%; height: 400px;"></div> -->
-<table class="table table-striped col-lg-12 col-md-12 col-sm-12 col-xs-12">
-      <tbody class="productive-analysis">
-        <!-- productive-analysis Progress Chart here -->
-      <tbody>
-        <tr>
-          <td style="padding: 0px !important;">
-            <!-- Utilization Analysis Data Loaded Here -->
-            <div class="progress" style="margin-bottom: 0px;" id="timeContentSeries">
-          </td>  
-      </tr>
-      <tr class="legent-toggle-tr">
-        <td style="text-align:center;font-size: 12px;font-weight: 100;">
-        <span id="UtilizationLabel"></span>       
-      </td></tr>
-    </tbody>
-  </table>
-            </div>
-
-          </div>
-        </div>
-      </div>
-<!-- Activity Progress Ends --> 
-
-
-<!-- Activity Analysis -->
-    <div class="col-md-3 col-sm-6 col-xs-12" id="activityAnalysisScreen">  
-        <div class="panel panel-default dashFirstRow">
-          <div class="panel-heading panelHeader">
-            <div class="panel-title pull-left">
-              <i class="fa fa-sliders fa-fw"></i> Activity Analysis (hh:mm)
-            </div>
-            <div class="panel-title pull-right">
-              <div id="statusImg"></div>
-            </div>
-              <div class="panel-title pull-right">
-               <i id="expandActivityAnalysis" class="btn btn-xs fa fa-expand" aria-hidden="true"></i>
-              </div> 
-            <div class="clearfix"></div>
-          </div>
-          <div class="panel-body">  
-            <div class="row">              
-                <!-- Load Activity Analysis pie Chart --> 
-                <div id="activityAnalysis" style="width:99%;height:270px;"></div>
-            </div> 
-          </div>
-        </div>
-      </div>
-<!-- Activity Analysis Ends -->  
-
 <!-- Hourly Production -->
     <div class="col-md-9 col-sm-12 col-xs-12" id="expandHourlyChartScreen">  
         <div class="panel panel-default dashFirstRow">
@@ -1177,6 +1135,76 @@ $(".loader").fadeOut("slow");
         </div>
       </div>
 <!-- Hourly Production Ends --> 
+
+
+<!-- Activity Analysis -->
+    <div class="col-md-3 col-sm-6 col-xs-12" id="activityAnalysisScreen">  
+        <div class="panel panel-default dashFirstRow">
+          <div class="panel-heading panelHeader">
+            <div class="panel-title pull-left">
+              <i class="fa fa-sliders fa-fw"></i> Activity Analysis (hh:mm)
+            </div>
+            <div class="panel-title pull-right">
+              <div id="statusImg"></div>
+            </div>
+              <div class="panel-title pull-right">
+               <i id="expandActivityAnalysis" class="btn btn-xs fa fa-expand" aria-hidden="true"></i>
+              </div> 
+            <div class="clearfix"></div>
+          </div>
+          <div class="panel-body">  
+            <div class="row">              
+                <!-- Load Activity Analysis pie Chart --> 
+                <div id="activityAnalysis" style="width:99%;height:270px;"></div>
+            </div> 
+          </div>
+        </div>
+      </div>
+<!-- Activity Analysis Ends -->  
+
+
+
+<!-- Activity Progress -->
+    <div class="col-md-9 col-sm-12 col-xs-12" id="activityProgressScreen">  
+        <div class="panel panel-default dashFirstRow">
+          <div class="panel-heading panelHeader">
+            <div class="panel-title pull-left">
+              <i class="fa fa-sliders fa-fw"></i> Activity Progress
+            </div>
+              <div class="panel-title pull-right">
+              <!--  <i id="compProfile" class="btn btn-xs fa fa-expand" aria-hidden="true"></i> -->
+              <button class="btn btn-xs bg-purple btn-flat" onclick="tempData.oeeDash.loadUtilizationReport();"><i class="fa fa-file-text-o" aria-hidden="true"></i> &nbsp; Report</button>
+              </div>
+            <div class="clearfix"></div>
+          </div>
+          <div class="panel-body">  
+              <div class="table-responsive" style="height: 270px;">
+                  <!-- <div id="productivity_analysis" style="width: 100%; height: 400px;"></div> -->
+                  <br>
+<table class="table table-striped col-lg-12 col-md-12 col-sm-12 col-xs-12">
+      <!-- <tbody class="productive-analysis"> -->
+      <tbody>
+        <tr>
+          <td style="padding: 0px !important;">
+            <!-- productive-analysis Progress Chart here -->      
+            <div class="productive-analysis"></div>
+            <!-- Utilization Analysis Data Loaded Here -->
+            <div class="progress" style="margin-bottom: 0px;" id="timeContentSeries"></div>
+          </td>  
+      </tr>
+      <tr class="legent-toggle-tr">
+        <td style="text-align:center;font-size: 12px;font-weight: 100;">
+        <span id="UtilizationLabel"></span>       
+      </td></tr>
+    </tbody>
+  </table>
+            </div>
+
+          </div>
+        </div>
+      </div>
+<!-- Activity Progress Ends --> 
+
 
 
 <!-- Shift Details -->
