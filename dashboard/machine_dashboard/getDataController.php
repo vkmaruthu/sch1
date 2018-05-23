@@ -61,7 +61,7 @@ if(isset($_POST['loadOeeData'])){     // getData for loadOeeData
                             'total_Count'=>round($total_Count),
                             'ok_Count'=>round($ok_Count),
                             'rejected_Count'=>round($rejected_Count),
-                            'oee_perc_color'=>round($oee_perc_color),
+                            'oee_perc_color'=>$oee_perc_color,
                             'availability_perc_color'=>$availability_perc_color,
                             'performance_perc_color'=>$performance_perc_color,
                             'quality_perc_color'=>$quality_perc_color,
