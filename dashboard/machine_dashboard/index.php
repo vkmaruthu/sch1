@@ -87,11 +87,15 @@ getEQDesc:function(){
       data:myData,
       success: function(obj) {
         if( obj.equipmentDetails !=null){
+          
+          equipGobalData=obj.equipmentDetails;
+
          $("#eq_desc").html('');
          //$("#eq_desc").append('<option value="none"> Select Equipment </option>');
           for(var i=0; i< obj.equipmentDetails.length; i++){
            $("#eq_desc").append('<option value="'+obj.equipmentDetails[i].id+'">'+obj.equipmentDetails[i].eq_desc+'</option>'); 
           }
+
           }
         } 
     });
@@ -201,6 +205,13 @@ visitMachine:function(){
   window.location.href="../machine/index.php?selDate="+$('#userDateSel').val();
 },   
 loadShiftData:function(){
+
+  var eq=$('#eq_desc').val();
+  var data = tempData.oeeDash.getObjects(equipGobalData,'id',eq);
+  console.log(data);
+  $('#plant_id').val(data[0].plant_id);  
+  
+
     var selDate = $("#userDateSel").val();
     var url= "getDataController.php";
 
@@ -796,7 +807,10 @@ getDiffHourMin:function(startDate,endDate){
 
   return tempData.oeeDash.addZero(hourDifference)+':'+tempData.oeeDash.addZero(minDiff)+':'+tempData.oeeDash.addZero(secDiff);
 },
-
+/*setPalnt:function(this){
+  console.log(this.value);
+  $('#plant_id').val();  
+}*/
 };
 
 
@@ -840,6 +854,10 @@ $('#expandActivityAnalysis').click(function(e){
 $("#btnExport1").click(function(e) {
     $('#loadUtilizationReportTable').table2excel();
 }); 
+
+$('#eq_desc').change(function() {
+  tempData.oeeDash.loadShiftData();  // Load the shift
+});
 
 $(".loader").fadeOut("slow");
 });

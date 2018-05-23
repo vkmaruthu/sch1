@@ -248,7 +248,7 @@ if(isset($_POST['getEquipmentDetails'])){
 if(isset($_POST['getEquipmentDetailsWithCompID'])){
     $comp_id=$_POST['comp_id'];
     
-    $eqQ="SELECT eq.id, eq.code, eq.descp, eq.image_file_name, eq.protocol_id, eq.type_id, eq.model_id, eq.wc_id,
+    $eqQ="SELECT sp.id as plant_id, sp.descp as plant_descp, eq.id, eq.code, eq.descp, eq.image_file_name, eq.protocol_id, eq.type_id, eq.model_id, eq.wc_id,
          eqm.name, eqt.descp as eq_type_desc, eq.reason_code_arr, eqp.name as eq_protocol, eq.mac_id  
          FROM sfs_equipment eq, sfs_eq_model eqm,
          sfs_eq_type eqt, sfs_eq_protocol eqp ,
@@ -271,6 +271,9 @@ if(isset($_POST['getEquipmentDetailsWithCompID'])){
         $eq_type_name=$row['eq_type_desc'];
         $reason_code_arr=$row['reason_code_arr'];
         $mac_id=$row['mac_id'];
+        $plant_id=$row['plant_id'];
+        $plant_descp=$row['plant_descp'];
+
         $q="select message from sfs_reason_code where id IN(".$reason_code_arr.")";
         $res=mysqli_query($con,$q) or die('Error:'.mysqli_error($con));
         while ($row=mysqli_fetch_array($res)){
@@ -291,7 +294,9 @@ if(isset($_POST['getEquipmentDetailsWithCompID'])){
             'eq_type_name' => "$eq_type_name",
             'reason_code_arr' => "$reason_code_arr",
             'reason_code_name' => "$strMsg",
-            'mac_id' => "$mac_id"
+            'mac_id' => "$mac_id",
+            'plant_descp' => "$plant_descp",
+            'plant_id' => "$plant_id",
         );
         $strMsg='';
     }

@@ -47,7 +47,7 @@ if(isset($_POST['loadOeeData'])){     // getData for loadOeeData
         $final_info=array('machine_status'=>$machine_status,
                             'oee_perc'=>round($oee_perc),
                             'image_filename'=>$image_filename,
-                            'active_reason_code'=>round($active_reason_code),
+                            'active_reason_code'=>$active_reason_code,
                             'active_reason_color'=>$active_reason_color,
                             'availability_perc'=>round($availability_perc,10),
                             'planned_production_time'=>round($planned_production_time),
