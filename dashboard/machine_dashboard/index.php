@@ -49,6 +49,7 @@ var GtotalHour=null;
 var GstartHour=null;
 var ShiftGobalData=null;
 var GdbStartHour=null;
+var equipGobalData=null;
 
 /* Event Chart*/
 var globalUtilizationData=null;
@@ -132,7 +133,7 @@ getImg:function(img,reason,status,reason_color) {
         }
         
 },
-loadOeeData:function(){
+loadOeeData:function(group_type){
     var selDate = $("#userDateSel").val();
     var url= "getDataController.php";
     var comp_id=$('#comp_id').val();
@@ -140,8 +141,9 @@ loadOeeData:function(){
     var workCenter_id=$('#workCenter_id').val();
     var iobotMachine= $('#eq_desc').val();
     var shift= $('#shiftDropdown').val();
+    var group_type= group_type;
 
-    var myData = {loadOeeData:'loadOeeData',selDate:selDate,comp_id:comp_id,plant_id:plant_id,workCenter_id:workCenter_id,iobotMachine:iobotMachine,shift:shift };
+    var myData = {loadOeeData:'loadOeeData',selDate:selDate,comp_id:comp_id,plant_id:plant_id,workCenter_id:workCenter_id,iobotMachine:iobotMachine,shift:shift,group_type:group_type };
 
         $.ajax({
             type:"POST",
@@ -159,11 +161,11 @@ loadOeeData:function(){
               tempData.oeeDash.oeeCirclePerc('qualityPerc',parseInt(obj.oeeDetails.quality_perc),obj.oeeDetails.quality_perc_color);
               $('#PlannedProductionTime').html(tempData.oeeDash.getTimeHHMMSS(parseInt(obj.oeeDetails.planned_production_time)));
               $('#RunTime').html(tempData.oeeDash.getTimeHHMMSS(parseInt(obj.oeeDetails.run_time)));
-              $('#RunTimePerc').css("width",parseInt(obj.oeeDetails.run_time_perc));
+              $('#RunTimePerc').css("width",parseInt(obj.oeeDetails.run_time_perc)+'%');
               $('#IdleTime').html(tempData.oeeDash.getTimeHHMMSS(parseInt(obj.oeeDetails.idle_time)));
-              $('#IdleTimePerc').css("width",parseInt(obj.oeeDetails.idle_time_perc));
+              $('#IdleTimePerc').css("width",parseInt(obj.oeeDetails.idle_time_perc)+'%');
               $('#BreakdownTime').html(tempData.oeeDash.getTimeHHMMSS(parseInt(obj.oeeDetails.breakdown_time)));
-              $('#BreakdownTimePerc').css("width",parseInt(obj.oeeDetails.breakdown_time_perc));
+              $('#BreakdownTimePerc').css("width",parseInt(obj.oeeDetails.breakdown_time_perc)+'%');
               $('#IdealCycleTime').html(tempData.oeeDash.getTimeHHMMSS(parseInt(obj.oeeDetails.ideal_cycle_time)));
               $('#AverageTimePart').html(tempData.oeeDash.getTimeHHMMSS(parseInt(obj.oeeDetails.average_time_per_part)));
               $('#TotalCount').html(tempData.oeeDash.NumFormat(parseInt(obj.oeeDetails.total_Count)));
@@ -712,17 +714,19 @@ checkData:function(){
     var overView = document.getElementById('production');
 
     if(tool.checked){       
+      tempData.oeeDash.loadOeeData('T');
       tempData.oeeDash.loadToolProcDrillData('T');  
-    }else if(machine.checked){        
+    }else if(machine.checked){
+      tempData.oeeDash.loadOeeData('M');        
       tempData.oeeDash.loadToolProcDrillData('M');  
     }else{          
+      tempData.oeeDash.loadOeeData('P');
       tempData.oeeDash.loadToolProcDrillData('P');
     }
 },
 reload:function(){
   $(".loader").fadeIn("slow");
   tempData.oeeDash.shiftsdata();
-  tempData.oeeDash.loadOeeData();
 
   tempData.oeeDash.getActivityProgress();
   tempData.oeeDash.getActivityAnalysis();

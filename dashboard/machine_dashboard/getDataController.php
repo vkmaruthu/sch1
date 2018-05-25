@@ -9,12 +9,14 @@ if(isset($_POST['loadOeeData'])){     // getData for loadOeeData
     $workCenter_id= $_POST['workCenter_id'];
     $iobotMachine= $_POST['iobotMachine'];
     $shift_num= $_POST['shift'];
+    $group_type= $_POST['group_type'];
+    $order=0;
 
     $selDate= explode("/",$_POST['selDate']);// getting only yyyy-mm-dd formate
     $final_date= $selDate[2].'-'.$selDate[1].'-'.$selDate[0];
 
 //echo $final_date;
-    $sqlProceQRes = mysqli_query($con, "call sfsp_getMachineOee(".$comp_id.",".$plant_id.",".$workCenter_id.",".$iobotMachine.",'".$final_date."',".$shift_num.")")or die("Query fail: " .mysqli_error($con));
+    $sqlProceQRes = mysqli_query($con, "call sfsp_getOverallOEE(".$comp_id.",".$plant_id.",".$workCenter_id.",".$iobotMachine.",'".$final_date."',".$shift_num.",'".$group_type."',".$order.")")or die("Query fail: " .mysqli_error($con));
  
    while($row=mysqli_fetch_array($sqlProceQRes)) {
 
