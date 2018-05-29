@@ -195,7 +195,7 @@ if(isset($_POST['loadToolProcDrillData'])){     // getData for loadToolDrillData
          $y_axisData=array();
          //$total_count='';
 
-        $name=$row['name'];
+        $name=$row['commonName'];
         $descp=$row['descp'];
         $no_of_hours=$row['no_of_hours'];
         $start_hour=$row['start_hour'];
