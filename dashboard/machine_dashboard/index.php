@@ -168,6 +168,7 @@ loadOeeData:function(group_type){
               $('#BreakdownTimePerc').css("width",parseInt(obj.oeeDetails.breakdown_time_perc)+'%');
               $('#IdealCycleTime').html(tempData.oeeDash.getTimeHHMMSS(parseInt(obj.oeeDetails.ideal_cycle_time)));
               $('#AverageTimePart').html(tempData.oeeDash.getTimeHHMMSS(parseInt(obj.oeeDetails.average_time_per_part)));
+              $('#benchmark_time').html(tempData.oeeDash.getTimeHHMMSS(parseInt(obj.oeeDetails.benchmark_time)));
               $('#TotalCount').html(tempData.oeeDash.NumFormat(parseInt(obj.oeeDetails.total_Count)));
               $('#OkCount').html(tempData.oeeDash.NumFormat(parseInt(obj.oeeDetails.ok_Count)));
               $('#RejectedCount').html(tempData.oeeDash.NumFormat(parseInt(obj.oeeDetails.rejected_Count)));
@@ -298,6 +299,11 @@ getCommonDataForShift:function(obj){
   var d = new Date(obj.in_time);
     arr.push({"hour":hours,"inTime":inTime,"outTime":outTime,"startHour":d.getHours()});
     return arr;
+},
+addOneDate:function(dateTime){
+  var dt=dateTime.split(' ');
+  var onlyDate=dt[0].split('-');
+  return onlyDate[0]+'-'+onlyDate[1]+'-'+(parseInt(onlyDate[2]) + 1)+' '+dt[1];
 },
 shiftsdata:function(){
      // tempData.oeeDash.changeDateFormat(); 
@@ -666,8 +672,6 @@ for(var q=0;q<obj.activityData.length;q++){        // Main Loop
     if(uiStDate<dbStDate){
      divData+=tempData.oeeDash.insertBlankEvent(d1,d2); 
     } else { // uiStDate = d1  uiEnDate = d3 dbStDate = d2  dbEnDate = d4
-      console.log(d1);
-      console.log(d4);
       widthVal=tempData.oeeDash.getRation(tempData.oeeDash.timeDiff(d1,d4));
     divData+='<div class="progress-bar" style="width:'+parseFloat(widthVal)+'%;background-color:'+obj.activityData[q].color_code+'" title="'+obj.activityData[q].message+' - '+GinTime+' to '+enTime.time+'"> </div>';
 
@@ -679,10 +683,33 @@ for(var q=0;q<obj.activityData.length;q++){        // Main Loop
 
   if(q == (obj.activityData.length-1)) 
   {// uiStDate = d1  uiEnDate = d3 dbStDate = d2  dbEnDate = d4
-    widthVal=tempData.oeeDash.getRation(tempData.oeeDash.timeDiff(d2,d3));
-    divData+='<div class="progress-bar" style="width:'+parseFloat(widthVal)+'%;background-color:'+obj.activityData[q].color_code+'" title="'+obj.activityData[q].message+' - '+stTime.time+' to '+GoutTime+'"> </div>';
+    var endDateTime;
+    var endTime;
+    var currentDateTime = new Date();
 
-   globalUtilizationData.push({"color_code":obj.activityData[q].color_code,"duration":tempData.oeeDash.timeDiff(d2,d3),"end_time":d3,"message":obj.activityData[q].message,"reason_code_id":obj.activityData[q].reason_code_id,"start_time":d2});
+      if(currentDateTime < uiEnDate){
+        //alert();
+        endDateTime = d4;
+        endTime=enTime.time;
+      }else{
+        //alert('Á');
+        //TODO :: Update end Date
+        if(GoutTime < GinTime){
+            // Update Date
+           endDateTime = tempData.oeeDash.addOneDate(d3);
+           endTime = GoutTime;
+          // alert(endDateTime);
+        }else{
+           // Current date
+           endDateTime = d3;
+           endTime = GoutTime;
+           //alert(endDateTime);
+        }
+      }
+    widthVal=tempData.oeeDash.getRation(tempData.oeeDash.timeDiff(d2,endDateTime));
+    divData+='<div class="progress-bar" style="width:'+parseFloat(widthVal)+'%;background-color:'+obj.activityData[q].color_code+'" title="'+obj.activityData[q].message+' - '+stTime.time+' to '+endTime+'"> </div>';
+
+   globalUtilizationData.push({"color_code":obj.activityData[q].color_code,"duration":tempData.oeeDash.timeDiff(d2,endDateTime),"end_time":endDateTime,"message":obj.activityData[q].message,"reason_code_id":obj.activityData[q].reason_code_id,"start_time":d2});
 
   } 
   else if (q!=0){
@@ -1091,17 +1118,22 @@ $(".loader").fadeOut("slow");
                 <input type="text" class="knob" id="performPerc" data-skin="tron" data-thickness="0.2" data-width="80" data-height="80" readonly>
               </div>
 
-            <div class="col-md-12 col-xs-12" style="padding: 0px;margin-top:5%;">
-                <p class="text-center timeFontStyle" id="IdealCycleTime"></p>
+            <div class="col-md-12 col-xs-12" style="padding: 0px;">
+                <p class="text-center timeFontStylePerformance" id="IdealCycleTime"></p>
                 <p class="text-center">Ideal Cycle Time</p>
             </div>
 
 
             <div class="col-md-12 col-xs-12" style="padding: 0px;">
-                <p class="text-center timeFontStyle" id="AverageTimePart"></p>
+                <p class="text-center timeFontStylePerformance" id="AverageTimePart"></p>
                 <p class="text-center">Average Time / Part</p>
             </div>
 
+
+            <div class="col-md-12 col-xs-12" style="padding: 0px;">
+                <p class="text-center timeFontStylePerformance" id="benchmark_time"></p>
+                <p class="text-center">Bench Mark Time</p>
+            </div>
 
             </div>      
           </div>

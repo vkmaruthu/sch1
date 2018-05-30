@@ -44,6 +44,7 @@ if(isset($_POST['loadOeeData'])){     // getData for loadOeeData
         $availability_perc_color=$row['availability_perc_color'];
         $performance_perc_color=$row['performance_perc_color'];
         $quality_perc_color=$row['quality_perc_color'];
+        $benchmark_time=$row['benchmark_time'];
               
 
         $final_info=array('machine_status'=>$machine_status,
@@ -69,7 +70,8 @@ if(isset($_POST['loadOeeData'])){     // getData for loadOeeData
                             'quality_perc_color'=>$quality_perc_color,
                             'run_time_perc'=>round($run_time_perc,10),
                             'idle_time_perc'=>round($idle_time_perc,10),
-                            'breakdown_time_perc'=>round($breakdown_time_perc,10)
+                            'breakdown_time_perc'=>round($breakdown_time_perc,10),
+                            'benchmark_time'=>round($benchmark_time,10),
                             );
     }
 
@@ -387,7 +389,6 @@ if(isset($_POST['getActivityAnalysis'])){     // getData for getActivityAnalysis
            sdi.eq_code=seq.code AND
            src.id=se.reason_code_id AND
            seq.id=".$iobotMachine." AND
-           DATE(se.start_time)='".$final_date."' AND
            shf.id=".$shift." AND
            se.reason_code_id <> 0 AND
            se.start_time >= TIMESTAMP('".$final_date."',TIME(shf.in_time)) AND

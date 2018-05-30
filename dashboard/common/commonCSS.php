@@ -176,6 +176,13 @@ label{
     margin-bottom: -8px;
 }
 
+.timeFontStylePerformance{
+    font-size: 32px;
+    color: #013785;
+    margin-bottom: -10px;
+}
+
+
 p{
    font-size: 15px;
 }
