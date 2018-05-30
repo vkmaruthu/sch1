@@ -285,27 +285,12 @@ if(isset($_POST['getActivityProgress'])){     // getData for getActivityProgress
        $y_axisData[]=$startHourTime."h";
     }
 
-    
-    $sqlQ="SELECT DISTINCT se.start_time as start_time, se.end_time as end_time, TIMESTAMPDIFF(SECOND,se.start_time,se.end_time) as duration, se.reason_code_id as reason_code_id, src.message as message, src.color_code as color_code  
-        FROM
-        sfs_event se,
-        sfs_data_info sdi,
-        sfs_equipment seq,
-        sfs_reason_code src,
-        sfs_shifts shf
-        WHERE
-        se.data_info_id=sdi.id AND
-        sdi.eq_code=seq.code AND
-        src.id=se.reason_code_id AND
-        seq.id=".$iobotMachine." AND
-        DATE(se.start_time)='".$final_date."' AND
-        shf.id=".$shift." AND
-        se.reason_code_id <> 0 AND
-        se.start_time >= TIMESTAMP('".$final_date."',TIME(shf.in_time)) AND
-        se.end_time <= TIMESTAMP('".$ModifideEndDate."',TIME(shf.out_time))";  
+//$sql =mysqli_query($con, "call sfsp_getEvents(".$iobotMachine.",".$shift.",'".$final_date."','".$ModifideEndDate."')") or die("Query fail: " .mysqli_error($con));
+$sqlQ ="SELECT DISTINCT se.start_time as start_time, se.end_time as end_time, TIMESTAMPDIFF(SECOND,se.start_time,se.end_time) as duration, se.reason_code_id as reason_code_id,src.message as message, src.color_code as color_code FROM sfs_event se, sfs_data_info sdi, sfs_equipment seq, sfs_reason_code src, sfs_shifts shf WHERE se.data_info_id=sdi.id AND sdi.eq_code=seq.code AND src.id=se.reason_code_id AND seq.id=".$iobotMachine." AND shf.id=".$shift." AND se.start_time < se.end_time AND (se.start_time BETWEEN CONCAT('".$final_date."',' ',TIME(shf.in_time)) AND CONCAT(IF(TIME(shf.in_time) < TIME(shf.out_time),'".$final_date."','".$ModifideEndDate."'),' ',TIME(shf.out_time)) OR se.end_time BETWEEN CONCAT('".$final_date."',' ',TIME(shf.in_time)) AND CONCAT(IF(TIME(shf.in_time) < TIME(shf.out_time),'".$final_date."','".$ModifideEndDate."'),' ',TIME(shf.out_time))) ORDER BY se.start_time";
 
 //echo $sqlQ;
-    $sql=mysqli_query($con, $sqlQ) or die("Query fail: " .mysqli_error($con));
+
+   $sql=mysqli_query($con, $sqlQ) or die("Query fail: " .mysqli_error($con));
     while ($row=mysqli_fetch_array($sql))
     {
         $start_time=$row['start_time'];
@@ -352,6 +337,7 @@ if(isset($_POST['getActivityProgress'])){     // getData for getActivityProgress
          $reasonCode[]=array('message'=>"$message",
                              'color_code'=>"$color_code");
     }   
+
 
     $status['rowHourArr']=$y_axisData;
     $status['activityData']=$final_data;

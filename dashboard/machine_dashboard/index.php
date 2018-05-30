@@ -52,7 +52,7 @@ var GdbStartHour=null;
 var equipGobalData=null;
 
 /* Event Chart*/
-var globalUtilizationData=null;
+var globalUtilizationData=new Array();
 
 var tempData;
 if(tempData===null||tempData===undefined){
@@ -592,7 +592,8 @@ getActivityProgress:function(){ // bar chart
       success: function(obj) {
         //alert();
 debugger;
-    globalUtilizationData=obj.activityData;
+globalUtilizationData=[];
+  //  globalUtilizationData=obj.activityData;
 
 /* Bulding progressBar Time Series */  //totalHour:GtotalHour,startHour:GstartHour
     var totalHour=GtotalHour;
@@ -634,9 +635,9 @@ for(var q=0;q<obj.reasonCode.length;q++){
    }
 }
 
-
+var widthVal;
 for(var q=0;q<obj.activityData.length;q++){        // Main Loop
-
+//widthVal=0;
   /* Formatting Date Time dd/mm/yyyy hh:mm:ss */
   var stTime = tempData.oeeDash.dbDateTimeSeparate(obj.activityData[q].start_time);
   var enTime = tempData.oeeDash.dbDateTimeSeparate(obj.activityData[q].end_time);
@@ -647,25 +648,55 @@ for(var q=0;q<obj.activityData.length;q++){        // Main Loop
   var selDate2 = (stTime.date).split('/')
   selDateF2=selDate2[2]+'-'+selDate2[1]+'-'+selDate2[0];
 
+  var dbEndDateTime = (enTime.date).split('/')
+  dbEndDateTimeF=dbEndDateTime[2]+'-'+dbEndDateTime[1]+'-'+dbEndDateTime[0];
+
   var d1 = selDateF+" "+GinTime;
   var d2 = selDateF2+" "+stTime.time;
+  var d4 = dbEndDateTimeF+" "+enTime.time;
+
+  var d3 = selDateF+" "+GoutTime;
+  var uiEnDate = new Date(d3); //yyyy-mm-dd
 
   var uiStDate = new Date(d1); //yyyy-mm-dd
-  var dbStDate = new Date(d2); 
+  var dbStDate = new Date(d2);
+  var dbEnDate = new Date(d4); 
   debugger;
-  if(status==1){
+  if(q==0){
     if(uiStDate<dbStDate){
      divData+=tempData.oeeDash.insertBlankEvent(d1,d2); 
+    } else { // uiStDate = d1  uiEnDate = d3 dbStDate = d2  dbEnDate = d4
+      console.log(d1);
+      console.log(d4);
+      widthVal=tempData.oeeDash.getRation(tempData.oeeDash.timeDiff(d1,d4));
+    divData+='<div class="progress-bar" style="width:'+parseFloat(widthVal)+'%;background-color:'+obj.activityData[q].color_code+'" title="'+obj.activityData[q].message+' - '+GinTime+' to '+enTime.time+'"> </div>';
+
+  globalUtilizationData.push({"color_code":obj.activityData[q].color_code,"duration":tempData.oeeDash.timeDiff(d1,d4),"end_time":obj.activityData[q].end_time,"message":obj.activityData[q].message,"reason_code_id":obj.activityData[q].reason_code_id,"start_time":d1});
+
+
     }
-    status=0;
-  }   
- // 
+  }
 
+  if(q == (obj.activityData.length-1)) 
+  {// uiStDate = d1  uiEnDate = d3 dbStDate = d2  dbEnDate = d4
+    widthVal=tempData.oeeDash.getRation(tempData.oeeDash.timeDiff(d2,d3));
+    divData+='<div class="progress-bar" style="width:'+parseFloat(widthVal)+'%;background-color:'+obj.activityData[q].color_code+'" title="'+obj.activityData[q].message+' - '+stTime.time+' to '+GoutTime+'"> </div>';
 
+   globalUtilizationData.push({"color_code":obj.activityData[q].color_code,"duration":tempData.oeeDash.timeDiff(d2,d3),"end_time":d3,"message":obj.activityData[q].message,"reason_code_id":obj.activityData[q].reason_code_id,"start_time":d2});
+
+  } 
+  else if (q!=0){
   /* Bulding main progress bar */    
-  var widthVal=tempData.oeeDash.getRation(parseInt(obj.activityData[q].duration));
+  // uiStDate = d1  uiEnDate = d3 dbStDate = d2  dbEnDate = d4
+  widthVal=tempData.oeeDash.getRation(parseInt(obj.activityData[q].duration));
   divData+='<div class="progress-bar" style="width:'+parseFloat(widthVal)+'%;background-color:'+obj.activityData[q].color_code+'" title="'+obj.activityData[q].message+' - '+stTime.time+' to '+enTime.time+'"> </div>';
 
+ globalUtilizationData.push({"color_code":obj.activityData[q].color_code,"duration":obj.activityData[q].duration,"end_time":obj.activityData[q].end_time,"message":obj.activityData[q].message,"reason_code_id":obj.activityData[q].reason_code_id,"start_time":obj.activityData[q].start_time});
+
+  }// end of else
+
+
+  
 } // end of FOR LOOP
 
   var finalDiv='<div class="progress" style="margin-bottom: 0px;height:30px;">'+divData+'</div>';
@@ -821,6 +852,8 @@ getDiffHourMin:function(startDate,endDate){
 
 $(document).ready(function() {
 debugger; 
+
+setInterval( function(){ tempData.oeeDash.reload();  } , 30000 );
 //$(".loader").fadeIn("slow");
   $("#companyOEE").parent().addClass('active');
   $("#companyOEE").parent().parent().closest('.treeview').addClass('active menu-open');
