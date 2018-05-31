@@ -311,24 +311,8 @@ $sqlQ ="SELECT DISTINCT se.start_time as start_time, se.end_time as end_time, TI
                             );
     }
 
-    $sqlR="SELECT DISTINCT src.message as message, src.color_code as color_code  
-        FROM
-        sfs_event se,
-        sfs_data_info sdi,
-        sfs_equipment seq,
-        sfs_reason_code src,
-        sfs_shifts shf
-        WHERE
-        se.data_info_id=sdi.id AND
-        sdi.eq_code=seq.code AND
-        src.id=se.reason_code_id AND
-        seq.id=".$iobotMachine." AND
-        DATE(se.start_time)='".$final_date."' AND
-        shf.id=".$shift." AND
-        se.reason_code_id <> 0 AND
-        se.start_time >= TIMESTAMP('".$final_date."',TIME(shf.in_time)) AND
-        se.end_time <= TIMESTAMP('".$ModifideEndDate."',TIME(shf.out_time))
-        group by message"; 
+$sqlR ="SELECT DISTINCT src.message as message, src.color_code as color_code FROM sfs_event se, sfs_data_info sdi, sfs_equipment seq, sfs_reason_code src, sfs_shifts shf WHERE se.data_info_id=sdi.id AND sdi.eq_code=seq.code AND src.id=se.reason_code_id AND seq.id=".$iobotMachine." AND shf.id=".$shift." AND se.start_time < se.end_time AND (se.start_time BETWEEN CONCAT('".$final_date."',' ',TIME(shf.in_time)) AND CONCAT(IF(TIME(shf.in_time) < TIME(shf.out_time),'".$final_date."','".$ModifideEndDate."'),' ',TIME(shf.out_time)) OR se.end_time BETWEEN CONCAT('".$final_date."',' ',TIME(shf.in_time)) AND CONCAT(IF(TIME(shf.in_time) < TIME(shf.out_time),'".$final_date."','".$ModifideEndDate."'),' ',TIME(shf.out_time)))";
+
 //echo $sqlR;
     $sqlRes=mysqli_query($con, $sqlR) or die("Query fail: " .mysqli_error($con));
     while ($row=mysqli_fetch_array($sqlRes))

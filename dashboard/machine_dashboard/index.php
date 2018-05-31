@@ -627,6 +627,9 @@ globalUtilizationData=[];
     $('#UtilizationLabel').html('<center><p> Data Not Available !! <p></center>');
   }else{
 
+    $('#UtilizationLabel').html('');
+    $('.productive-analysis').html('');
+
     var labelContent='';
     var divData='';
     var stTime='';
@@ -671,13 +674,12 @@ for(var q=0;q<obj.activityData.length;q++){        // Main Loop
   if(q==0){
     if(uiStDate<dbStDate){
      divData+=tempData.oeeDash.insertBlankEvent(d1,d2); 
-    } else { // uiStDate = d1  uiEnDate = d3 dbStDate = d2  dbEnDate = d4
+    }
+    else { // uiStDate = d1  uiEnDate = d3 dbStDate = d2  dbEnDate = d4
       widthVal=tempData.oeeDash.getRation(tempData.oeeDash.timeDiff(d1,d4));
     divData+='<div class="progress-bar" style="width:'+parseFloat(widthVal)+'%;background-color:'+obj.activityData[q].color_code+'" title="'+obj.activityData[q].message+' - '+GinTime+' to '+enTime.time+'"> </div>';
 
   globalUtilizationData.push({"color_code":obj.activityData[q].color_code,"duration":tempData.oeeDash.timeDiff(d1,d4),"end_time":obj.activityData[q].end_time,"message":obj.activityData[q].message,"reason_code_id":obj.activityData[q].reason_code_id,"start_time":d1});
-
-
     }
   }
 
