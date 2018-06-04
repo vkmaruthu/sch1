@@ -40,6 +40,7 @@
 /* highchart variable */
 var operBtn=null;
 var activity=null;
+var lineGraph=null;
 
 /* Shift Variables */
 var Ghours=null;  
@@ -358,17 +359,17 @@ loadToolProcDrillData:function(mode){        /* Load Hourly Chart with Drilldown
     var workCenter_id=$('#workCenter_id').val();
     var iobotMachine= $('#eq_desc').val();  
     var group_type=mode;
-    var msg;
+    var msg="";
 
     var myData = {loadToolProcDrillData:'loadToolProcDrillData',selDate:selDate,comp_id:comp_id,plant_id:plant_id,workCenter_id:workCenter_id,iobotMachine:iobotMachine,total_hours:GtotalHour,start_hour:GstartHour,dbStartHour:GdbStartHour,group_type:group_type};
 
-    if(mode=='T'){
+    /*if(mode=='T'){
       msg = 'Tool Hourly Production';
     }else if(mode=='P'){
       msg = 'Hourly Production';
     }else{
       msg = 'Machine Hourly Production';
-    }
+    }*/
 
     $.ajax({
       type:"POST",
@@ -387,16 +388,16 @@ loadToolProcDrillData:function(mode){        /* Load Hourly Chart with Drilldown
           } 
         }else{
           if(obj.firstPhaseData!=null){          
-            tempData.oeeDash.loadToolHourlyDrilldown(obj,msg); 
+            tempData.oeeDash.loadToolHourlyDrilldown(obj,msg,mode); 
           }else{
             msg = 'Data Not Available';
-            tempData.oeeDash.loadToolHourlyDrilldown(obj,msg); 
+            tempData.oeeDash.loadToolHourlyDrilldown(obj,msg,mode); 
           }     
         }             
       } 
     });
 },
-loadToolHourlyDrilldown:function(obj,msg){        /* Load Hourly Chart with Drilldown */
+loadToolHourlyDrilldown:function(obj,msg,mode){        /* Load Hourly Chart with Drilldown */
 operBtn = Highcharts.chart('hourlyProduction', {
   lang: {
         drillUpText: '<',
@@ -406,6 +407,7 @@ operBtn = Highcharts.chart('hourlyProduction', {
         events: {
                 drillup: function (e) {
                   //alert();
+                  tempData.oeeDash.getHourlyRpmGraph('M',"");
               }
             }
     },
@@ -430,7 +432,8 @@ operBtn = Highcharts.chart('hourlyProduction', {
         series: {
             events: {
               click: function (e){
-                  //alert(); 
+                 // alert(e.point.drilldown); 
+                  tempData.oeeDash.getHourlyRpmGraph(mode,e.point.drilldown);
               }
             },
             borderWidth: 0,
@@ -533,7 +536,6 @@ getActivityAnalysis:function(){
     });
 },
 activityAnalysisChat:function(obj,msg){ // pie chart
-debugger;  
 activity = Highcharts.chart('activityAnalysis', {
     chart: {
         plotBackgroundColor: null,
@@ -596,10 +598,8 @@ getActivityProgress:function(){ // bar chart
       cache: false,
       data:myData,
       success: function(obj) {
-        //alert();
-debugger;
+
 globalUtilizationData=[];
-  //  globalUtilizationData=obj.activityData;
 
 /* Bulding progressBar Time Series */  //totalHour:GtotalHour,startHour:GstartHour
     var totalHour=GtotalHour;
@@ -670,7 +670,7 @@ for(var q=0;q<obj.activityData.length;q++){        // Main Loop
   var uiStDate = new Date(d1); //yyyy-mm-dd
   var dbStDate = new Date(d2);
   var dbEnDate = new Date(d4); 
-  debugger;
+
   if(q==0){
     if(uiStDate<dbStDate){
      divData+=tempData.oeeDash.insertBlankEvent(d1,d2); 
@@ -728,7 +728,7 @@ for(var q=0;q<obj.activityData.length;q++){        // Main Loop
   
 } // end of FOR LOOP
 
-  var finalDiv='<div class="progress" style="margin-bottom: 0px;height:30px;">'+divData+'</div>';
+  var finalDiv='<div class="progress" style="margin-bottom: 0px;">'+divData+'</div>';
     $('#UtilizationLabel').html(labelContent);
     $('.productive-analysis').html(finalDiv);
 
@@ -738,12 +738,10 @@ for(var q=0;q<obj.activityData.length;q++){        // Main Loop
     });
 },
 insertBlankEvent:function(startT,EndT){
-  debugger;
   var defaultTime= tempData.oeeDash.getRation(tempData.oeeDash.timeDiff(startT,EndT));
   return '<div class="progress-bar progress-bar-defalt" style="width:'+parseFloat(defaultTime) +'%"></div>';
 }, 
 getRation:function(t){
-  debugger;
   var e=GtotalHour*3600;
   var per = (100 * t) / e;
   return per;
@@ -756,7 +754,6 @@ timeDiff:function(time1,time2){
   return finalVal;
 },
 dbDateTimeSeparate:function(time){
-  debugger;
   var dateTimeArr = new Array();
 
   var dateTime = time.split(' ');
@@ -768,17 +765,17 @@ dbDateTimeSeparate:function(time){
   return dateTimeArr;
 },
 checkData:function(){
- //tempData.oeeDash.changeDateFormat(); 
     var tool = document.getElementById('tool');
     var machine = document.getElementById('machine');
     var overView = document.getElementById('production');
 
     if(tool.checked){       
       tempData.oeeDash.loadOeeData('T');
-      tempData.oeeDash.loadToolProcDrillData('T');  
+      tempData.oeeDash.loadToolProcDrillData('T');    
     }else if(machine.checked){
       tempData.oeeDash.loadOeeData('M');        
-      tempData.oeeDash.loadToolProcDrillData('M');  
+      tempData.oeeDash.loadToolProcDrillData('M');
+      tempData.oeeDash.getHourlyRpmGraph('M',"");  
     }else{          
       tempData.oeeDash.loadOeeData('P');
       tempData.oeeDash.loadToolProcDrillData('P');
@@ -794,14 +791,12 @@ reload:function(){
   $(".loader").fadeOut("slow");
 },
 loadUtilizationReport:function(){
-    debugger
     $('#loadUtilizationReport').modal({show:true});
       setTimeout(function(){
          tempData.oeeDash.loadUtilizationReportPopData(); 
       }, 200);
 },
 loadUtilizationReportPopData:function(){
-    debugger
     $('#loadUtilizationReportTable').hide();
     $('#table_disGraph7').show();
 
@@ -856,7 +851,6 @@ loadUtilizationReportPopData:function(){
           } ).draw(); 
 },
 getDateFormate:function(date){
-  debugger;
   var dt=date.split(' ');
   var onlyDate=dt[0].split('-');
   return onlyDate[2]+'-'+onlyDate[1]+'-'+onlyDate[0]+'  '+dt[1];
@@ -871,10 +865,123 @@ getDiffHourMin:function(startDate,endDate){
 
   return tempData.oeeDash.addZero(hourDifference)+':'+tempData.oeeDash.addZero(minDiff)+':'+tempData.oeeDash.addZero(secDiff);
 },
-/*setPalnt:function(this){
-  console.log(this.value);
-  $('#plant_id').val();  
-}*/
+getHourlyRpmGraph:function(mode,val){
+   // Ghours=90200;  GinTime='00:00:00';   GoutTime='23:59:59';  GtotalHour=24;  GstartHour=0; GdbStartHour=fromShift
+    var selDate = $("#userDateSel").val();
+    var url= "getDataController.php";
+
+    var comp_id=$('#comp_id').val();
+    var plant_id=$('#plant_id').val();
+    var workCenter_id=$('#workCenter_id').val();
+    var iobotMachine= $('#eq_desc').val();  
+    var shift= $('#shiftDropdown').val();
+
+    var myData = {getHourlyRpmGraph:'getHourlyRpmGraph', selDate:selDate, comp_id:comp_id,plant_id:plant_id,workCenter_id:workCenter_id,iobotMachine:iobotMachine,sTime:GinTime,eTime:GoutTime,group_type:mode,po_oper_num:val};
+    $.ajax({
+      type:"POST",
+      url:url,
+      async: false,
+      dataType: 'json',
+      cache: false,
+      data:myData,
+      success: function(obj) {
+       debugger;//alert(mode);
+          if(obj.data.length <= 0){
+            msg="Data is not available";
+            tempData.oeeDash.hourlyLineGraph(obj,msg,"","");
+          }else{
+            msg="";
+            tempData.oeeDash.hourlyLineGraph(obj,msg,obj.info.unit,obj.info.thresholdValue);
+          }
+
+        }
+      });
+},
+hourlyLineGraph:function(obj,msg,unit,threshold){ //  hourly 
+  debugger;
+ var split=$("#userDateSel").val().split('/');
+ var day=split[0]; var month=split[1]; var year=split[2];
+ var final_data=year+"/"+month+"/"+day;
+
+ var startDataTime=final_data+" "+ GinTime;
+ var endDataTime= tempData.oeeDash.getShiftWiseDates(final_data);
+
+ var dDate = new Date(startDataTime); 
+ var dDateEnd = new Date(endDataTime);
+
+var minDateTime=Date.UTC(dDate.getFullYear(),(dDate.getMonth()),dDate.getDate(),dDate.getHours(),dDate.getMinutes(),dDate.getSeconds(),dDate.getMilliseconds());
+
+var maxDateTime=Date.UTC(dDateEnd.getFullYear(),(dDateEnd.getMonth()),dDateEnd.getDate(),dDateEnd.getHours(),dDateEnd.getMinutes(),dDateEnd.getSeconds(),dDateEnd.getMilliseconds());
+
+ lineGraph = Highcharts.chart('hourlyLineGraph', {
+        chart: {
+            type: 'areaspline',
+            zoomType: 'x'
+        },
+        title: {
+            text: msg
+        },
+        subtitle: {
+            text: ''
+        },
+        xAxis: {
+            type: 'datetime',
+           min:minDateTime,
+           max:maxDateTime,
+        },
+        yAxis: {
+            min:0,
+            title: {
+                text:unit
+            }
+        },
+        legend: {
+            enabled: false
+        },
+       plotOptions: {
+        series: {
+            fillOpacity: 0.3
+        }
+    },
+        series: [{  //1523944800000   
+
+            name: unit,
+            data:obj.data           
+          }]
+    });
+
+
+  setTimeout(function() {
+        // Add plotline when you have the data you need
+        lineGraph.yAxis[0].addPlotLine({
+            value : threshold,
+            color : 'red',
+            dashStyle : 'shortdash',
+            width : 2,
+            label : {
+                text : 'Threshold : '+threshold
+            }
+        });
+    }, 2000);
+},
+getShiftWiseDates:function(date){ 
+   debugger;
+   var startDataTime=date+" "+GinTime;
+   var endDataTime=date+" "+GoutTime;
+
+   var date1 = new Date(startDataTime);
+   var date2 = new Date(endDataTime);
+   var diffDays = (date2.getTime() - date1.getTime())/1000; 
+   diffDays=diffDays/60;
+
+   if(diffDays>=0){
+     return endDataTime;
+   }else{
+     endDataTime=date2.getFullYear()+"/"+tempData.oeeDash.addZero(date2.getMonth()+1)+"/"+tempData.oeeDash.addZero((date2.getDate() + 1))+" "+GoutTime;
+     return endDataTime;
+   }
+},
+
 };
 
 
@@ -882,7 +989,7 @@ getDiffHourMin:function(startDate,endDate){
 $(document).ready(function() {
 debugger; 
 
-setInterval( function(){ tempData.oeeDash.reload();  } , 30000 );
+setInterval( function(){ tempData.oeeDash.reload();  } , 100000 );
 //$(".loader").fadeIn("slow");
   $("#companyOEE").parent().addClass('active');
   $("#companyOEE").parent().parent().closest('.treeview').addClass('active menu-open');
@@ -906,6 +1013,15 @@ $('#expandHourlyChart').click(function(e){
     $('#expandHourlyChartScreen').find('.panel-default').toggleClass('expandAddCssDIV');
     $('#hourlyProduction').toggleClass('expandAddCssGraph');
     operBtn.setSize($('#hourlyProduction').width(), $('#hourlyProduction').height());
+});
+
+$('#expandHourlyLineGraph').click(function(e){
+    $('#expandHourlyLineGraphScreen').toggleClass('fullscreen'); 
+    $('#expandHourlyLineGraphScreen').removeAttr("style");
+    $('#expandHourlyLineGraph').toggleClass('fa-expand fa-caret-down'); 
+    $('#expandHourlyLineGraphScreen').find('.panel-default').toggleClass('expandAddCssDIV');
+    $('#hourlyLineGraph').toggleClass('expandAddCssGraph');
+    lineGraph.setSize($('#hourlyLineGraph').width(), $('#hourlyLineGraph').height());
 });
 
 $('#expandActivityAnalysis').click(function(e){
@@ -1200,7 +1316,7 @@ $(".loader").fadeOut("slow");
         <div class="panel panel-default dashFirstRow">
           <div class="panel-heading panelHeader">
             <div class="panel-title pull-left">
-              <i class="fa fa-sliders fa-fw"></i> Hourly Production
+              <i class="fa fa-bar-chart fa-fw"></i> Hourly Production
             </div>
               <div class="panel-title pull-right">
                 <label> <input type="radio" class="" name="order"  id="machine"  
@@ -1224,76 +1340,6 @@ $(".loader").fadeOut("slow");
         </div>
       </div>
 <!-- Hourly Production Ends --> 
-
-
-<!-- Activity Analysis -->
-    <div class="col-md-3 col-sm-6 col-xs-12" id="activityAnalysisScreen">  
-        <div class="panel panel-default dashFirstRow">
-          <div class="panel-heading panelHeader">
-            <div class="panel-title pull-left">
-              <i class="fa fa-sliders fa-fw"></i> Activity Analysis (hh:mm)
-            </div>
-            <div class="panel-title pull-right">
-              <div id="statusImg"></div>
-            </div>
-              <div class="panel-title pull-right">
-               <i id="expandActivityAnalysis" class="btn btn-xs fa fa-expand" aria-hidden="true"></i>
-              </div> 
-            <div class="clearfix"></div>
-          </div>
-          <div class="panel-body">  
-            <div class="row">              
-                <!-- Load Activity Analysis pie Chart --> 
-                <div id="activityAnalysis" style="width:99%;height:270px;"></div>
-            </div> 
-          </div>
-        </div>
-      </div>
-<!-- Activity Analysis Ends -->  
-
-
-
-<!-- Activity Progress -->
-    <div class="col-md-9 col-sm-12 col-xs-12" id="activityProgressScreen">  
-        <div class="panel panel-default dashFirstRow">
-          <div class="panel-heading panelHeader">
-            <div class="panel-title pull-left">
-              <i class="fa fa-sliders fa-fw"></i> Activity Progress
-            </div>
-              <div class="panel-title pull-right">
-              <!--  <i id="compProfile" class="btn btn-xs fa fa-expand" aria-hidden="true"></i> -->
-              <button class="btn btn-xs bg-purple btn-flat" onclick="tempData.oeeDash.loadUtilizationReport();"><i class="fa fa-file-text-o" aria-hidden="true"></i> &nbsp; Report</button>
-              </div>
-            <div class="clearfix"></div>
-          </div>
-          <div class="panel-body">  
-              <div class="table-responsive" style="height: 270px;">
-                  <!-- <div id="productivity_analysis" style="width: 100%; height: 400px;"></div> -->
-                  <br>
-<table class="table table-striped col-lg-12 col-md-12 col-sm-12 col-xs-12">
-      <!-- <tbody class="productive-analysis"> -->
-      <tbody>
-        <tr>
-          <td style="padding: 0px !important;">
-            <!-- productive-analysis Progress Chart here -->      
-            <div class="productive-analysis"></div>
-            <!-- Utilization Analysis Data Loaded Here -->
-            <div class="progress" style="margin-bottom: 0px;" id="timeContentSeries"></div>
-          </td>  
-      </tr>
-      <tr class="legent-toggle-tr">
-        <td style="text-align:center;font-size: 12px;font-weight: 100;">
-        <span id="UtilizationLabel"></span>       
-      </td></tr>
-    </tbody>
-  </table>
-            </div>
-
-          </div>
-        </div>
-      </div>
-<!-- Activity Progress Ends --> 
-
 
 
 <!-- Shift Details -->
@@ -1335,6 +1381,98 @@ $(".loader").fadeOut("slow");
         </div>
       </div>
 <!-- Shift Details Ends -->  
+
+
+
+<!-- Energy Consumed -->
+       <!--  <div class="col-md-12 col-sm-6 col-xs-12" id="expandHourlyLineGraphScreen">  
+          <div class="panel panel-default dashFirstRow">
+          <div class="panel-heading panelHeader">
+            <div class="panel-title pull-left"><i class="fa fa fa-area-chart fa-fw"></i> &nbsp;Load Curve <span class="normalText"></span></div>
+           <div class="panel-title pull-right">
+             <i id="expandHourlyLineGraph" class="btn btn-xs fa fa-expand" aria-hidden="true"></i>
+              </div> 
+            <div class="clearfix"></div>
+          </div>
+          <div class="panel-body">
+          <div class="table-responsive">       
+           <div id="hourlyLineGraph"  style="width:99%;height: 270px;"></div>
+          </div>
+              </div>
+          </div>
+        </div>  -->
+<!-- Ends Energy Consumed -->
+
+
+<!-- Activity Progress -->
+    <div class="col-md-9 col-sm-12 col-xs-12" id="activityProgressScreen">  
+        <div class="panel panel-default dashFirstRow">
+          <div class="panel-heading panelHeader">
+            <div class="panel-title pull-left">
+              <i class="fa fa-sliders fa-fw"></i> Activity Progress
+            </div>
+              <div class="panel-title pull-right">
+              <!--  <i id="compProfile" class="btn btn-xs fa fa-expand" aria-hidden="true"></i> -->
+              <button class="btn btn-xs bg-purple btn-flat" onclick="tempData.oeeDash.loadUtilizationReport();"><i class="fa fa-file-text-o" aria-hidden="true"></i> &nbsp; Report</button>
+              </div>
+            <div class="clearfix"></div>
+          </div>
+          <div class="panel-body">  
+              <div class="table-responsive" style="height: 270px;">
+                  <!-- <div id="productivity_analysis" style="width: 100%; height: 400px;"></div> -->
+          
+  <table class="table table-striped col-lg-12 col-md-12 col-sm-12 col-xs-12" style="width: 90%;margin-left: 8%;">
+      <!-- <tbody class="productive-analysis"> -->
+      <tbody>
+        <tr>
+          <td style="padding: 0px !important;">
+            <!-- productive-analysis Progress Chart here -->      
+            <div class="productive-analysis"></div>
+            <!-- productive Analysis Time Series Loaded Here -->
+            <div class="progress" style="margin-bottom: 0px;" id="timeContentSeries"></div>
+          </td>  
+      </tr>
+      <tr class="legent-toggle-tr">
+        <td style="text-align:center;font-size: 12px;font-weight: 100;">
+        <span id="UtilizationLabel"></span>       
+      </td></tr>
+    </tbody>
+  </table>
+
+   <div id="hourlyLineGraph"  style="width:99%;height: 120px;margin-top:2%;"></div>
+
+            </div>
+
+          </div>
+        </div>
+      </div>
+<!-- Activity Progress Ends --> 
+
+
+<!-- Activity Analysis -->
+    <div class="col-md-3 col-sm-6 col-xs-12" id="activityAnalysisScreen">  
+        <div class="panel panel-default dashFirstRow">
+          <div class="panel-heading panelHeader">
+            <div class="panel-title pull-left">
+              <i class="fa fa-pie-chart fa-fw"></i> Activity Analysis (hh:mm)
+            </div>
+            <div class="panel-title pull-right">
+              <div id="statusImg"></div>
+            </div>
+              <div class="panel-title pull-right">
+               <i id="expandActivityAnalysis" class="btn btn-xs fa fa-expand" aria-hidden="true"></i>
+              </div> 
+            <div class="clearfix"></div>
+          </div>
+          <div class="panel-body">  
+            <div class="row">              
+                <!-- Load Activity Analysis pie Chart --> 
+                <div id="activityAnalysis" style="width:99%;height:270px;"></div>
+            </div> 
+          </div>
+        </div>
+      </div>
+<!-- Activity Analysis Ends -->  
 
 
 

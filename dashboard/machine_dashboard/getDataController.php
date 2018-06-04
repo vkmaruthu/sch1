@@ -287,17 +287,31 @@ if(isset($_POST['getActivityProgress'])){     // getData for getActivityProgress
        $y_axisData[]=$startHourTime."h";
     }
 
-//$sql =mysqli_query($con, "call sfsp_getEvents(".$iobotMachine.",".$shift.",'".$final_date."','".$ModifideEndDate."')") or die("Query fail: " .mysqli_error($con));
-$sqlQ ="SELECT DISTINCT se.start_time as start_time, se.end_time as end_time, TIMESTAMPDIFF(SECOND,se.start_time,se.end_time) as duration, se.reason_code_id as reason_code_id,src.message as message, src.color_code as color_code FROM sfs_event se, sfs_data_info sdi, sfs_equipment seq, sfs_reason_code src, sfs_shifts shf WHERE se.data_info_id=sdi.id AND sdi.eq_code=seq.code AND src.id=se.reason_code_id AND seq.id=".$iobotMachine." AND shf.id=".$shift." AND se.start_time < se.end_time AND (se.start_time BETWEEN CONCAT('".$final_date."',' ',TIME(shf.in_time)) AND CONCAT(IF(TIME(shf.in_time) < TIME(shf.out_time),'".$final_date."','".$ModifideEndDate."'),' ',TIME(shf.out_time)) OR se.end_time BETWEEN CONCAT('".$final_date."',' ',TIME(shf.in_time)) AND CONCAT(IF(TIME(shf.in_time) < TIME(shf.out_time),'".$final_date."','".$ModifideEndDate."'),' ',TIME(shf.out_time))) ORDER BY se.start_time";
 
-//echo $sqlQ;
+//$sqlQ ="SELECT DISTINCT se.start_time as start_time, se.end_time as end_time, TIMESTAMPDIFF(SECOND,se.start_time,se.end_time) as duration, se.reason_code_id as reason_code_id,src.message as message, src.color_code as color_code FROM sfs_event se, sfs_data_info sdi, sfs_equipment seq, sfs_reason_code src, sfs_shifts shf WHERE se.data_info_id=sdi.id AND sdi.eq_code=seq.code AND src.id=se.reason_code_id AND seq.id=".$iobotMachine." AND shf.id=".$shift." AND se.start_time < se.end_time AND (se.start_time BETWEEN CONCAT('".$final_date."',' ',TIME(shf.in_time)) AND CONCAT(IF(TIME(shf.in_time) < TIME(shf.out_time),'".$final_date."','".$ModifideEndDate."'),' ',TIME(shf.out_time)) OR se.end_time BETWEEN CONCAT('".$final_date."',' ',TIME(shf.in_time)) AND CONCAT(IF(TIME(shf.in_time) < TIME(shf.out_time),'".$final_date."','".$ModifideEndDate."'),' ',TIME(shf.out_time))) ORDER BY se.start_time";
 
-   $sql=mysqli_query($con, $sqlQ) or die("Query fail: " .mysqli_error($con));
+$sqlR ="SELECT DISTINCT src.message as message, src.color_code as color_code FROM sfs_event se, sfs_data_info sdi, sfs_equipment seq, sfs_reason_code src, sfs_shifts shf WHERE se.data_info_id=sdi.id AND sdi.eq_code=seq.code AND src.id=se.reason_code_id AND se.reason_code_id>0 AND seq.id=".$iobotMachine." AND shf.id=".$shift." AND se.start_time < se.end_time AND (se.start_time BETWEEN CONCAT('".$final_date."',' ',TIME(shf.in_time)) AND CONCAT(IF(TIME(shf.in_time) < TIME(shf.out_time),'".$final_date."','".$ModifideEndDate."'),' ',TIME(shf.out_time)) OR se.end_time BETWEEN CONCAT('".$final_date."',' ',TIME(shf.in_time)) AND CONCAT(IF(TIME(shf.in_time) < TIME(shf.out_time),'".$final_date."','".$ModifideEndDate."'),' ',TIME(shf.out_time)))";
+
+    $sqlRes=mysqli_query($con, $sqlR) or die("Query fail: " .mysqli_error($con));
+    while ($row=mysqli_fetch_array($sqlRes))
+    {
+        $message=$row['message'];
+        $color_code=$row['color_code'];
+
+         $reasonCode[]=array('message'=>"$message",
+                             'color_code'=>"$color_code");
+    }
+
+
+$sql = mysqli_query($con, "call sfsp_getEvents(".$iobotMachine.",".$shift.",'".$final_date."',
+    '".$ModifideEndDate."','P',@1,@2,@3)") or die("Query fail: " .mysqli_error($con));
+
+//$sql=mysqli_query($con, $sqlQ) or die("Query fail: " .mysqli_error($con));
     while ($row=mysqli_fetch_array($sql))
     {
         $start_time=$row['start_time'];
         $end_time=$row['end_time'];
-        $duration=$row['duration'];
+        $duration=$row['time_diff'];
         $reason_code_id=$row['reason_code_id'];
         $message=$row['message'];
         $color_code=$row['color_code'];
@@ -310,20 +324,6 @@ $sqlQ ="SELECT DISTINCT se.start_time as start_time, se.end_time as end_time, TI
                             'color_code'=>"$color_code",
                             );
     }
-
-$sqlR ="SELECT DISTINCT src.message as message, src.color_code as color_code FROM sfs_event se, sfs_data_info sdi, sfs_equipment seq, sfs_reason_code src, sfs_shifts shf WHERE se.data_info_id=sdi.id AND sdi.eq_code=seq.code AND src.id=se.reason_code_id AND seq.id=".$iobotMachine." AND shf.id=".$shift." AND se.start_time < se.end_time AND (se.start_time BETWEEN CONCAT('".$final_date."',' ',TIME(shf.in_time)) AND CONCAT(IF(TIME(shf.in_time) < TIME(shf.out_time),'".$final_date."','".$ModifideEndDate."'),' ',TIME(shf.out_time)) OR se.end_time BETWEEN CONCAT('".$final_date."',' ',TIME(shf.in_time)) AND CONCAT(IF(TIME(shf.in_time) < TIME(shf.out_time),'".$final_date."','".$ModifideEndDate."'),' ',TIME(shf.out_time)))";
-
-//echo $sqlR;
-    $sqlRes=mysqli_query($con, $sqlR) or die("Query fail: " .mysqli_error($con));
-    while ($row=mysqli_fetch_array($sqlRes))
-    {
-        $message=$row['message'];
-        $color_code=$row['color_code'];
-
-         $reasonCode[]=array('message'=>"$message",
-                             'color_code'=>"$color_code");
-    }   
-
 
     $status['rowHourArr']=$y_axisData;
     $status['activityData']=$final_data;
@@ -361,8 +361,8 @@ if(isset($_POST['getActivityAnalysis'])){     // getData for getActivityAnalysis
     $ModifideEndDate = $final_date;
 
 
-
-    $sqlQ=" SELECT SUM(TIMESTAMPDIFF(SECOND,se.start_time,se.end_time)) as time_diff, se.reason_code_id as reason_code_id, src.message as message, src.color_code as color_code,DATE_FORMAT(SEC_TO_TIME(SUM(TIMESTAMPDIFF(SECOND,se.start_time, se.end_time))),'%H:%i') AS getHHMM FROM
+/*
+    $sqlQ="SELECT SUM(TIMESTAMPDIFF(SECOND,se.start_time,se.end_time)) as time_diff, se.reason_code_id as reason_code_id, src.message as message, src.color_code as color_code,DATE_FORMAT(SEC_TO_TIME(SUM(TIMESTAMPDIFF(SECOND,se.start_time, se.end_time))),'%H:%i') AS getHHMM FROM
         sfs_event se,
            sfs_data_info sdi,
         sfs_equipment seq,
@@ -377,9 +377,13 @@ if(isset($_POST['getActivityAnalysis'])){     // getData for getActivityAnalysis
            se.reason_code_id <> 0 AND
            se.start_time >= TIMESTAMP('".$final_date."',TIME(shf.in_time)) AND
            se.end_time <= TIMESTAMP('".$ModifideEndDate."',TIME(shf.out_time))
-        GROUP BY se.reason_code_id";  
+        GROUP BY se.reason_code_id";  */
 
-    $sql=mysqli_query($con, $sqlQ) or die("Query fail: " .mysqli_error($con));
+    $sql = mysqli_query($con, "call sfsp_getEvents(".$iobotMachine.",".$shift.",'".$final_date."',
+    '".$ModifideEndDate."','A',@1,@2,@3)") or die("Query fail: " .mysqli_error($con));
+
+
+   // $sql=mysqli_query($con, $sqlQ) or die("Query fail: " .mysqli_error($con));
     while ($row=mysqli_fetch_array($sql))
     {
         $duration=$row['time_diff'];
@@ -388,15 +392,80 @@ if(isset($_POST['getActivityAnalysis'])){     // getData for getActivityAnalysis
         $color_code=$row['color_code'];
         $getHHMM=$row['getHHMM'];
 
-        $final_data[]=array('name'=>"$message",
+        $final_data[]=array('name'=>$message,
                             'y'=>round($duration),
-                            'color'=>"$color_code",
-                            'getHHMM'=>"$getHHMM"
+                            'color'=>$color_code,
+                            'getHHMM'=>$getHHMM
                             );
+        //$reasonCode[]=('' => , );
+
     }
 
     $status['analysisData']=$final_data;
     echo json_encode($status);  
     mysqli_close($con); 
+}
+
+if(isset($_POST['getHourlyRpmGraph'])){
+    $comp_id= $_POST['comp_id'];
+    $plant_id= $_POST['plant_id'];
+    $workCenter_id= $_POST['workCenter_id'];
+    $iobotMachine= $_POST['iobotMachine'];
+    $po_oper_num= $_POST['po_oper_num'];
+
+    $selDate= explode("/",$_POST['selDate']);// getting only Dateval
+    $final_date= $selDate[2].'-'.$selDate[1].'-'.$selDate[0];
+
+    $sTime=$_POST['sTime'];
+    $eTime=$_POST['eTime'];
+    
+    $startDateTime=$final_date." ".$sTime; 
+    $endDateTime=$final_date." ".$eTime;
+
+    $start = strtotime($startDateTime);
+    $end = strtotime($endDateTime);
+
+    if($start-$end >= 0)
+    $ModifideEndDate = date('Y-m-d', strtotime("+1 day", strtotime($endDateTime)))." ".$eTime;
+    else
+    $ModifideEndDate = $endDateTime;
+
+    $finalDataInArr=array();
+
+   /* $GetSql="SELECT sp.date_time as EndDateTime, sp.value as value FROM sfs_param sp, sfs_equipment seq, sfs_data_info sdi 
+WHERE sp.data_info_id=sdi.id AND seq.code=sdi.eq_code AND date_time BETWEEN '".$startDateTime."' AND '".$ModifideEndDate."'
+AND seq.id=".$iobotMachine." ORDER BY sp.date_time ASC";
+*/
+//echo $GetSql; sfsp_getLoadCurve
+
+ $sqlGet = mysqli_query($con, "call sfsp_getLoadCurve('".$startDateTime."','".$ModifideEndDate."','".$group_type."',
+    ".$iobotMachine.",'".$po_oper_num."')") or die("Query fail: " .mysqli_error($con));
+
+
+ //   $sqlGet= mysqli_query($con,$GetSql)or die("Query fail: " .mysqli_error($con));
+    while ($row=mysqli_fetch_array($sqlGet)) {
+        $value=$row['value'];
+        $endDateTime=$row['endDateTime'];
+        $unit=$row['unit'];
+        $thresholdValue=$row['thresholdValue'];
+        $descp=$row['descp'];
+        
+        date_default_timezone_set("UTC");
+        $the_date = strtotime($endDateTime)*1000;
+        $finalDataInArr[]=array($the_date,floatval($value));
+        //$test[]=array($endDateTime);
+    }
+    
+    //echo $ModifideEndDate;
+
+    $info=array('unit'=>$unit,
+                'descp'=>$descp,
+                'thresholdValue'=>$thresholdValue
+                 );
+
+    $status['data'] = $finalDataInArr;
+    $status['info'] = $info;
+    echo json_encode($status);
+    mysqli_close($con);
 }
 ?>
