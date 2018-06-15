@@ -102,7 +102,7 @@ getEQDesc:function(){
         } 
     });
 },
-oeeCirclePerc:function(id,val,fgColor) {  
+oeeCirclePerc:function(id,val,fgColor) {
        $('#'+id).trigger('configure',{
             "min":0,
             "max":100,
@@ -156,10 +156,10 @@ loadOeeData:function(group_type){
               if(obj.oeeDetails !=null){
 
               tempData.oeeDash.getImg(obj.oeeDetails.image_filename,obj.oeeDetails.active_reason_code,parseInt(obj.oeeDetails.machine_status),obj.oeeDetails.active_reason_color);
-              tempData.oeeDash.oeeCirclePerc('oeePerc',parseInt(obj.oeeDetails.oee_perc),obj.oeeDetails.oee_perc_color);
-              tempData.oeeDash.oeeCirclePerc('availPerc',parseInt(obj.oeeDetails.availability_perc),obj.oeeDetails.availability_perc_color);
-              tempData.oeeDash.oeeCirclePerc('performPerc',parseInt(obj.oeeDetails.performance_perc),obj.oeeDetails.performance_perc_color);
-              tempData.oeeDash.oeeCirclePerc('qualityPerc',parseInt(obj.oeeDetails.quality_perc),obj.oeeDetails.quality_perc_color);
+              tempData.oeeDash.oeeCirclePerc('oeePerc',parseFloat(obj.oeeDetails.oee_perc),obj.oeeDetails.oee_perc_color);
+              tempData.oeeDash.oeeCirclePerc('availPerc',parseFloat(obj.oeeDetails.availability_perc),obj.oeeDetails.availability_perc_color);
+              tempData.oeeDash.oeeCirclePerc('performPerc',parseFloat(obj.oeeDetails.performance_perc),obj.oeeDetails.performance_perc_color);
+              tempData.oeeDash.oeeCirclePerc('qualityPerc',parseFloat(obj.oeeDetails.quality_perc),obj.oeeDetails.quality_perc_color);
               $('#PlannedProductionTime').html(tempData.oeeDash.getTimeHHMMSS(parseInt(obj.oeeDetails.planned_production_time)));
               $('#RunTime').html(tempData.oeeDash.getTimeHHMMSS(parseInt(obj.oeeDetails.run_time)));
               $('#RunTimePerc').css("width",parseInt(obj.oeeDetails.run_time_perc)+'%');
@@ -212,7 +212,6 @@ loadShiftData:function(){
 
   var eq=$('#eq_desc').val();
   var data = tempData.oeeDash.getObjects(equipGobalData,'id',eq);
-  console.log(data);
   $('#plant_id').val(data[0].plant_id);  
   
 
@@ -675,15 +674,15 @@ for(var q=0;q<obj.activityData.length;q++){        // Main Loop
     if(uiStDate<dbStDate){
      divData+=tempData.oeeDash.insertBlankEvent(d1,d2); 
     }
-    else { // uiStDate = d1  uiEnDate = d3 dbStDate = d2  dbEnDate = d4
+    /*else { // uiStDate = d1  uiEnDate = d3 dbStDate = d2  dbEnDate = d4
       widthVal=tempData.oeeDash.getRation(tempData.oeeDash.timeDiff(d1,d4));
     divData+='<div class="progress-bar" style="width:'+parseFloat(widthVal)+'%;background-color:'+obj.activityData[q].color_code+'" title="'+obj.activityData[q].message+' - '+GinTime+' to '+enTime.time+'"> </div>';
 
   globalUtilizationData.push({"color_code":obj.activityData[q].color_code,"duration":tempData.oeeDash.timeDiff(d1,d4),"end_time":obj.activityData[q].end_time,"message":obj.activityData[q].message,"reason_code_id":obj.activityData[q].reason_code_id,"start_time":d1});
-    }
+    }*/
   }
 
-  if(q == (obj.activityData.length-1)) 
+ /* if(q == (obj.activityData.length-1)) 
   {// uiStDate = d1  uiEnDate = d3 dbStDate = d2  dbEnDate = d4
     var endDateTime;
     var endTime;
@@ -694,18 +693,15 @@ for(var q=0;q<obj.activityData.length;q++){        // Main Loop
         endDateTime = d4;
         endTime=enTime.time;
       }else{
-        //alert('Á');
         //TODO :: Update end Date
         if(GoutTime < GinTime){
             // Update Date
            endDateTime = tempData.oeeDash.addOneDate(d3);
            endTime = GoutTime;
-          // alert(endDateTime);
         }else{
            // Current date
-           endDateTime = d3;
-           endTime = GoutTime;
-           //alert(endDateTime);
+           endDateTime = d4;        //d3
+           endTime = enTime.time;  //GoutTime
         }
       }
     widthVal=tempData.oeeDash.getRation(tempData.oeeDash.timeDiff(d2,endDateTime));
@@ -713,8 +709,8 @@ for(var q=0;q<obj.activityData.length;q++){        // Main Loop
 
    globalUtilizationData.push({"color_code":obj.activityData[q].color_code,"duration":tempData.oeeDash.timeDiff(d2,endDateTime),"end_time":endDateTime,"message":obj.activityData[q].message,"reason_code_id":obj.activityData[q].reason_code_id,"start_time":d2});
 
-  } 
-  else if (q!=0){
+  } */
+  //else if (q!=0){
   /* Bulding main progress bar */    
   // uiStDate = d1  uiEnDate = d3 dbStDate = d2  dbEnDate = d4
   widthVal=tempData.oeeDash.getRation(parseInt(obj.activityData[q].duration));
@@ -722,7 +718,7 @@ for(var q=0;q<obj.activityData.length;q++){        // Main Loop
 
  globalUtilizationData.push({"color_code":obj.activityData[q].color_code,"duration":obj.activityData[q].duration,"end_time":obj.activityData[q].end_time,"message":obj.activityData[q].message,"reason_code_id":obj.activityData[q].reason_code_id,"start_time":obj.activityData[q].start_time});
 
-  }// end of else
+ // }// end of else
 
 
   
@@ -771,7 +767,8 @@ checkData:function(){
 
     if(tool.checked){       
       tempData.oeeDash.loadOeeData('T');
-      tempData.oeeDash.loadToolProcDrillData('T');    
+      tempData.oeeDash.loadToolProcDrillData('T');  
+      tempData.oeeDash.getHourlyRpmGraph('M',"");  
     }else if(machine.checked){
       tempData.oeeDash.loadOeeData('M');        
       tempData.oeeDash.loadToolProcDrillData('M');
@@ -779,6 +776,7 @@ checkData:function(){
     }else{          
       tempData.oeeDash.loadOeeData('P');
       tempData.oeeDash.loadToolProcDrillData('P');
+      tempData.oeeDash.getHourlyRpmGraph('M',"");
     }
 },
 reload:function(){
@@ -959,10 +957,12 @@ var maxDateTime=Date.UTC(dDateEnd.getFullYear(),(dDateEnd.getMonth()),dDateEnd.g
             dashStyle : 'shortdash',
             width : 2,
             label : {
-                text : 'Threshold : '+threshold
+                text : 'Threshold : '+threshold,
+                x: 5,
+                y: 15
             }
         });
-    }, 2000);
+    }, 1000);
 },
 getShiftWiseDates:function(date){ 
    debugger;
@@ -1324,7 +1324,7 @@ $(".loader").fadeOut("slow");
                 <label> <input type="radio" class="" name="order" id="production" 
                   onclick= "tempData.oeeDash.checkData();"> Production </label>&nbsp;&nbsp;
                 <label> <input type="radio" class="" name="order" id="tool" 
-                  onclick= "tempData.oeeDash.checkData();"> Tool </label>
+                  onclick= "tempData.oeeDash.checkData();"> Operation </label>
 
                <i id="expandHourlyChart" class="btn btn-xs fa fa-expand" aria-hidden="true"></i>
               </div> 
@@ -1420,7 +1420,8 @@ $(".loader").fadeOut("slow");
           <div class="panel-body">  
               <div class="table-responsive" style="height: 270px;">
                   <!-- <div id="productivity_analysis" style="width: 100%; height: 400px;"></div> -->
-          
+            <div id="hourlyLineGraph"  style="width:99%;height: 120px;margin-top:0%;"></div>
+<br>
   <table class="table table-striped col-lg-12 col-md-12 col-sm-12 col-xs-12" style="width: 90%;margin-left: 8%;">
       <!-- <tbody class="productive-analysis"> -->
       <tbody>
@@ -1439,8 +1440,7 @@ $(".loader").fadeOut("slow");
     </tbody>
   </table>
 
-   <div id="hourlyLineGraph"  style="width:99%;height: 120px;margin-top:2%;"></div>
-
+ 
             </div>
 
           </div>
@@ -1454,7 +1454,7 @@ $(".loader").fadeOut("slow");
         <div class="panel panel-default dashFirstRow">
           <div class="panel-heading panelHeader">
             <div class="panel-title pull-left">
-              <i class="fa fa-pie-chart fa-fw"></i> Activity Analysis (hh:mm)
+              <i class="fa fa-pie-chart fa-fw"></i> Activity Analysis (hh:mm:ss)
             </div>
             <div class="panel-title pull-right">
               <div id="statusImg"></div>
