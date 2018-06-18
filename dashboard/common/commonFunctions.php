@@ -196,7 +196,7 @@ if(isset($_POST['getEquipmentDetails'])){
         $eqQ="SELECT eq.id, eq.code, eq.descp, eq.image_file_name, eq.protocol_id, eq.type_id, eq.model_id, eq.wc_id,
              eqm.name, eqt.descp as eq_type_desc, eq.reason_code_arr, eqp.name as eq_protocol, eq.mac_id  FROM sfs_equipment eq, sfs_eq_model eqm,
              sfs_eq_type eqt, sfs_eq_protocol eqp where eq.model_id=eqm.id and
-             eq.type_id=eqt.id and eqp.id=eq.protocol_id and wc_id=".$wc_id;
+             eq.type_id=eqt.id and eqp.id=eq.protocol_id and eq.code !='IOent' and wc_id=".$wc_id;
     }
     
     $eqDetails=mysqli_query($con,$eqQ) or die('Error:'.mysqli_error($con));

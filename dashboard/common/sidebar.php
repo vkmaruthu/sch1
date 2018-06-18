@@ -59,6 +59,7 @@
               <li><a href="../partsandtools/plant.php" id="menuPlants"><i class="fa fa-th"></i> Plants</a></li>
               <li><a href="../user/screens.php?screen=s" id="menuScreen"><i class="fa fa-files-o"></i> Screens</a></li>
               <li><a href="../reasons/createreasons.php" id="menuReason"><i class="fa fa-files-o"></i> Reasons</a></li>
+              <li><a href="../reject/index.php" id="menuRejectEntryScreen"><i class="fa fa-th"></i> Reject</a></li>
           </ul>
         </li>        
       </ul>
