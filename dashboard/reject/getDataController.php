@@ -75,24 +75,35 @@ if(isset($_POST['getPODetails'])){
 }
 
 
-if(isset($_POST['getOperation'])){
+if(isset($_POST['getRejCount'])){
+    $comp_id=$_POST['comp_id'];
+    $quality_codes_id=$_POST['quality_codes_id'];
+    $eq_code=$_POST['eq_code'];
+    $start_time=$_POST['start_time'];
+    $end_time=$_POST['end_time'];
     
-    $part_id=$_POST['part_id'];
-    if ($part_id != '') {
-        $eqQ="SELECT number, name, descp FROM sfs_tool_opr where part_fg_id=".$part_id;
-    }
+    if ($eq_code != '') {
+        $eqQ="SELECT sd.start_time, sd.end_time, sd.count, seq.code, seq.descp, sqc.reason_message FROM sfs_data sd, sfs_data_info sdi, sfs_equipment seq, sfs_quality_code sqc 
+        WHERE sd.data_info_id=sdi.id AND sdi.eq_code=seq.code AND sd.quality_codes_id=sqc.id AND 
+        quality_codes_id=".$quality_codes_id." AND sdi.eq_code='".$eq_code."' AND start_time >= '".$start_time."' AND end_time <= '".$end_time."'";
+
     $partsDetails=mysqli_query($con,$eqQ) or die('Error:'.mysqli_error($con));
     while ($row=mysqli_fetch_array($partsDetails)){
-        $opr_num=$row['number'];
-        $opr_name=$row['name'];
-        $opr_desc=$row['descp'];
+        $start_time=$row['start_time'];
+        $end_time=$row['end_time'];
+        $count=$row['count'];
+        $descp=$row['descp'];
+        $reason_message=$row['reason_message'];
         
-        $getEQData[]=array('opr_num' =>"$opr_num",
-            'opr_name' =>"$opr_name",
-            'opr_desc' =>"$opr_desc"
+        $getEQData[]=array('start_time' =>"$start_time",
+            'end_time' =>"$end_time",
+            'count' =>"$count",
+            'descp' =>"$descp",
+            'reason_message' =>"$reason_message"
         );
     }
-    $status['oprDetails'] = $getEQData;
+    }
+    $status['rejectCount'] = $getEQData;
     echo json_encode($status);
     mysqli_close($con);
 }

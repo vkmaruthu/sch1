@@ -39,12 +39,11 @@ var globalRejectData=new Array();
 var poGlobalArray=new Array();
 tempData.oeereject=
 {
-loadAllRjectData:function(){
+loadAllRjectData:function(start_time, end_time, qCode, eq_code, plantId){
   debugger;
-  var plantId = $('#plants').val();
   var comp_id =  $('#comp_id').val();
   var url="getDataController.php";
-  var myData={getPODetails:"getPODetails22", plant_id:plantId, comp_id:comp_id};
+  var myData={getRejCount:"getRejCount", plant_id:plantId, comp_id:comp_id, quality_codes_id:qCode, start_time:start_time, end_time:end_time, eq_code:eq_code };
        $.ajax({
             type:"POST",
             url:url,
@@ -52,20 +51,19 @@ loadAllRjectData:function(){
             dataType: 'json',
             data:myData,
             success: function(obj){
-            globalRejectData=obj.poDetails;
-            $('#plants').val('');
-        if(obj.poDetails==null){
-          $('#poTable').DataTable({
+            globalRejectData=obj.rejectCount;
+        if(obj.rejectCount==null){
+          $('#rejectTable').DataTable({
              "paging":false,
-              "ordering":true,
-              "info":true,
-              "searching":false,         
-              "destroy":true,
+             "ordering":true,
+             "info":true,
+             "searching":false,         
+             "destroy":true,
           }).clear().draw();
 
         }else{
             
-    var DataTableProject = $('#poTable').DataTable( {
+    var DataTableProject = $('#rejectTable').DataTable( {
             'paging'      : true,
             'lengthChange': false,
             'searching'   : true,
@@ -73,47 +71,15 @@ loadAllRjectData:function(){
             'info'        : true,
             'autoWidth'   : false,
             "destroy":true,
-            "data":obj.poDetails,   
+            "data":obj.rejectCount,   
             "columns": [           
-              { data: "order_number" },
-              { data: "wc_name" },
-              { data: "equi_code" },
-              { data: "conf_no", className: "text-right" },
-              { data: "target_qty",className: "text-right"},
-              { data: "line_feed_qty",className: "text-right"},
-              { data: "conf_yield",className: "text-right"},
-              { data: "conf_scrap",className: "text-right"},
-              { data: "plant_desc"},
-              { data: "eq_desc"},
-              { data: "id" ,className: "text-left",
-                  render: function (data, type, row, meta) {
-                    var result = "";
-                    if(row.is_final_confirmed == 1){
-                    	result='<button type="button" class="btn btn-success btn-xs" onclick="" title="Completed PO"><i class="fa fa-check"></i> Completed </button>';
-                    }else if(row.eq_code == "" || row.eq_code == null){ 
-                       result ='<button type="button" class="btn btn-primary btn-xs" onclick="tempData.oeereject.assingPOModal('+row.id+',\''+row.plant_id+'\');" title="Assign PO"><i class="fa fa-flag"> Assign </i></button>';
-                    }else {
-                       var d='<button type="button" class="btn btn-danger btn-xs" onclick="tempData.oeereject.stopPOModal('+row.id+',\''+row.plant_id+'\');" title="Stop PO"><i class="fa fa-stop"> Stop </i></button>';
-                       var e='<button type="button" class="btn btn-danger btn-xs" onclick="tempData.oeereject.completePOModal('+row.id+',\''+row.plant_id+'\');" title="Complete PO"><i class="fa fa-remove"> Complete </i></button>';
-                       result = d+' '+e
-                    }
-                    return result;
-                  }
-              },
-              { data: "id" ,className: "text-left",
-                render: function (data, type, row, meta) {
-                  if(row.is_final_confirmed != 1){
-                  var a='<button type="button" title="Edit" class="btn btn-primary btn-xs" onclick="tempData.oeereject.editReject('+row.id+',\''+row.plant_id+'\');"><i class="fa fa-pencil-square-o"></i> </button>';
-                  var b='<button type="button" title="Delete" class="btn btn-danger btn-xs" onclick="tempData.oeereject.deleteReject('+row.id+');"><i class="fa fa-trash"></i> </button>';
-                  return a+' '+b;
-                  }else{
-                	  return "";
-                  }
-                }
-              },
-               ]
+              { data: "start_time" },
+              { data: "end_time" },
+              { data: "count",className: "text-right" },
+              { data: "reason_message"},
+              { data: "descp"},
+            ]
            });
-
            } // else End here    //image_file_name
 
           } // ajax success ends
@@ -121,59 +87,6 @@ loadAllRjectData:function(){
 
 },
 
-
-editReject:function (id, wcId){
-    for(var i=0;i<globalRejectData.length;i++){
-        if(id==globalRejectData[i].id){
-          $('#po_id').val(globalRejectData[i].id);
-          $('#order_number').val(globalRejectData[i].order_number);
-          $('#line_feed_qty').val(globalRejectData[i].line_feed_qty);
-          $('#target_qty').val(globalRejectData[i].target_qty);
-          $('#conf_no').val(globalRejectData[i].conf_no);
-          $('#order_number').prop('readonly', true);
-
-          $('#plantSave').val(globalRejectData[i].plant_id).change();       
-          $("#wc_name option:contains(" + globalRejectData[i].wc_name + ")").attr('selected', 'selected').change();
-          $('#equi_code').val(globalRejectData[i].equi_code).change();
-
-          $("#wc_name").prop("disabled", true); 
-          $("#equi_code").prop("disabled", true);
-          $("#plantSave").prop("disabled", true); 
-          break;
-        }
-    }
-    $("#fromReject").fadeIn("fast");
-    $("#addReject").hide();
-    $("#updateReject").show();            
-},
-deleteReject:function (id){
-  var url="getDataController.php";
-  var myData={deleteReject:"deleteReject",po_id:id};
-  $.ajax({
-    type:"POST",
-    url:url,
-    async: false,
-    dataType: 'json',
-    data:myData,
-    success: function(obj) {
-        debugger;
-      if(obj.data !=null){
-        if(obj.data.infoRes=='S'){
-           $("#delCommonMsg").show();
-           $('#delCommonMsg').html('<p class="commonMsgSuccess"> <i class="fa fa-trash"></i> '+obj.data.info+'</p>');
-           tempData.oeereject.loadAllRjectData();
-        }else{
-          $("#delCommonMsg").show();
-           $('#delCommonMsg').html('<p class="commonMsgFail"> <i class="fa fa-warning"></i> '+obj.data.info+'</p>');
-        }  
-      } 
-      setTimeout(function(){ 
-           $("#delCommonMsg").fadeToggle('slow'); 
-       }, 1500);
-    }
-  });
-
-},
 reload:function(){
    location.reload(true);
 },
@@ -190,25 +103,38 @@ getPlantsForFilterDropdown:function(){
 	    data:myData,
 	    success: function(obj) {
 	      if(obj.plantDetails !=null){
-         	 $("#plants").html('');
-	    	 $("#plants").append('<option value="0"> Select Plant </option>');
-        		for(var i=0; i< obj.plantDetails.length; i++){
-    			   $("#plants").append('<option value="'+obj.plantDetails[i].id+'">'+obj.plantDetails[i].plant_desc+'</option>'); 
-        		}
-
-        	  $("#plantSave").html('');
-	    	  $("#plantSave").append('<option value="0"> Select Plant </option>');
+       	         $("#plantSave").html('');
         		for(var i=0; i< obj.plantDetails.length; i++){
     			   $("#plantSave").append('<option value="'+obj.plantDetails[i].id+'">'+obj.plantDetails[i].plant_desc+'</option>'); 
-        	   }
+        		}
+        	    $("#plantSave").val(obj.plantDetails[0].id).change();
+	        }
+	      } 
+	});
+},
+getPlantsForTableFilter:function(){
+	  var url="getDataController.php";
+	  var compId = $('#comp_id').val();
+	  var myData = {getPlantDetails:'getPlantDetails', comp_id:compId};
+	  $.ajax({
+	    type:"POST",
+	    url:url,
+	    async: false,
+	    dataType: 'json',
+	    cache: false,
+	    data:myData,
+	    success: function(obj) {
+	      if(obj.plantDetails !=null){
+           	 $("#plants").html('');
+      		for(var i=0; i< obj.plantDetails.length; i++){
+  			   $("#plants").append('<option value="'+obj.plantDetails[i].id+'">'+obj.plantDetails[i].plant_desc+'</option>');  
+      		}
+      	    $("#plants").val(obj.plantDetails[0].id).change();
 	        }
 	      } 
 	});
 },
 
-filter:function(){
-	   tempData.oeereject.loadAllRjectData();
-},
 clearForm:function(){
     $('#order_number').prop('readonly', false);
     $("#plantSave").prop("disabled", false);
@@ -216,10 +142,11 @@ clearForm:function(){
     $("#fromReject").fadeToggle("slow");
     $("#addReject").show();
     $("#updateReject").hide();
-    $("#plantSave").val(0).change();
     $("#equi_code").val(0).change();
     $("#wc_name").val(0).change();
     //$("#shift_id").val(0).change();
+    $("#dropHide").fadeToggle("slow");
+    tempData.oeereject.getPlantsForFilterDropdown();
 },
 
 getWCDesc:function(plantId){	
@@ -243,6 +170,27 @@ getWCDesc:function(plantId){
 		      }   
          });
 },
+getForTableDropdownWCDesc:function(plantId){	
+	  var url="getDataController.php";
+	  var comp_id=$('#comp_id').val();
+	  var myData={getWCDetails:"getWCDetails",plant_id:plantId, comp_id:comp_id};
+	  $.ajax({
+	    type:"POST",
+	    url:url,
+	    async: false,
+	    dataType: 'json',
+	    data:myData,
+	    success: function(obj) {
+	    	 $("#d_wc").html('');
+	    	 $("#d_wc").append('<option value="0"> Select Work Center </option>');
+		      if(obj.wcDetails !=null){
+	        		for(var i=0; i< obj.wcDetails.length; i++){
+	    			   $("#d_wc").append('<option value="'+obj.wcDetails[i].id+'">'+obj.wcDetails[i].wc_desc+'</option>'); 
+	        		}
+		        }
+		      }   
+       });
+},
 getEquipmentDesc:function(wc_id){	
 	  var url="getDataController.php";
 	  var comp_id=$('#comp_id').val();
@@ -263,6 +211,27 @@ getEquipmentDesc:function(wc_id){
 		        }
 		      }   
        });
+},
+getEquipmentDescForTableDropdown:function(wc_id){	
+	  var url="getDataController.php";
+	  var comp_id=$('#comp_id').val();
+	  var myData={getEquipmentDetails:"getEquipmentDetails",wc_id:wc_id, comp_id:comp_id};
+	  $.ajax({
+	    type:"POST",
+	    url:url,
+	    async: false,
+	    dataType: 'json',
+	    data:myData,
+	    success: function(obj) {
+	    	 $("#d_equip").html('');
+	    	 $("#d_equip").append('<option value="0"> Select Equipment </option>');
+		      if(obj.equipmentDetails !=null){
+	        		for(var i=0; i< obj.equipmentDetails.length; i++){
+	    			   $("#d_equip").append('<option value="'+obj.equipmentDetails[i].eq_code+'">'+obj.equipmentDetails[i].eq_desc+'</option>'); 
+	        		}
+		        }
+		      }   
+     });
 },
 getPOData:function(plantId, eq_code){
 	  var comp_id =  $('#comp_id').val();
@@ -299,7 +268,6 @@ loadShiftData:function(plantId){
     var workCenter_id=$('#wc_name').val();
     var iobotMachine= $('#equi_code').val();  
     var myData = {loadShiftData:'loadShiftData',selDate:selDate,comp_id:comp_id,plant_id:plant_id,workCenter_id:workCenter_id,iobotMachine:iobotMachine };
-
         $.ajax({
             type:"POST",
             url:url,
@@ -307,6 +275,7 @@ loadShiftData:function(plantId){
             dataType: 'json',
             data:myData,
             success: function(obj) {
+            	ShiftGobalData = null;
               if(obj.shiftData != null){
                ShiftGobalData=obj.shiftData;
                $("#shift_id").html('');
@@ -326,13 +295,55 @@ loadShiftData:function(plantId){
             }
         });
 },
-shiftsdata:function(){  
-     var shift= $('#shift_id').val();
+
+loadShiftDataForFilter:function(plantId){
+    var selDate = $("#userDateSel").val();
+    var url= "getDataController.php";
+    var comp_id=$('#comp_id').val();
+    var plant_id=plantId;
+    var workCenter_id=$('#wc_name').val();
+    var iobotMachine= $('#equi_code').val();  
+    var myData = {loadShiftData:'loadShiftData',selDate:selDate,comp_id:comp_id,plant_id:plant_id,workCenter_id:workCenter_id,iobotMachine:iobotMachine };
+        $.ajax({
+            type:"POST",
+            url:url,
+            async: false,
+            dataType: 'json',
+            data:myData,
+            success: function(obj) {
+            	ShiftGobalData = null;
+              if(obj.shiftData != null){
+               ShiftGobalData=obj.shiftData;
+               $("#d_shift_id").html('');
+                for(var i=0;i<obj.shiftData.length;i++)
+                {
+                   if(obj.shiftData[i].shift != 0){
+                        $("#d_shift_id").append('<option value="'+obj.shiftData[i].id+'"> Shift-'+
+                                obj.shiftData[i].shift+' '+obj.shiftData[i].dateFormat+'</option>');
+                    }
+                } 
+                $("#d_shift_id").val(obj.shiftData[0].id).change();
+              }else{
+                $("#d_shift_id").html('');
+                $("#d_shift_id").html('<option value="0">Select Shift</option>');
+              }            
+                                                   
+            }
+        });
+},
+shiftsdataFilter:function(){  
+     var shift= $('#d_shift_id').val();
      var singalJosn=tempData.oeereject.getObjects(ShiftGobalData,'id',shift);
      var get3Data= tempData.oeereject.getCommonDataForShift(singalJosn[0]); // Passing all Selected Shift Data
      // hours,inTime,outTime,totalHour,startHour
      tempData.oeereject.AfterShiftSelect(get3Data[0].hour,get3Data[0].inTime,get3Data[0].outTime,parseInt(singalJosn[0].num_hourss),get3Data[0].startHour,singalJosn[0].hour_start);
-
+},
+shiftsdata:function(){  
+    var shift= $('#shift_id').val();
+    var singalJosn=tempData.oeereject.getObjects(ShiftGobalData,'id',shift);
+    var get3Data= tempData.oeereject.getCommonDataForShift(singalJosn[0]); // Passing all Selected Shift Data
+    // hours,inTime,outTime,totalHour,startHour
+    tempData.oeereject.AfterShiftSelect(get3Data[0].hour,get3Data[0].inTime,get3Data[0].outTime,parseInt(singalJosn[0].num_hourss),get3Data[0].startHour,singalJosn[0].hour_start);
 },
 AfterShiftSelect:function(hours,inTime,outTime,totalHour,startHour,dbStartHour){
        // hours,inTime,outTime,totalHour,startHour
@@ -377,6 +388,26 @@ getCommonDataForShift:function(obj){
     arr.push({"hour":hours,"inTime":inTime,"outTime":outTime,"startHour":d.getHours()});
     return arr;
 },
+filter:function(){  
+	tempData.oeereject.shiftsdataFilter();
+	if($("#userDateSel").val() != '' &&  $('#plants').val() !=0){
+		var plantId = $('#plants').val();
+    	var startDate = tempData.oeereject.dateFormat($("#userDateSel").val());
+    	var endDate = startDate;
+    	 if(GinTime > GoutTime){
+    		 endDate = tempData.oeereject.dateAddDay(startDate);
+    	 }
+    	 startDate = startDate+' '+GinTime
+    	 endDate = endDate+' '+GoutTime
+    	 if($('#d_equip').val() !=0 && $('#d_equip').val() !=''){
+    		 tempData.oeereject.loadAllRjectData(startDate, endDate, 2, $('#d_equip').val(),plantId);
+         }else{
+        	 alert("Select Equipment");
+          }
+	 }else{
+         alert("Select Plant");
+	 }
+},
 createRejectInput:function(shift_id){
    tempData.oeereject.shiftsdata();
    var content= '';
@@ -390,10 +421,10 @@ createRejectInput:function(shift_id){
          j=0; lstartH=0;
          userDate=tempData.oeereject.dateAddDay(userDate+' 00:00:00');
         }
-       content = '  <tr id="'+parseInt(lstartH+j)+'"><td><div class=" tFormat talign">'+parseInt(lstartH+j)+' Hrs To '+parseInt(lstartH+j+1)+' Hrs</div></td> '+
-       '<td><div class="col-md-7 col-sm-7 col-xs-7"><input id="kg_'+parseInt(lstartH+j)+'" type="number" min="0" step="0.01" value="0" class="form-control" /></div><div class="col-md-2 col-sm-2 col-xs-2 tFormat">Kg</div><div class="col-md-3 col-sm-3 col-xs-3 tFormat"><button type="button" class="btn btn-primary btn-xs" onclick="tempData.oeereject.calculation(\''+"H_"+parseInt(lstartH+j)+'\');" title="Calculate"><i class="fa fa-calculator"> Cal </i></button></div></td>'+
-       '<td><div class="col-md-8 col-sm-8 col-xs-8"><input id="cort_'+parseInt(lstartH+j)+'" type="number" min="0" step="0.01"  value="0" class="form-control" readonly /></div><div class="col-md-4 col-sm-4 col-xs-4 tFormat">Cortans</div></td>'+ 
-       '<td><div class="col-md-8 col-sm-8 col-xs-8"><input id="rev_'+parseInt(lstartH+j)+'" type="number" min="0" step="0.01"  value="0" class="form-control" readonly /></div><div class="col-md-4 col-sm-4 col-xs-4 tFormat">Rev</div></td>'+
+       content = '  <tr id="'+parseInt(lstartH+j)+'"><td width="5%"><div class=" tFormat talign">'+parseInt(lstartH+j)+'h</div></td> '+
+       '<td><div class="col-md-7 col-sm-7 col-xs-7"><input onkeypress="tempData.oeereject.calculation(\''+"kg_"+parseInt(lstartH+j)+'\');" id="kg_'+parseInt(lstartH+j)+'" type="number" min="0" step="0.01" value="0" class="form-control" /></div><div class="col-md-2 col-sm-2 col-xs-2 tFormat">Kg</div></td>'+
+       '<td><div class="col-md-8 col-sm-8 col-xs-8"><input id="cort_'+parseInt(lstartH+j)+'" type="number" min="0" step="0.01"  value="0" class="form-control" readonly /></div><div class="col-md-4 col-sm-4 col-xs-4 tFormat">Cartons</div></td>'+ 
+       '<td><div class="col-md-8 col-sm-8 col-xs-8"><input id="rev_'+parseInt(lstartH+j)+'" type="number" min="0" step="0.01"  value="0" class="form-control" readonly /></div><div class="col-md-4 col-sm-4 col-xs-4 tFormat">Revolutions</div></td>'+
        '<td><button type="button" id="btn_'+parseInt(lstartH+j)+'" class="btn btn-success btn-xs" onclick="tempData.oeereject.insertReject(\''+"H_"+parseInt(lstartH+j)+'\');" title="Calculate"><i class="fa fa-floppy-o"> Save </i></button></td></tr> '+
        '<input type="hidden" name="d_'+parseInt(lstartH+j)+'" id="d_'+parseInt(lstartH+j)+'" value="'+userDate+'" /> ';
        Gcontent += content;
@@ -469,6 +500,8 @@ saveReject:function(startDT, endDT, count, qualityCode, data_info_id, hrs){
 	           $("#commonMsg").show();
 	           $('#commonMsg').html('<p class="commonMsgSuccess"> <i class="fa fa-check"></i> '+obj.data.info+'</p>');
 	           $("#btn_"+hrs).remove();
+	           $("#cal_"+hrs).remove();
+	           $("#kg_"+hrs).prop('disabled', true);
 	        }else{
 	          $("#commonMsg").show();
 	          $('#commonMsg').html('<p class="commonMsgFail"> <i class="fa fa-warning"></i> '+obj.data.info+'</p>');
@@ -493,7 +526,7 @@ debugger;
   $("#workcenters").prop("disabled", true); 
   $("#wc_name").prop("disabled", true); 
   $("#equi_code").prop("disabled", true);
-
+  $("#shift_id").prop("disabled", true);
   var date = new Date();
   var today = new Date(date.getFullYear(), date.getMonth(), date.getDate());
   $('.datepicker-me').datepicker('setDate', today);
@@ -606,10 +639,44 @@ debugger;
 	   $('#mul_factor').val(0);
        $('#data_info_id').val(0); 
        tempData.oeereject.getPlantsForFilterDropdown();
-   });
+       tempData.oeereject.getPlantsForTableFilter();
+   }); 
 
+   $('#plants').change(function(){ 
+      if($('#plants').val() != 0){
+          tempData.oeereject.getForTableDropdownWCDesc($('#plants').val()); 
+          $("#d_wc").prop("disabled", false);
+          tempData.oeereject.loadShiftDataForFilter($('#plants').val())  
+          $("#shift_id").prop("disabled", false); 
+     	  $("#d_equip").html('');
+    	  $("#d_equip").append('<option value="0"> Select Equipment </option>');
+          $("#d_equip").prop("disabled", true);   
+                
+       }else {
+	     $("#d_wc").html('');
+	     $("#d_wc").append('<option value="0"> Select Work Center </option>');
+	     $("#d_wc").prop("disabled", true);
+	     $("#d_equip").html('');
+	     $("#d_equip").append('<option value="0"> Select Equipment </option>');
+  	     $("#d_equip").prop("disabled", true);
+  	     $("#shift_id").html('');
+         $("#shift_id").html('<option value="0">Select Shift</option>');
+         $("#shift_id").prop("disabled", true);
+       }
+    });
+   $('#d_wc').change(function(){ 
+	      if($('#d_wc').val() != 0){
+	          tempData.oeereject.getEquipmentDescForTableDropdown($('#d_wc').val()); 
+	          $("#d_equip").prop("disabled", false);        
+	       }else {
+		     $("#d_equip").html('');
+		     $("#d_equip").append('<option value="0"> Select Equipment </option>');
+	  	     $("#d_equip").prop("disabled", true);
+	       }
+	  });
     tempData.oeereject.loadAllRjectData();
     tempData.oeereject.getPlantsForFilterDropdown();
+    tempData.oeereject.getPlantsForTableFilter();
 });
 
 </script>
@@ -627,16 +694,20 @@ debugger;
         <div class="panel-title pull-left">           
         
         </div>
-             <div class="col-md-4 pull-left"> 
-              <label class="control-label col-md-2">Date: </label>  
-                <div class='input-group date datepicker-me' data-provide="datepicker">
+             <div class="col-md-3 pull-left">
+              <label class="control-label col-md-4">Date: </label>  
+                <div class='col-md-8 input-group date datepicker-me' data-provide="datepicker">
                 <input type='text' class="form-control" id='userDateSel' name="userDateSel" 
                        style="cursor: pointer;" readonly="readonly"/>
                   <label class="input-group-addon btn" for="userDateSel">
                       <span class="glyphicon glyphicon-calendar"></span>               
                   </label>
               </div>
-            </div> 
+           </div> 
+          <div class="col-md-3 pull-left">
+
+          </div> 
+            
             <button type="button" onclick="tempData.oeereject.reload();" class="btn btn-sm btn-info pull-right" style="margin-top: -3px;margin-bottom: -2px;margin-left:15px;">   <i class="fa  fa-refresh"> </i>
             </button>
             <button type="button" id="createReject" class="btn btn-sm btn-primary pull-right" style="margin-top: -3px;margin-bottom: -2px;">
@@ -657,24 +728,13 @@ debugger;
           <input type="hidden" name="plant_id" id="plant_id"/>  
            <input type="hidden" name="data_info_id" id="data_info_id"/>  
             <div class="form-group">
-            <div class="row" style="margin-bottom: 10px;">
-              <div class="col-md-6 "> 
- 
-            </div>
-           <div class="col-md-6">
-                <label class="control-label col-md-4 col-sm-6 col-xs-12">Shift <span class="required">*</span></label>
-                <div class="col-md-6 col-sm-6 col-xs-12">
-                    <select class="form-control select2"  id="shift_id" name="shift_id" style="width:100%;">
-                    </select>
-                </div>
-           </div>
-            </div>
                <div class="row" style="margin-bottom: 0px;">
                 <div class="col-md-6">
                   <label class="control-label col-md-4 col-sm-6 col-xs-12">Plant <span class="required">*</span></label>
                     <div class="col-md-6 col-sm-6 col-xs-12">
                       <div class="form-group">
                         <select class="form-control select2"  id="plantSave" name="plantSave" style="width:100%;">
+                          <option value="0">Select Plant</option>
                         </select>
                       </div>
                     </div>
@@ -705,7 +765,7 @@ debugger;
                         </div>
                    </div>
               </div>
-                          
+                    
               <div class="row" style="margin-top: 10px;">
                <div class="col-md-6">
                    <label class="control-label col-md-4 col-sm-6 col-xs-12">1 Carton Equal To </label>
@@ -720,31 +780,43 @@ debugger;
                     </div><span style="vertical-align: -webkit-baseline-middle; font-weight: 600;">Cartons</span>
                    </div>
                </div>
-              </div>
-              <span style="padding-left: 20px;color : #6f5757;">* Note : Select all the fields before entering the rejects. Once data is saved you can't edit.</span>
-              <div class="row" style="margin-top: 10px;  padding-left: 5px; padding-right: 5px;">
-                <div class="col-md-12">
-                     <table id="shiftTable" class="table table-bordered table-hover nowarp tborder" style="font-size: 12px;">
-                           
-                      </table>
-               </div>
+               
+              <div class="row" style="margin-top: 10px;">
+               <div class="col-md-6">
+                <label class="control-label col-md-4 col-sm-6 col-xs-12">Shift:</label>
+                <div class="col-md-6 col-sm-6 col-xs-12">
+                    <select class="form-control select2"  id="shift_id" name="shift_id" style="width:100%;">
+                    <option value="0">Select Shift</option>
+                    </select>
+                </div>
+                </div>
+                <div class="col-md-6">
+                </div>
               </div>
               
-              <div class="row">
-                <div id="msg" style="padding-left: 28px;color: red;"></div>
-                   <div class="col-md-12 text-center">
+              </div>
+          
+              <div class="row" style="margin-top: 10px;  padding-left: 5px; padding-right: 5px;">
+                <div class="col-md-12">
+                  <table  class="table table-bordered table-hover nowarp tborder"  style="font-size: 12px;">  
+                  	<tbody id="shiftTable"></tbody>
+                  </table>
+               </div>
+                 <div class="col-md-12 text-center">
                      <button type="button" id="cancel" onclick="" class="btn btn-sm btn-danger"><i class="fa fa-close"></i>&nbsp; Cancel
                     </button>
                    </div>
+                 <span style="padding-left: 20px;color : #6f5757;">* Note : Select all the fields before entering the rejects. Once data is saved you can't edit.</span>
               </div>
+              
             </div>  
            <hr class="hr-primary"/>  
           </form>
-
+     </div>     
+ <div class="row" id="dropHide">
        <div class="table-responsive"> 
-        <div class="col-sm-12">
-            <div>
-                <label>Select:  
+        <div class="col-sm-12" >
+                <label>Select:</label>
                    <select class="form-control select2"  id="plants" name="plants" style="width : auto;">
                       <option value="0">Select Plant</option>
                    </select>
@@ -757,30 +829,34 @@ debugger;
                       <option value="0">Select Equipment</option>
                    </select>
                    
+                    <select class="form-control select2"  id="d_shift_id" name="d_shift_id" style="width:auto;">
+                       <option value="0">Select Shift</option>
+                    </select>
+
                   <button type="button" id="refresh" onclick="tempData.oeereject.filter();" 
                 	    class="btn btn-sm btn-primary pull-right" style="padding-top: 6px;margin-left:15px;">
-                 	    <i class="fa  fa-refresh"></i>
+                 	    Load Data
                   </button>
                   <div id="msgFilter"></div>
-                </label>
-            </div>
+       
         </div>
         
-          <table id="poTable" class="table table-bordered table-hover nowarp" style="font-size: 12px;">
+          <table  id="rejectTable" class="table table-bordered table-hover nowarp" style="font-size: 12px;">
            <thead>
              <tr>       
                <th>Start Time</th>
                <th>End Time</th>
-               <th>Count</th>  
+               <th>Count(Rev/Strokes)</th>  
                <th>Quality Type</th>  
                <th>Equipment</th>
-               <th>Action</th> 
              </tr>
            </thead>
            </table>
 
          </div>
-      </div>
+   </div>      
+         
+
     </div>
    </div>       
    </div>
