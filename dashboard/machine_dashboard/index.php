@@ -425,7 +425,7 @@ operBtn = Highcharts.chart('hourlyProduction', {
         }
     },
     legend: {
-        enabled: false
+        enabled: true
     },
     plotOptions: {
         series: {
@@ -446,11 +446,7 @@ operBtn = Highcharts.chart('hourlyProduction', {
         headerFormat: '<span style="font-size:11px">{series.name}</span><br>',
         pointFormat: '<span style="color:{point.color}">{point.name}</span>: <b>{point.y}</b><br/>'
     },
-    series: [{
-        name: 'Production',
-        colorByPoint: true,
-        data: obj.firstPhaseData
-    }],
+    series: obj.firstPhaseData,
     drilldown: {
         series:obj.secondPhaseData
     }
@@ -780,6 +776,7 @@ checkData:function(){
     }
 },
 reload:function(){
+  setIntervalTime=100000;
   $(".loader").fadeIn("slow");
   tempData.oeeDash.shiftsdata();
 
@@ -988,8 +985,8 @@ getShiftWiseDates:function(date){
 
 $(document).ready(function() {
 debugger; 
-
-setInterval( function(){ tempData.oeeDash.reload();  } , 100000 );
+var setIntervalTime=100000;
+setInterval( function(){ tempData.oeeDash.reload();  } , setIntervalTime);
 //$(".loader").fadeIn("slow");
   $("#companyOEE").parent().addClass('active');
   $("#companyOEE").parent().parent().closest('.treeview').addClass('active menu-open');

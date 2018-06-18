@@ -187,14 +187,18 @@ if(isset($_POST['loadToolProcDrillData'])){     // getData for loadToolDrillData
 
    
     $final_data=array();
-    //$rowHourArr=array();
+    $colName=array('OK','REJECT','OK','REJECT','OK','REJECT','OK','REJECT');
+    $colors=array('rgb(149, 206, 255)','rgb(243, 20, 51)','rgb(149, 206, 255)','rgb(243, 20, 51)','rgb(149, 206, 255)','rgb(243, 20, 51)');
+    $count=0;
 
     $sqlProceQ = mysqli_query($con, "call sfsp_getHourlyDrill('".$final_date."','".$group_type."',".$total_hours.",".$dbStartHour.",".$iobotMachine.")") or die("Query fail: " .mysqli_error($con));
  
     while ($row=mysqli_fetch_array($sqlProceQ))
     {
+
          $hourArr=array();
          $y_axisData=array();
+         $innerDataFirst=array();
          //$total_count='';
 
         $name=$row['commonName'];
@@ -221,21 +225,28 @@ if(isset($_POST['loadToolProcDrillData'])){     // getData for loadToolDrillData
         }
                    
         if($group_type=='M'){            
-            $machineData[]=array('name'=>"$descp",
-                                 'data'=>$hourArr
+            $machineData[]=array('name'=>$colName[$count],
+                                 'data'=>$hourArr,
+                                 'color'=>$colors[$count]
                                  );
         }else{     
-            $firstPhaseData[]=array('id'=>"$name",
-                                    'y'=>round($total_count),
+            $innerDataFirst[]=array('y'=>round($total_count),
                                     'name'=>"$descp",
-                                    'drilldown'=>"$name"
+                                    'drilldown'=>"$descp"."_".$colName[$count],
                                     );
 
-            $secondPhaseData[]=array('name'=>"$descp",
-                                     'id'=>"$name",
-                                     'data'=>$hourArr
+            $firstPhaseData[]=array('name'=>$colName[$count],
+                                    'data'=>$innerDataFirst,
+                                    'color'=>$colors[$count]
+                                    );
+
+            $secondPhaseData[]=array('id'=>"$descp"."_".$colName[$count],
+                                     'data'=>$hourArr,
+                                     'color'=>$colors[$count],
+                                     'name'=>$colName[$count]
                                      );
         }
+         $count++;
     }
 
     $status['secondPhaseData']=$secondPhaseData;
