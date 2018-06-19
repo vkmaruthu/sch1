@@ -712,7 +712,7 @@ for(var q=0;q<obj.activityData.length;q++){        // Main Loop
   widthVal=tempData.oeeDash.getRation(parseInt(obj.activityData[q].duration));
   divData+='<div class="progress-bar" style="width:'+parseFloat(widthVal)+'%;background-color:'+obj.activityData[q].color_code+'" title="'+obj.activityData[q].message+' - '+stTime.time+' to '+enTime.time+'"> </div>';
 
- globalUtilizationData.push({"color_code":obj.activityData[q].color_code,"duration":obj.activityData[q].duration,"end_time":obj.activityData[q].end_time,"message":obj.activityData[q].message,"reason_code_id":obj.activityData[q].reason_code_id,"start_time":obj.activityData[q].start_time});
+ globalUtilizationData.push({"color_code":obj.activityData[q].color_code,"duration":obj.activityData[q].duration,"end_time":obj.activityData[q].end_time,"message":obj.activityData[q].message,"reason_code_id":obj.activityData[q].reason_code_id,"start_time":obj.activityData[q].start_time, "data_info_id":obj.activityData[q].data_info_id, "remark_id":obj.activityData[q].remark_id, "remark":obj.activityData[q].remark});
 
  // }// end of else
 
@@ -836,7 +836,23 @@ loadUtilizationReportPopData:function(){
                 render: function (data, type, row, meta) {
                     return '<span style=color:'+row.color_code+';font-weight:bold;>'+row.message+'</sanp>';
                 }
-              }          
+              } , 
+              { data: "remark",
+                  render: function (data, type, row, meta) {
+                      return '<textarea type="text" class="form-control" maxlength="500" style="height:100;" readonly>'+row.remark+'</textarea>';
+                }
+              }, 
+            { data: "remark_id",
+                render: function (data, type, row, meta) {
+                	var result = '';
+                	if(row.remark !=""){
+                		 result ='<button type="button" class="btn btn-warning btn-xs" onclick="tempData.oeeDash.editRemarks(\''+row.start_time+'\', \''+row.end_time+'\', '+row.data_info_id+', '+row.remark_id+', \''+escape(row.remark)+'\');" title="Edit Remarks"><i class="fa fa-edit"></i> Edit </button>';
+                	} else { 
+                		 result ='<button type="button" class="btn btn-primary btn-xs" onclick="tempData.oeeDash.editRemarks(\''+row.start_time+'\', \''+row.end_time+'\', '+row.data_info_id+', '+row.remark_id+', \''+escape(row.remark)+'\');" title="Edit Remarks"><i class="fa fa-edit"></i> Add </button>';
+                	}
+                    return result;
+                }
+              }         
             ]
            });   
         DataTableProject.on( 'order.dt search.dt', function () {
@@ -844,6 +860,48 @@ loadUtilizationReportPopData:function(){
                   cell.innerHTML = i+1;
               } );
           } ).draw(); 
+},
+editRemarks:function(startTime, endTime, d_info_id, remark_id, remark){
+    $('#remarkModal').modal({show:true});
+    $('#remark_id').val(remark_id);
+    $('#data_info_id').val(d_info_id);
+    $('#start_time').val(startTime);
+    $('#end_time').val(endTime);
+    $('#remark_val').val(unescape(remark));
+},
+saveRemarksVal:function(){
+	 $('#loading').show();
+	 var url="getDataController.php";
+	 var fromData = new FormData($('#fromRemarkForm')[0]);
+	  fromData.append("saveRemark", "saveRemark");
+	  $.ajax({
+	    type:"POST",
+	    url:url,
+	    async: false,
+	    dataType: 'json',
+	    cache: false,
+	    processData: false,
+	    contentType: false,
+	    data:fromData,
+	    success: function(obj) {
+	        debugger;
+	      if(obj.data !=null){
+	        if(obj.data.infoRes=='S'){		      
+	        	 
+	        	 tempData.oeeDash.getActivityProgress();
+	        	 tempData.oeeDash.loadUtilizationReportPopData();
+	        	 $('#fromRemarkForm')[0].reset();	
+	        	 $('#remarkModal').modal('hide');        	 
+	        }else{
+		     
+		     } 
+	        $('#loading').hide(); 
+	      } 
+	      setTimeout(function(){  
+	        $("#commonMsg").fadeToggle('slow');        
+	      }, 1500);
+	    }
+	 });
 },
 getDateFormate:function(date){
   var dt=date.split(' ');
@@ -985,7 +1043,7 @@ getShiftWiseDates:function(date){
 
 $(document).ready(function() {
 debugger; 
-var setIntervalTime=100000;
+var setIntervalTime=200000;
 setInterval( function(){ tempData.oeeDash.reload();  } , setIntervalTime);
 //$(".loader").fadeIn("slow");
   $("#companyOEE").parent().addClass('active');
@@ -1183,7 +1241,7 @@ $(".loader").fadeOut("slow");
             </div>
 
             <div class="col-md-12 col-xs-12" style="padding: 0px;">
-                <p class="col-md-7 col-xs-7 availTextRight">Idle Time</p>
+                <p class="col-md-7 col-xs-7 availTextRight">Downtime</p>
                 <p class="col-md-5 col-xs-5 text-right availTextLeft" id="IdleTime"></p>
                 <div class="col-md-12 col-xs-12" style="margin-top: -10px; margin-bottom: 4%;">    
                   <div class="progress progress-sm active" style="margin: auto;">
@@ -1195,7 +1253,7 @@ $(".loader").fadeOut("slow");
             </div>
 
             <div class="col-md-12 col-xs-12" style="padding: 0px;">
-                <p class="col-md-8 col-xs-8 availTextRight">Breakdown Time</p>
+                <p class="col-md-8 col-xs-8 availTextRight">Scheduled Downtime</p>
                 <p class="col-md-4 col-xs-4 text-right availTextLeft" id="BreakdownTime"></p>
                 <div class="col-md-12 col-xs-12" style="margin-top: -10px; margin-bottom: 4%;">    
                   <div class="progress progress-sm active" style="margin: auto;">
@@ -1513,7 +1571,9 @@ $(".loader").fadeOut("slow");
                               <th>Start Time <!-- <SUB>(yyyy-mm-dd)</SUB> --></th>
                               <th>End Time <!-- <SUB>(yyyy-mm-dd)</SUB> --> </th>                               
                               <th>Duration <!-- <SUB>(hh:mm:ss)</SUB> --></th>                               
-                              <th style="width: 30%;">Reason</th>                         
+                              <th style="width: 30%;">Reason</th> 
+                              <th>Remarks</th> 
+                              <th>Action</th>                       
                             </tr>
                             </thead>
                         </table>
@@ -1529,6 +1589,46 @@ $(".loader").fadeOut("slow");
     </div>
   </div>
 </div> 
+
+     
+  <!-- Remarks Entry modal -->
+    <div class="modal fade" id="remarkModal">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+              <span aria-hidden="true">&times;</span></button>
+              <h4 class="modal-title">Remarks</h4>
+          </div>
+          <form id="fromRemarkForm" enctype="multipart/form-data">
+           <input type="hidden" name="data_info_id" id="data_info_id"/> 
+           <input type="hidden" name="remark_id" id="remark_id"/>
+           <input type="hidden" name="start_time" id="start_time"/>
+            <input type="hidden" name="end_time" id="end_time"/>
+           <div class="modal-body">          
+               <div class="row">  
+                    <div class="col-md-12" style="padding-top: 3px;">
+<!--                         <label class="control-label col-md-4 col-sm-6 col-xs-12">Remarks</label> -->
+                          <div class="col-md-1 col-sm-1 col-xs-12">
+                          </div>
+                        <div class="col-md-10 col-sm-10 col-xs-12">
+                          <textarea  type="text" placeholder="Enter Remarks" name="remark_val" id="remark_val" class="form-control" style="height: 150px;"></textarea>
+                        </div>
+                    </div>
+                </div>
+          </div>
+          <div class="modal-footer" style="text-align: center;">
+            <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+            <button type="button" class="btn btn-success" onclick="tempData.oeeDash.saveRemarksVal();" >Save</button>
+            <div id="loading" style="display: none;"> <i class="fa fa-refresh fa-spin" style="font-size:35px"></i></div>
+          </div>
+          </form>
+        </div>
+        <!-- /.modal-content -->
+      </div>
+      <!-- /.modal-dialog -->
+    </div>
+    <!-- /.modal -->
 
 
 </body>

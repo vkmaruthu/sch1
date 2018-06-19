@@ -326,6 +326,9 @@ $sql = mysqli_query($con, "call sfsp_getEvents(".$iobotMachine.",".$shift.",'".$
         $reason_code_id=$row['reason_code_id'];
         $message=$row['message'];
         $color_code=$row['color_code'];
+        $data_info_id=$row['data_info_id'];
+        $remark_id=$row['remark_id'];
+        $remark=$row['remark'];
 
         $final_data[]=array('start_time'=>"$start_time",
                             'end_time'=>"$end_time",
@@ -333,6 +336,9 @@ $sql = mysqli_query($con, "call sfsp_getEvents(".$iobotMachine.",".$shift.",'".$
                             'reason_code_id'=>"$reason_code_id",
                             'message'=>"$message",
                             'color_code'=>"$color_code",
+                            'data_info_id'=>"$data_info_id",
+                            'remark_id'=>"$remark_id",
+                            'remark'=>"$remark",
                             );
     }
 
@@ -476,6 +482,69 @@ AND seq.id=".$iobotMachine." ORDER BY sp.date_time ASC";
 
     $status['data'] = $finalDataInArr;
     $status['info'] = $info;
+    echo json_encode($status);
+    mysqli_close($con);
+}
+if(isset($_POST['saveRemark'])){
+    
+    $data_info_id=$_POST['data_info_id'];
+    $remark_id=$_POST['remark_id'];
+    $remark_val=$_POST['remark_val'];
+    $end_time=$_POST['end_time'];
+    $start_time=$_POST['start_time'];
+    
+    
+    
+    $table = 'sfs_remarks';
+    if($remark_id == 1 || $remark_id == ''){
+        $DataMarge=array('remarks' => $remark_val);
+        $sqlQuery = mysqli_insert_array($table, $DataMarge, "submit");
+        $res=mysqli_query($con,$sqlQuery) or die('Error: ' . mysqli_error($con));
+       // $last_id = mysql_insert_id();
+
+        if(!$res) {
+            $error="Error while saving data";
+            $response['info']=$error;
+            $response['infoRes']='E';             
+        }else {
+            if(mysqli_errno() != 1062){
+                move_uploaded_file($file_tmps,$filePath);
+                $response['info']="Saved Successfully";
+                $response['infoRes']="S"; // success
+                $response['mysqli_insert_id']=mysqli_insert_id($con);
+                $sqlQuery1 = "UPDATE sfs_event SET remark_id=".mysqli_insert_id($con)." WHERE data_info_id=".$data_info_id." AND start_time >= '".$start_time."' AND end_time <= '".$end_time."'";
+                $res=mysqli_query($con,$sqlQuery1);
+            }else{
+                $error="Error while saving data";
+                $response['info']=$error;
+                $response['infoRes']='E'; //Error
+            }
+        }
+    }else{
+        $DataMarge=array('remarks'=>$remark_val);
+        $cond=' id='.$remark_id;
+        $sqlQuery = mysqli_update_array($table, $DataMarge, "submit",$cond); 
+        $res=mysqli_query($con,$sqlQuery); //or die('Error: ' . mysqli_error($con));
+        if(!$res) {
+            $error="Error while Updating";
+            $response['info']=$error;
+            $response['infoRes']='E'; //Error
+        }else {
+            if(mysqli_errno() != 1062){
+                move_uploaded_file($file_tmps,$filePath);
+                $response['info']="Record Updated Successfully";
+                $response['infoRes']="S"; // success
+                $response['mysqli_insert_id']=mysqli_insert_id($con);
+            }else{
+                $error="Error while Updating";
+                $response['info']=$error;
+                $response['infoRes']='E'; //Error
+            }
+            
+        } 
+    }
+    
+    $status['data'] = $response;
     echo json_encode($status);
     mysqli_close($con);
 }
