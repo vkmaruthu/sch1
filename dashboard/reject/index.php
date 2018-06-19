@@ -37,6 +37,7 @@ if(tempData===null||tempData===undefined){
 
 var globalRejectData=new Array();
 var poGlobalArray=new Array();
+var qcGlobalArray=new Array();
 tempData.oeereject=
 {
 loadAllRjectData:function(start_time, end_time, qCode, eq_code, plantId){
@@ -90,6 +91,24 @@ loadAllRjectData:function(start_time, end_time, qCode, eq_code, plantId){
 reload:function(){
    location.reload(true);
 },
+getQualityCode:function(){
+	  var url="getDataController.php";
+	  var compId = $('#comp_id').val();
+	  var myData = {getQualityCode:'getQualityCode', comp_id:compId};
+	  $.ajax({
+	    type:"POST",
+	    url:url,
+	    async: false,
+	    dataType: 'json',
+	    cache: false,
+	    data:myData,
+	    success: function(obj) {
+	      if(obj.getQC !=null){
+	    	  qcGlobalArray = obj.getQC;
+	        }
+	      } 
+	});
+},
 getPlantsForFilterDropdown:function(){
 	  var url="getDataController.php";
 	  var compId = $('#comp_id').val();
@@ -103,11 +122,11 @@ getPlantsForFilterDropdown:function(){
 	    data:myData,
 	    success: function(obj) {
 	      if(obj.plantDetails !=null){
-       	         $("#plantSave").html('');
-        		for(var i=0; i< obj.plantDetails.length; i++){
-    			   $("#plantSave").append('<option value="'+obj.plantDetails[i].id+'">'+obj.plantDetails[i].plant_desc+'</option>'); 
-        		}
-        	    $("#plantSave").val(obj.plantDetails[0].id).change();
+     	         $("#plantSave").html('');
+      		for(var i=0; i< obj.plantDetails.length; i++){
+  			   $("#plantSave").append('<option value="'+obj.plantDetails[i].id+'">'+obj.plantDetails[i].plant_desc+'</option>'); 
+      		}
+      	    $("#plantSave").val(obj.plantDetails[0].id).change();
 	        }
 	      } 
 	});
@@ -421,11 +440,12 @@ createRejectInput:function(shift_id){
          j=0; lstartH=0;
          userDate=tempData.oeereject.dateAddDay(userDate+' 00:00:00');
         }
-       content = '  <tr id="'+parseInt(lstartH+j)+'"><td width="5%"><div class=" tFormat talign">'+parseInt(lstartH+j)+'h</div></td> '+
-       '<td><div class="col-md-7 col-sm-7 col-xs-7"><input onkeypress="tempData.oeereject.calculation(\''+"kg_"+parseInt(lstartH+j)+'\');" id="kg_'+parseInt(lstartH+j)+'" type="number" min="0" step="0.01" value="0" class="form-control" /></div><div class="col-md-2 col-sm-2 col-xs-2 tFormat">Kg</div></td>'+
-       '<td><div class="col-md-8 col-sm-8 col-xs-8"><input id="cort_'+parseInt(lstartH+j)+'" type="number" min="0" step="0.01"  value="0" class="form-control" readonly /></div><div class="col-md-4 col-sm-4 col-xs-4 tFormat">Cartons</div></td>'+ 
-       '<td><div class="col-md-8 col-sm-8 col-xs-8"><input id="rev_'+parseInt(lstartH+j)+'" type="number" min="0" step="0.01"  value="0" class="form-control" readonly /></div><div class="col-md-4 col-sm-4 col-xs-4 tFormat">Revolutions</div></td>'+
-       '<td><button type="button" id="btn_'+parseInt(lstartH+j)+'" class="btn btn-success btn-xs" onclick="tempData.oeereject.insertReject(\''+"H_"+parseInt(lstartH+j)+'\');" title="Calculate"><i class="fa fa-floppy-o"> Save </i></button></td></tr> '+
+       content = '  <tr id="'+parseInt(lstartH+j)+'"><td width="10%"><div class=" tFormat talign">'+parseInt(lstartH+j)+':00 - '+parseInt(lstartH+j+1)+':00</div></td> '+
+       '<td><div class="col-md-7 col-sm-7 col-xs-7"><input onkeyup="tempData.oeereject.calculation(\''+"kg_"+parseInt(lstartH+j)+'\');" id="kg_'+parseInt(lstartH+j)+'" type="number" min="0" step="0.01" value="0" class="form-control" /></div><div class="col-md-2 col-sm-2 col-xs-2 tFormat">Kg</div></td>'+
+       '<td><select class="form-control select2 loadVal"  id="qc_'+parseInt(lstartH+j)+'" name="qc_'+parseInt(lstartH+j)+'"></select></td> '+
+       '<td><div class="col-md-8 col-sm-8 col-xs-8"><input id="cort_'+parseInt(lstartH+j)+'" type="number" min="0" step="0.01"  value="0" class="form-control" readonly style="text-align: right;" /></div><div class="col-md-4 col-sm-4 col-xs-4 tFormat">Cartons</div></td>'+ 
+       '<td hidden><div class="col-md-8 col-sm-8 col-xs-8"><input id="rev_'+parseInt(lstartH+j)+'" type="number" min="0" step="0.01"  value="0" class="form-control" readonly /></div><div class="col-md-4 col-sm-4 col-xs-4 tFormat">Revolutions</div></td>'+
+       '<td><button type="button" id="btn_'+parseInt(lstartH+j)+'" class="btn btn-success btn-xs" onclick="tempData.oeereject.insertReject(\''+"H_"+parseInt(lstartH+j)+'\');" title="Calculate"><i class="fa fa-floppy-o"> Save </i></button></td> </tr> '+
        '<input type="hidden" name="d_'+parseInt(lstartH+j)+'" id="d_'+parseInt(lstartH+j)+'" value="'+userDate+'" /> ';
        Gcontent += content;
        content = '';
@@ -434,6 +454,12 @@ createRejectInput:function(shift_id){
    j=0;
    $('#shiftTable').append(Gcontent);
    Gcontent = '';
+   for(var i=0;i<qcGlobalArray.length;i++)
+   {
+       if(qcGlobalArray[i].shift != 0){
+           $(".loadVal").append('<option value="'+qcGlobalArray[i].id+'">'+qcGlobalArray[i].reason_message+'</option>');
+       }
+   }
 },
 dateFormat:function(date){
     var Date = date.split('/');
@@ -459,7 +485,7 @@ calculation:function(val){
     		rev = Math.round(rev);
     		$('#rev_'+hrs).val(rev);
 		}else{
-			alert('Enter the reject quantities first.');
+			//alert('Enter the reject quantities first.');
 		}
 	}else {
 		alert('Select First PO Number');
@@ -474,7 +500,8 @@ insertReject:function(val){
     		var endDT = dataTime + ' '+tempData.oeereject.addZero(hrs)+':35:00';
     		var dinfoId = $('#data_info_id').val();
     		var count = $('#rev_'+hrs).val();
-    		var qualityCode = 2;
+    		var qualityCode =$('#qc_'+hrs).val();
+    		alert(qualityCode);
     		tempData.oeereject.saveReject(startDT,endDT,count, qualityCode, dinfoId, hrs);
 		}else {
 			alert('First Calculate Data on '+hrs+' Hrs To '+parseInt(parseInt(hrs)+1)+' Hrs');
@@ -502,6 +529,7 @@ saveReject:function(startDT, endDT, count, qualityCode, data_info_id, hrs){
 	           $("#btn_"+hrs).remove();
 	           $("#cal_"+hrs).remove();
 	           $("#kg_"+hrs).prop('disabled', true);
+	           $("#qc_"+hrs).prop('disabled', true);
 	        }else{
 	          $("#commonMsg").show();
 	          $('#commonMsg').html('<p class="commonMsgFail"> <i class="fa fa-warning"></i> '+obj.data.info+'</p>');
@@ -512,8 +540,25 @@ saveReject:function(startDT, endDT, count, qualityCode, data_info_id, hrs){
 	      }, 1500);
 
 	    }
-	  });
-  }
+	});
+},
+common:function(){
+	$("#wc_name").html('');
+	$("#wc_name").append('<option value="0"> Select Work Center </option>');     
+    $("#wc_name").prop("disabled", true); 
+    $("#equi_code").html('');
+    $("#equi_code").append('<option value="0"> Select Equipment </option>');
+    $("#equi_code").prop("disabled", true);
+    $("#order_number").html('');
+    $("#order_number").append('<option value="0"> Select PO </option>');
+	$("#order_number").prop("disabled", true);
+    $("#shift_id").html('');
+    $("#shift_id").html('<option value="0">Select Shift</option>');
+    $("#shift_id").prop("disabled", true);
+    $("#shiftTable").html('');
+	$('#mul_factor').val(0);
+    $('#data_info_id').val(0); 
+}
 
 };
 
@@ -578,21 +623,7 @@ debugger;
   	     $('#mul_factor').val(0);
          $('#data_info_id').val(0); 
       }else{  
-   	     $("#wc_name").html('');
-   	     $("#wc_name").append('<option value="0"> Select Work Center </option>');     
-         $("#wc_name").prop("disabled", true); 
-         $("#equi_code").html('');
-   	     $("#equi_code").append('<option value="0"> Select Equipment </option>');
-   	     $("#equi_code").prop("disabled", true);
-   	     $("#order_number").html('');
-   	     $("#order_number").append('<option value="0"> Select PO </option>');
-     	 $("#order_number").prop("disabled", true);
-         $("#shift_id").html('');
-         $("#shift_id").html('<option value="0">Select Shift</option>');
-         $("#shift_id").prop("disabled", true);
-         $("#shiftTable").html('');
-  	     $('#mul_factor').val(0);
-         $('#data_info_id').val(0); 
+    	  tempData.oeereject.common();
       }
    });
   $('#wc_name').change(function(){	  
@@ -622,24 +653,10 @@ debugger;
            $('#data_info_id').val(0); 
        }	  
    });
-   $('#userDateSel').change(function(){
-       $("#wc_name").html('');
-       $("#wc_name").append('<option value="0"> Select Work Center </option>');     
-       $("#wc_name").prop("disabled", true); 
-       $("#equi_code").html('');
-       $("#equi_code").append('<option value="0"> Select Equipment </option>');
-       $("#equi_code").prop("disabled", true);
-       $("#order_number").html('');
-       $("#order_number").append('<option value="0"> Select PO </option>');
-   	   $("#order_number").prop("disabled", true);
-       $("#shift_id").html('');
-       $("#shift_id").html('<option value="0">Select Shift</option>');
-       $("#shift_id").prop("disabled", true);
-       $("#shiftTable").html('');
-	   $('#mul_factor').val(0);
-       $('#data_info_id').val(0); 
+   $('#userDateSel').change(function(){ 
        tempData.oeereject.getPlantsForFilterDropdown();
        tempData.oeereject.getPlantsForTableFilter();
+       tempData.oeereject.common();
    }); 
 
    $('#plants').change(function(){ 
@@ -673,10 +690,11 @@ debugger;
 		     $("#d_equip").append('<option value="0"> Select Equipment </option>');
 	  	     $("#d_equip").prop("disabled", true);
 	       }
-	  });
+	});
     tempData.oeereject.loadAllRjectData();
     tempData.oeereject.getPlantsForFilterDropdown();
     tempData.oeereject.getPlantsForTableFilter();
+    tempData.oeereject.getQualityCode();
 });
 
 </script>
@@ -766,20 +784,7 @@ debugger;
                    </div>
               </div>
                     
-              <div class="row" style="margin-top: 10px;">
-               <div class="col-md-6">
-                   <label class="control-label col-md-4 col-sm-6 col-xs-12">1 Carton Equal To </label>
-                    <div class="col-md-4 col-sm-4 col-xs-10">
-                      <input type="number" min="1" step="0.01" value="4.16" name="kg" id="kg" class="form-control" />
-                    </div><span style="vertical-align: -webkit-baseline-middle; font-weight: 600;">Kg</span>
-                    </div>
-               <div class="col-md-6">
-                  <label class="control-label col-md-4 col-sm-6 col-xs-12">1 Rev Equal To </label>
-                    <div class="col-md-4 col-sm-4 col-xs-10">
-                      <input type="number" min="0" step="0.01" value="0" name="mul_factor" id="mul_factor" class="form-control" readonly/>
-                    </div><span style="vertical-align: -webkit-baseline-middle; font-weight: 600;">Cartons</span>
-                   </div>
-               </div>
+
                
               <div class="row" style="margin-top: 10px;">
                <div class="col-md-6">
@@ -791,9 +796,21 @@ debugger;
                 </div>
                 </div>
                 <div class="col-md-6">
+                   <label class="control-label col-md-4 col-sm-6 col-xs-12">1 Carton Equal To </label>
+                    <div class="col-md-4 col-sm-4 col-xs-10">
+                      <input type="number" min="1" step="0.01" value="4.16" name="kg" id="kg" class="form-control" />
+                    </div><span style="vertical-align: -webkit-baseline-middle; font-weight: 600;">Kg</span>
                 </div>
-              </div>
+              </div> 
               
+              <div class="row" style="margin-top: 10px;">
+               <div class="col-md-6">
+                    <div class="col-md-4 col-sm-4 col-xs-10">
+                      <input type="hidden" min="0" step="0.01" value="0" name="mul_factor" id="mul_factor" class="form-control" readonly/>
+                    </div>
+                   </div>
+               </div>
+             
               </div>
           
               <div class="row" style="margin-top: 10px;  padding-left: 5px; padding-right: 5px;">
@@ -846,7 +863,7 @@ debugger;
              <tr>       
                <th>Start Time</th>
                <th>End Time</th>
-               <th>Count(Rev/Strokes)</th>  
+               <th>Cartons</th>  
                <th>Quality Type</th>  
                <th>Equipment</th>
              </tr>

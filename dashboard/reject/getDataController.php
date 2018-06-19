@@ -73,8 +73,6 @@ if(isset($_POST['getPODetails'])){
     echo json_encode($status);
     mysqli_close($con);
 }
-
-
 if(isset($_POST['getRejCount'])){
     $comp_id=$_POST['comp_id'];
     $quality_codes_id=$_POST['quality_codes_id'];
@@ -83,8 +81,10 @@ if(isset($_POST['getRejCount'])){
     $end_time=$_POST['end_time'];
     
     if ($eq_code != '') {
-        $eqQ="SELECT sd.start_time, sd.end_time, sd.count, seq.code, seq.descp, sqc.reason_message FROM sfs_data sd, sfs_data_info sdi, sfs_equipment seq, sfs_quality_code sqc 
+        $eqQ="SELECT sd.start_time, sd.end_time,  ROUND((sd.count*	no_of_items_per_oper), 3) as count, seq.code, seq.descp, sqc.reason_message 
+       FROM sfs_data sd, sfs_data_info sdi, sfs_equipment seq, sfs_quality_code sqc, sfs_tool_opr sto 
         WHERE sd.data_info_id=sdi.id AND sdi.eq_code=seq.code AND sd.quality_codes_id=sqc.id AND 
+        sto.tag_id=sdi.tag_id AND
         quality_codes_id=".$quality_codes_id." AND sdi.eq_code='".$eq_code."' AND start_time >= '".$start_time."' AND end_time <= '".$end_time."'";
 
     $partsDetails=mysqli_query($con,$eqQ) or die('Error:'.mysqli_error($con));
@@ -107,23 +107,16 @@ if(isset($_POST['getRejCount'])){
     echo json_encode($status);
     mysqli_close($con);
 }
-
-
-
 if(isset($_POST['loadShiftData'])){     // getData for loadShiftData
     $comp_id= $_POST['comp_id'];
     $plant_id= $_POST['plant_id'];
     $workCenter_id= $_POST['workCenter_id'];
     $iobotMachine= $_POST['iobotMachine'];
-    
     $selDate= explode("/",$_POST['selDate']);// getting only Dateval
     $final_date= $selDate[2].'-'.$selDate[1].'-'.$selDate[0];
-    
     function getHours($time){
         return date("H", strtotime($time));
     }
-    
-    
     $ssq="SELECT id FROM  sfs_shifts WHERE type='SPECIAL' and plant_id=".$plant_id." and
         DATE(start_date) = '".$final_date."'";
     
@@ -133,8 +126,6 @@ if(isset($_POST['loadShiftData'])){     // getData for loadShiftData
     }else{
         $sqlQ="SELECT id, code, start_date, end_date, plant_id, in_time, out_time, total_minutes, num_hours, hour_start,type, lb_starttime, lb_endtime, sb1_starttime, sb1_endtime, sb2_starttime, sb2_endtime,is_break_availb  FROM  sfs_shifts where type='NORMAL' and plant_id=".$plant_id." and start_date=(SELECT MAX(DATE(start_date)) FROM  sfs_shifts WHERE DATE(start_date) <= '".$final_date."' and plant_id=".$plant_id."  and type='NORMAL')";
     }
-    
-    
     $sql=mysqli_query($con, $sqlQ) or die("Query fail: " .mysqli_error($con));
     while ($row=mysqli_fetch_array($sql))
     {
@@ -199,6 +190,27 @@ if(isset($_POST['loadShiftData'])){     // getData for loadShiftData
     echo json_encode($status);
     mysqli_close($con);
 }
+if(isset($_POST['getQualityCode'])){
+    $comp_id=$_POST['comp_id'];
+    if ($comp_id != '') {
+        $eqQ="SELECT sqc.id, sqc.reason_message, sqc.color_code FROM sfs_quality_code sqc , sfs_quality_type sqt
+              WHERE  sqt.id=sqc.quality_type_id AND sqc.quality_type_id=2";
+        $qcDetails=mysqli_query($con,$eqQ) or die('Error:'.mysqli_error($con));
+        while ($row=mysqli_fetch_array($qcDetails)){
+            $id=$row['id'];
+            $reason_message=$row['reason_message'];
+            $color_code=$row['color_code'];           
+            $getEQData[]=array('id' =>"$id",
+                'reason_message' =>"$reason_message",
+                'color_code' =>"$color_code"
+            );
+        }
+    }
+    $status['getQC'] = $getEQData;
+    echo json_encode($status);
+    mysqli_close($con);
+}
+
 
 
     
