@@ -445,7 +445,7 @@ createRejectInput:function(shift_id){
        '<td><select class="form-control select2 loadVal"  id="qc_'+parseInt(lstartH+j)+'" name="qc_'+parseInt(lstartH+j)+'"></select></td> '+
        '<td><div class="col-md-8 col-sm-8 col-xs-8"><input id="cort_'+parseInt(lstartH+j)+'" type="number" min="0" step="0.01"  value="0" class="form-control" readonly style="text-align: right;" /></div><div class="col-md-4 col-sm-4 col-xs-4 tFormat">Cartons</div></td>'+ 
        '<td hidden><div class="col-md-8 col-sm-8 col-xs-8"><input id="rev_'+parseInt(lstartH+j)+'" type="number" min="0" step="0.01"  value="0" class="form-control" readonly /></div><div class="col-md-4 col-sm-4 col-xs-4 tFormat">Revolutions</div></td>'+
-       '<td><button type="button" id="btn_'+parseInt(lstartH+j)+'" class="btn btn-success btn-xs" onclick="tempData.oeereject.insertReject(\''+"H_"+parseInt(lstartH+j)+'\');" title="Calculate"><i class="fa fa-floppy-o"> Save </i></button></td> </tr> '+
+       '<td><button type="button" id="btn_'+parseInt(lstartH+j)+'" class="btn btn-success btn-xs" onclick="tempData.oeereject.insertReject(\''+"H_"+parseInt(lstartH+j)+'\');" title="Calculate" style="display:none;"><i class="fa fa-floppy-o"> Save </i></button></td> </tr> '+
        '<input type="hidden" name="d_'+parseInt(lstartH+j)+'" id="d_'+parseInt(lstartH+j)+'" value="'+userDate+'" /> ';
        Gcontent += content;
        content = '';
@@ -487,8 +487,9 @@ calculation:function(val){
 		}else{
 			//alert('Enter the reject quantities first.');
 		}
+		$('#btn_'+hrs).show();
 	}else {
-		alert('Select First PO Number');
+		alert('Select PO Number');
 	}
 }, 
 insertReject:function(val){	
@@ -501,7 +502,6 @@ insertReject:function(val){
     		var dinfoId = $('#data_info_id').val();
     		var count = $('#rev_'+hrs).val();
     		var qualityCode =$('#qc_'+hrs).val();
-    		alert(qualityCode);
     		tempData.oeereject.saveReject(startDT,endDT,count, qualityCode, dinfoId, hrs);
 		}else {
 			alert('First Calculate Data on '+hrs+' Hrs To '+parseInt(parseInt(hrs)+1)+' Hrs');
@@ -578,9 +578,6 @@ debugger;
   
   $('#createReject').click(function(){
 	  tempData.oeereject.clearForm();
-	  var date = new Date();
-	  var today = new Date(date.getFullYear(), date.getMonth(), date.getDate());
-	  $('.datepicker-me').datepicker('setDate', today);
   });
 
   $('#cancel').click(function(){
@@ -653,11 +650,11 @@ debugger;
            $('#data_info_id').val(0); 
        }	  
    });
-   $('#userDateSel').change(function(){ 
+/*    $('#userDateSel').change(function(){ 
        tempData.oeereject.getPlantsForFilterDropdown();
        tempData.oeereject.getPlantsForTableFilter();
        tempData.oeereject.common();
-   }); 
+   });  */
 
    $('#plants').change(function(){ 
       if($('#plants').val() != 0){
@@ -864,7 +861,7 @@ debugger;
                <th>Start Time</th>
                <th>End Time</th>
                <th>Cartons</th>  
-               <th>Quality Type</th>  
+               <th>Reason</th>  
                <th>Equipment</th>
              </tr>
            </thead>

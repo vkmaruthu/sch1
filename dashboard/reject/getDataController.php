@@ -81,11 +81,11 @@ if(isset($_POST['getRejCount'])){
     $end_time=$_POST['end_time'];
     
     if ($eq_code != '') {
-        $eqQ="SELECT sd.start_time, sd.end_time,  ROUND((sd.count*	no_of_items_per_oper), 3) as count, seq.code, seq.descp, sqc.reason_message 
-       FROM sfs_data sd, sfs_data_info sdi, sfs_equipment seq, sfs_quality_code sqc, sfs_tool_opr sto 
-        WHERE sd.data_info_id=sdi.id AND sdi.eq_code=seq.code AND sd.quality_codes_id=sqc.id AND 
-        sto.tag_id=sdi.tag_id AND
-        quality_codes_id=".$quality_codes_id." AND sdi.eq_code='".$eq_code."' AND start_time >= '".$start_time."' AND end_time <= '".$end_time."'";
+        $eqQ="SELECT sd.start_time, sd.end_time, ROUND((sd.count*no_of_items_per_oper), 3) as count, seq.code, seq.descp, sqc.reason_message 
+         FROM sfs_data sd, sfs_data_info sdi, sfs_equipment seq, sfs_quality_code sqc, sfs_tool_opr sto, sfs_quality_type sqt 
+         WHERE sd.data_info_id=sdi.id AND sdi.eq_code=seq.code AND sd.quality_codes_id=sqc.id AND sqc.quality_type_id=sqt.id AND
+         sto.tag_id=sdi.tag_id AND
+         sqc.quality_type_id=".$quality_codes_id." AND sdi.eq_code='".$eq_code."' AND start_time >= '".$start_time."' AND end_time <= '".$end_time."'";
 
     $partsDetails=mysqli_query($con,$eqQ) or die('Error:'.mysqli_error($con));
     while ($row=mysqli_fetch_array($partsDetails)){
