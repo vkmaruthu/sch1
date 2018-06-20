@@ -712,7 +712,10 @@ for(var q=0;q<obj.activityData.length;q++){        // Main Loop
   widthVal=tempData.oeeDash.getRation(parseInt(obj.activityData[q].duration));
   divData+='<div class="progress-bar" style="width:'+parseFloat(widthVal)+'%;background-color:'+obj.activityData[q].color_code+'" title="'+obj.activityData[q].message+' - '+stTime.time+' to '+enTime.time+'"> </div>';
 
- globalUtilizationData.push({"color_code":obj.activityData[q].color_code,"duration":obj.activityData[q].duration,"end_time":obj.activityData[q].end_time,"message":obj.activityData[q].message,"reason_code_id":obj.activityData[q].reason_code_id,"start_time":obj.activityData[q].start_time, "data_info_id":obj.activityData[q].data_info_id, "remark_id":obj.activityData[q].remark_id, "remark":obj.activityData[q].remark});
+ globalUtilizationData.push({"color_code":obj.activityData[q].color_code,"duration":obj.activityData[q].duration,"end_time":obj.activityData[q].end_time,"message":obj.activityData[q].message,
+	 "reason_code_id":obj.activityData[q].reason_code_id,"start_time":obj.activityData[q].start_time, 
+	 "data_info_id":obj.activityData[q].data_info_id, "remark_id":obj.activityData[q].remark_id, 
+	 "remark":obj.activityData[q].remark,"start_time_actual":obj.activityData[q].start_time_actual,"end_time_actual":obj.activityData[q].end_time_actual});
 
  // }// end of else
 
@@ -846,9 +849,9 @@ loadUtilizationReportPopData:function(){
                 render: function (data, type, row, meta) {
                 	var result = '';
                 	if(row.remark !=""){
-                		 result ='<button type="button" class="btn btn-warning btn-xs" onclick="tempData.oeeDash.editRemarks(\''+row.start_time+'\', \''+row.end_time+'\', '+row.data_info_id+', '+row.remark_id+', \''+escape(row.remark)+'\');" title="Edit Remarks"><i class="fa fa-edit"></i> Edit </button>';
+                		 result ='<button type="button" class="btn btn-warning btn-xs" onclick="tempData.oeeDash.editRemarks(\''+row.start_time_actual+'\', \''+row.end_time_actual+'\', '+row.data_info_id+', '+row.remark_id+', \''+escape(row.remark)+'\');" title="Edit Remarks"><i class="fa fa-edit"></i> Edit </button>';
                 	} else { 
-                		 result ='<button type="button" class="btn btn-primary btn-xs" onclick="tempData.oeeDash.editRemarks(\''+row.start_time+'\', \''+row.end_time+'\', '+row.data_info_id+', '+row.remark_id+', \''+escape(row.remark)+'\');" title="Edit Remarks"><i class="fa fa-edit"></i> Add </button>';
+                		 result ='<button type="button" class="btn btn-primary btn-xs" onclick="tempData.oeeDash.editRemarks(\''+row.start_time_actual+'\', \''+row.end_time_actual+'\', '+row.data_info_id+', '+row.remark_id+', \''+escape(row.remark)+'\');" title="Edit Remarks"><i class="fa fa-edit"></i> Add </button>';
                 	}
                     return result;
                 }

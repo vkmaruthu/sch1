@@ -25,7 +25,7 @@ if(isset($_POST['insertRej'])){
         $res=mysqli_query($con,$sqlQuery);// or die('Error: ' . mysqli_error($con));
         if(mysqli_errno() != 1062){
             move_uploaded_file($file_tmps,$filePath);
-            $response['info']="Data Inserted Successfully.";
+            $response['info']="Data Saved Successfully.";
             $response['infoRes']="S"; // success
             $response['mysqli_insert_id']=mysqli_insert_id($con);
         }else{
@@ -44,7 +44,6 @@ if(isset($_POST['getPODetails'])){
     $comp_id = $_POST['comp_id'];
     $plant_id=$_POST['plant_id'];
     $eq_code=$_POST['eq_code'];
-    
     if (($plant_id != "" && $plant_id != 0)) {
        $eqQ="SELECT dp.id, dp.operation, dp.order_number, dp.material, sdi.id as data_info_id, sto.no_of_items_per_oper
                 FROM  sfs_dc_po dp, sfs_plant sp, sfs_data_info sdi, sfs_tool_opr sto, sfs_equipment seq
@@ -79,14 +78,22 @@ if(isset($_POST['getRejCount'])){
     $eq_code=$_POST['eq_code'];
     $start_time=$_POST['start_time'];
     $end_time=$_POST['end_time'];
+    $po_id=$_POST['po_id'];
     
-    if ($eq_code != '') {
-        $eqQ="SELECT sd.start_time, sd.end_time, ROUND((sd.count*no_of_items_per_oper), 3) as count, seq.code, seq.descp, sqc.reason_message 
+ if ($eq_code != '') {
+     if($po_id != 0){
+        $eqQ="SELECT sd.start_time, sd.end_time, ROUND((sd.count*no_of_items_per_oper), 3) as count, seq.code, seq.descp, sqc.reason_message, sqc.id
          FROM sfs_data sd, sfs_data_info sdi, sfs_equipment seq, sfs_quality_code sqc, sfs_tool_opr sto, sfs_quality_type sqt 
          WHERE sd.data_info_id=sdi.id AND sdi.eq_code=seq.code AND sd.quality_codes_id=sqc.id AND sqc.quality_type_id=sqt.id AND
-         sto.tag_id=sdi.tag_id AND
-         sqc.quality_type_id=".$quality_codes_id." AND sdi.eq_code='".$eq_code."' AND start_time >= '".$start_time."' AND end_time <= '".$end_time."'";
-
+         sto.tag_id=sdi.tag_id AND sqc.quality_type_id=".$quality_codes_id." AND sdi.order_id=".$po_id."
+         AND sdi.eq_code='".$eq_code."' AND start_time >= '".$start_time."' AND end_time <= '".$end_time."'";
+     } else {
+       $eqQ="SELECT sd.start_time, sd.end_time, ROUND((sd.count*no_of_items_per_oper), 3) as count, seq.code, seq.descp, sqc.reason_message, sqc.id
+         FROM sfs_data sd, sfs_data_info sdi, sfs_equipment seq, sfs_quality_code sqc, sfs_tool_opr sto, sfs_quality_type sqt
+         WHERE sd.data_info_id=sdi.id AND sdi.eq_code=seq.code AND sd.quality_codes_id=sqc.id AND sqc.quality_type_id=sqt.id AND
+         sto.tag_id=sdi.tag_id AND sqc.quality_type_id=".$quality_codes_id."
+         AND sdi.eq_code='".$eq_code."' AND start_time >= '".$start_time."' AND end_time <= '".$end_time."'"; 
+     }
     $partsDetails=mysqli_query($con,$eqQ) or die('Error:'.mysqli_error($con));
     while ($row=mysqli_fetch_array($partsDetails)){
         $start_time=$row['start_time'];
@@ -94,12 +101,14 @@ if(isset($_POST['getRejCount'])){
         $count=$row['count'];
         $descp=$row['descp'];
         $reason_message=$row['reason_message'];
+        $id=$row['id'];
         
         $getEQData[]=array('start_time' =>"$start_time",
             'end_time' =>"$end_time",
             'count' =>"$count",
             'descp' =>"$descp",
-            'reason_message' =>"$reason_message"
+            'reason_message' =>"$reason_message",
+            'id' => $id
         );
     }
     }

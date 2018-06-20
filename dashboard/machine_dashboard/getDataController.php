@@ -329,6 +329,8 @@ $sql = mysqli_query($con, "call sfsp_getEvents(".$iobotMachine.",".$shift.",'".$
         $data_info_id=$row['data_info_id'];
         $remark_id=$row['remark_id'];
         $remark=$row['remark'];
+        $start_time_actual=$row['start_time_actual'];
+        $end_time_actual=$row['end_time_actual'];
 
         $final_data[]=array('start_time'=>"$start_time",
                             'end_time'=>"$end_time",
@@ -339,6 +341,8 @@ $sql = mysqli_query($con, "call sfsp_getEvents(".$iobotMachine.",".$shift.",'".$
                             'data_info_id'=>"$data_info_id",
                             'remark_id'=>"$remark_id",
                             'remark'=>"$remark",
+                            'start_time_actual'=>"$start_time_actual",
+                            'end_time_actual'=>"$end_time_actual"
                             );
     }
 
