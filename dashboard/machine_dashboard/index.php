@@ -670,43 +670,8 @@ for(var q=0;q<obj.activityData.length;q++){        // Main Loop
     if(uiStDate<dbStDate){
      divData+=tempData.oeeDash.insertBlankEvent(d1,d2); 
     }
-    /*else { // uiStDate = d1  uiEnDate = d3 dbStDate = d2  dbEnDate = d4
-      widthVal=tempData.oeeDash.getRation(tempData.oeeDash.timeDiff(d1,d4));
-    divData+='<div class="progress-bar" style="width:'+parseFloat(widthVal)+'%;background-color:'+obj.activityData[q].color_code+'" title="'+obj.activityData[q].message+' - '+GinTime+' to '+enTime.time+'"> </div>';
-
-  globalUtilizationData.push({"color_code":obj.activityData[q].color_code,"duration":tempData.oeeDash.timeDiff(d1,d4),"end_time":obj.activityData[q].end_time,"message":obj.activityData[q].message,"reason_code_id":obj.activityData[q].reason_code_id,"start_time":d1});
-    }*/
   }
 
- /* if(q == (obj.activityData.length-1)) 
-  {// uiStDate = d1  uiEnDate = d3 dbStDate = d2  dbEnDate = d4
-    var endDateTime;
-    var endTime;
-    var currentDateTime = new Date();
-
-      if(currentDateTime < uiEnDate){
-        //alert();
-        endDateTime = d4;
-        endTime=enTime.time;
-      }else{
-        //TODO :: Update end Date
-        if(GoutTime < GinTime){
-            // Update Date
-           endDateTime = tempData.oeeDash.addOneDate(d3);
-           endTime = GoutTime;
-        }else{
-           // Current date
-           endDateTime = d4;        //d3
-           endTime = enTime.time;  //GoutTime
-        }
-      }
-    widthVal=tempData.oeeDash.getRation(tempData.oeeDash.timeDiff(d2,endDateTime));
-    divData+='<div class="progress-bar" style="width:'+parseFloat(widthVal)+'%;background-color:'+obj.activityData[q].color_code+'" title="'+obj.activityData[q].message+' - '+stTime.time+' to '+endTime+'"> </div>';
-
-   globalUtilizationData.push({"color_code":obj.activityData[q].color_code,"duration":tempData.oeeDash.timeDiff(d2,endDateTime),"end_time":endDateTime,"message":obj.activityData[q].message,"reason_code_id":obj.activityData[q].reason_code_id,"start_time":d2});
-
-  } */
-  //else if (q!=0){
   /* Bulding main progress bar */    
   // uiStDate = d1  uiEnDate = d3 dbStDate = d2  dbEnDate = d4
   widthVal=tempData.oeeDash.getRation(parseInt(obj.activityData[q].duration));
@@ -716,11 +681,6 @@ for(var q=0;q<obj.activityData.length;q++){        // Main Loop
 	 "reason_code_id":obj.activityData[q].reason_code_id,"start_time":obj.activityData[q].start_time, 
 	 "data_info_id":obj.activityData[q].data_info_id, "remark_id":obj.activityData[q].remark_id, 
 	 "remark":obj.activityData[q].remark,"start_time_actual":obj.activityData[q].start_time_actual,"end_time_actual":obj.activityData[q].end_time_actual});
-
- // }// end of else
-
-
-  
 } // end of FOR LOOP
 
   var finalDiv='<div class="progress" style="margin-bottom: 0px;">'+divData+'</div>';
@@ -797,14 +757,6 @@ loadUtilizationReport:function(){
 loadUtilizationReportPopData:function(){
     $('#loadUtilizationReportTable').hide();
     $('#table_disGraph7').show();
-
-/*        $.ajax({
-            type:"POST",
-            url:"loadData.json",
-            async: false,
-            dataType: 'json',
-            success: function(obj){*/
-              //debugger;
 
               $('#loadUtilizationReportTable').show();
               $('#table_disGraph7').hide();
@@ -1046,15 +998,11 @@ getShiftWiseDates:function(date){
 
 $(document).ready(function() {
 debugger; 
-var setIntervalTime=200000;
+var setIntervalTime=500000;
 setInterval( function(){ tempData.oeeDash.reload();  } , setIntervalTime);
-//$(".loader").fadeIn("slow");
   $("#companyOEE").parent().addClass('active');
   $("#companyOEE").parent().parent().closest('.treeview').addClass('active menu-open');
   
-/*  var today="<?php echo $_GET['selDate']; ?>";
-  $('.datepicker-me').datepicker('setDate', today);
-*/
 var date = new Date();
 var today = new Date(date.getFullYear(), date.getMonth(), date.getDate());
 $('.datepicker-me').datepicker('setDate', today);
@@ -1116,24 +1064,17 @@ $(".loader").fadeOut("slow");
 
     <div class="btnsStyle btnsStyleDashboard" id="btns">
       <div class="col-md-5 col-sm-12 col-xs-12 pull-left headerTitle">
-       <!--  <a onclick="tempData.oeeDash.visitPlants();">Plants</a> / <a onclick="tempData.oeeDash.visitWorkcenter();">WorkCenter</a> / 
-        <a onclick="tempData.oeeDash.visitMachine();">Machine</a> / Name of Machine<br>  -->
-
           <div class="col-md-4 col-sm-6 col-xs-12" style="padding:0px;">
                 <div class="form-group" style="margin-bottom:0px;">
                   <select class="form-control select2"  id="eq_desc" name="eq_desc" 
                   style="width: 100%;padding:0px !important;">
                     <option value="none"> Select Equipment </option>
                   </select>
-               <!--  <p style="font-size: 11px;"> As on 24/04/2018 18:00:00 </p> -->
                 </div>
           </div>      
       </div>
 
       <div class="col-md-5 col-sm-12 col-xs-12 pull-right" style="margin-top:7px;">
-          
-
-         
         <div class="col-md-1 col-sm-1 col-xs-1 pull-right">
           <button type="button" onclick="tempData.oeeDash.reload();" class="btn btn-sm btn-info"
            style="">   <i class="fa  fa-refresh"> </i>
@@ -1154,24 +1095,8 @@ $(".loader").fadeOut("slow");
           <select class="form-control" id="shiftDropdown" style="font-size: 12px; padding: 2px;">
           </select>   <!-- onchange= "tempData.oeeDash.shiftsdata(); -->
         </div> 
-
-     
-
       </div>      
     </div>
-
-<!-- Plant / Workcenter / Machine -->
-<!-- <div class="row">
-  <div class="col-md-3 col-sm-6 col-xs-12">
-       <div class="col-md-12 col-sm-12 col-xs-12">
-        <div class="form-group">
-          <select class="form-control select2"  id="eq_desc" name="eq_desc" style="width: 100%">
-            <option value="none"> Select Equipment </option>
-          </select>
-        </div>
-      </div>
-  </div>
-</div> -->
 
 <div class="row">
      <!-- OEE -->
@@ -1184,9 +1109,6 @@ $(".loader").fadeOut("slow");
             <div class="panel-title pull-right">
               <div id="statusImg"></div>
             </div>
-           <!--  <div class="panel-title pull-right">
-               <i id="compProfile" class="btn btn-xs fa fa-expand" aria-hidden="true"></i>
-              </div> -->
             <div class="clearfix"></div>
           </div>
           <div class="panel-body">  
