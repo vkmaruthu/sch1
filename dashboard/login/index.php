@@ -4,7 +4,7 @@ session_start();
 
 if(isset($_SESSION['schAdminSession'])) {
   //echo "test";
-  echo "<script> window.location='../machine_dashboard';</script>";
+  echo "<script> window.location='../jobcard';</script>";
 }else{
   //echo $_SESSION['schAdminSession']."_Not working";
 }
@@ -20,7 +20,7 @@ if(isset($_SESSION['schAdminSession'])) {
   <title>Login</title>
   <!-- Tell the browser to be responsive to screen width -->
   <meta http-equiv="Content-Type" content="text/html; charset=utf-8 width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
-
+  <link rel="icon" type="image/png" sizes="32x32" href="../common/img/favicon-32x32.png">
   <?php include('../common/commonCSS.php');?>
   <?php include('../common/commonJS.php');?>
 
@@ -91,7 +91,7 @@ getLogin:function(){
                 $('#status2').hide();
                 $('#status3').hide();
                 window.setTimeout(function () { 
-                  window.location='../machine_dashboard';
+                  window.location='../home';
                 },3000);
             }else if(obj.login.infoRes=="D"){
                 $('#status3').slideDown(600);
@@ -133,10 +133,19 @@ $(document).ready(function() {
   $('#email').val('');
   $('#password').val('');
 
+  $('#formLogin').keydown(function(event) {
+      //alert(event.keyCode);
+      if (event.keyCode == 13) {
+          tempData.oeeLogin.getLogin();
+      }
+    });
+
+
 });
 
 
 </script>
+
 <!-- onload="window.history.forward();" -->
 <body>
 
@@ -166,7 +175,7 @@ $(document).ready(function() {
 
   <div class="input-group">
     <span class="input-group-addon"><i class="glyphicon glyphicon-user"></i></span>
-    <input id="email" type="text" class="form-control" name="email" placeholder="Email">
+    <input id="email" type="text" class="form-control" name="email" placeholder="Employee Id">
   </div><br>
   <div class="input-group">
     <span class="input-group-addon"><i class="glyphicon glyphicon-lock"></i></span>

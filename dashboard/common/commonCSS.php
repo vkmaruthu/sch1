@@ -318,6 +318,8 @@ a {cursor: pointer;}
 
       .dashMachineImg{
         margin-left: 40%;
+        width: 144px;
+        height: 145px;
       }
       .statusImg{
         width: 24%;
@@ -405,7 +407,9 @@ a {cursor: pointer;}
       }
       .dashMachineImg{
         margin-left: 40%;
-        width: 84%;
+        /*width: 84%;*/
+        width: 140px;
+        height: 137px;
       }
       .statusImg{
         width: 26%;

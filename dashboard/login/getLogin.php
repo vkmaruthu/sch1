@@ -15,39 +15,32 @@ if(isset($_POST['getLogin'])){
 	{	
 		//echo $_POST['password'];
 		$email = $_POST['email'];				
-		$password=$_POST['password'];
-
-		$sql="SELECT su.roles_id as roles_id,sr.name as roleName, sr.company_id as company_id,su.is_active as is_active from sfs_user su, sfs_roles sr
-		    where su.roles_id=sr.id and su.email_id='".$email."' and su.password='".$password."'";
-		//echo "<br>Q :".$sql; //is_active
+		$password=md5($_POST['password'],FALSE);
+        $sql = "SELECT id,username,Password,role FROM login WHERE username='".$email."' 
+        and Password='".$password."'";
+		// $sql="SELECT e.emp_id,e.role_code,e.frst_name,e.designation,p.plnt_code,p.plnt_s_desc,p.plnt_desc, c.comp_code,c.comp_desc	
+		// FROM tb_m_employee e, tb_o_plant p,tb_o_company c 
+		// 	WHERE e.emp_id='".$email."' and e.password='".$password."' 
+		// 	and e.plnt_code=p.plnt_code and p.comp_code=c.comp_code";
+		//echo "<pre>".	$sql; 
+		//die();
 		$query = mysqli_query($con,$sql) or die(mysqli_error());
 		
 		if(mysqli_num_rows($query) == 1) {
 			while($row = mysqli_fetch_assoc($query)){
-				$roles_id = $row['roles_id'];
-				$roleName = $row['roleName'];
-				$company_id = $row['company_id'];
-				$is_active = $row['is_active'];
-			}
+				
 
-			if($is_active==1){
 				$msg="User is Activated";
                 $response['info']=$msg;
                 $response['infoRes']='A'; //Activated
-
+                
 				$_SESSION['schAdminSession'] = $email;
-				$_SESSION['schAdminRole'] = $roleName;
+				$_SESSION['schAdminRole'] = $password;
 
-			}else{
-				$msg="User is Deactivated";
-                $response['info']=$msg;
-                $response['infoRes']='D'; //Deactivated
+				
 			}
-			    //$_SESSION['start'] = time(); // Taking now logged in time.
-	            // Ending a session in 30 minutes from the starting time.
-	            //$_SESSION['expire'] = $_SESSION['start'] + (10 * 5);
-				//echo "<script> window.location='admin/index.php';</script>";	
-			//echo "S";							
+
+			    						
 		}
 		else {
 			$msg="wrong user/password";

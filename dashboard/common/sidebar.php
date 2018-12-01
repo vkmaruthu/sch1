@@ -1,3 +1,4 @@
+
  <!-- Left side column. contains the logo and sidebar //style="position: fixed;" -->
   <aside class="main-sidebar" >
     <!-- sidebar: style can be found in sidebar.less -->
@@ -5,10 +6,11 @@
       <!-- Sidebar user panel -->
       <div class="user-panel">
         <div class="pull-left image" id="userImgFileName">
-        <!--   <img src="../common/img/user.jpg" class="img-circle" alt="User Image"> -->
+          <!-- <img src="../common/img/user.jpg" class="img-circle" alt="User Image"> -->
         </div>
         <div class="pull-left info">
           <p id="sidebarUserName"></p>
+          <small id="sidebarUserDes"></small>
           <!-- <a href="../logout.php">Logout <i class="fa fa-sign-out"></i></a>  -->
         </div>
       </div>
@@ -37,11 +39,11 @@
         <!--     <li><a href="../home/index.php" id="companyOEE"><i class="fa fa-circle-o"></i> Company OEE</a></li>
             <li><a href="../history/index.php" id="menuHistory"><i class="fa fa-circle-o"></i> History</a></li>
             <li><a href="index2.html"><i class="fa fa-circle-o"></i> Pridiction</a></li> -->
-            <li><a href="../machine_dashboard" id="companyOEE"><i class="fa fa-circle-o"></i>Overview</a></li>
+          <li><a href="../home" id="reasons"><i class="fa fa-qrcode"></i> Reasons</a></li>
             <li><a href="../logout.php" id="logout"><i class="fa fa-sign-out"></i>Logout</a></li>
           </ul>
         </li>
-        <li class="treeview" id="hideConfiguration">
+        <!-- <li class="treeview" id="hideConfiguration">
           <a href="#">
             <i class="fa fa-files-o"></i>
             <span>Configuration</span>
@@ -50,7 +52,6 @@
               </span>
           </a>
           <ul class="treeview-menu">
-              <li><a href="pages/layout/top-nav.html" id="menuShiftConfiguration"><i class="fa fa-files-o"></i> Shift Configuration</a></li>
               <li><a href="../oeelimits/oeelimits.php" id="menuOeeConfiguration"><i class="fa fa-th"></i> OEE Configuration</a></li>
               <li><a href="../user/role.php" id="menuRoleConfiguration"><i class="fa fa-users"></i> Role Configuration</a></li>
               <li><a href="../user/user.php" id="menuUserConfiguration"><i class="fa fa-users"></i> User Configuration</a></li>
@@ -60,8 +61,9 @@
               <li><a href="../user/screens.php?screen=s" id="menuScreen"><i class="fa fa-files-o"></i> Screens</a></li>
               <li><a href="../reasons/createreasons.php" id="menuReason"><i class="fa fa-files-o"></i> Reasons</a></li>
               <li><a href="../reject/index.php" id="menuRejectEntryScreen"><i class="fa fa-th"></i> Reject</a></li>
+              <li><a href="../jobcard/index.php" id="menuJobCardScreen"><i class="fa fa-qrcode"></i> Job Card</a></li>
           </ul>
-        </li>        
+        </li>   -->      
       </ul>
     </section>
     <!-- /.sidebar -->

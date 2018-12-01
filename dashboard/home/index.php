@@ -1,136 +1,157 @@
 <?php include('../common/header.php'); ?>
-<?php include('../common/sidebar.php'); ?>
-
+<?php //include('../common/sidebar.php'); ?>
 <script type="text/javascript">
-var tempData;
-if(tempData===null||tempData===undefined){
-   tempData={};
-}
-  
-tempData.oeehome=
-{
-   oeeCirclePerc:function(id,val,fgColor) {  
-    debugger;
-       $('#'+id).trigger('configure',{
-            "min":0,
-            "max":100,
-            "fgColor":fgColor,
-            "inputColor":fgColor,
-            "format" : function (val) {
-              return val + '%';
-            }
-        }
-    );      
-    $('#'+id).val(val).trigger('change');
-  },
-  visitPlants:function(){
-    window.location.href="../machine_dashboard/index.php?selDate="+$('#userDateSel').val();
-  },
-  getSelDate:function(){
-    var date= $('#userDateSel').val();
-    alert(date);
-  }
-
-};
-
-
-
-$(document).ready(function() {
-debugger; 
-/* Date is defined to DatePicker */
-
-
- $("#companyOEE").parent().addClass('active');
- $("#companyOEE").parent().parent().closest('.treeview').addClass('active menu-open');
- 
-var date = new Date();
-var today = new Date(date.getFullYear(), date.getMonth(), date.getDate());
-$('.datepicker-me').datepicker('setDate', today);
-
-tempData.oeehome.oeeCirclePerc('oeePerc',90,'#E29C21');
-tempData.oeehome.oeeCirclePerc('availPerc',40,'#FDCA6C');
-tempData.oeehome.oeeCirclePerc('performPerc',20,'#DB4F31');
-tempData.oeehome.oeeCirclePerc('qualityPerc',90,'#1AD34E');
-
+	$(document).ready(function() {
+	add();
 });
 
+
 </script>
+<script type="text/javascript">
+$(document).ready(function() {
+ debugger;
+var tempData;
+if(tempData===null||tempData===undefined){  
+     
+  add();
+}
+function add(){
+
+	alert('welcome')
+	 $(".dis").append("<b>Appended text</b>");
+	 var url="reason.php";
+             	$.ajax({
+					      type:"POST",
+					      url:url,
+					      data:{'id': 'one'	},
+					      success: function(obj) {
+					      	console.log(obj.idleReason)
+					      }
+					  });
+}
 
 
- 
-  <!-- Content Wrapper. Contains page content -->
-  <div class="content-wrapper">
 
-    <!-- Main content -->
-    <section class="content">
+	   debugger;
+            //alert('data')
+    $("#reasons").parent().addClass('active');
+    $("#reasons").parent().parent().closest('.treeview').addClass('active menu-open');
 
-    <div class="btnsStyle" id="btns">
-      <div class="col-md-5 col-sm-12 col-xs-2 pull-left headerTitle" >
-      <h3 style="margin-top: 2px;">Company<h3>
-      </div>
+    $('.click_btn').click(function(){   
+   
+    		var val=$(this).data('value');  	alert(val);
+    	    var url="getHome.php";
+             	$.ajax({
+					      type:"POST",
+					      url:url,
+					      data:{'id':val	},
+					      success: function(obj) {
+					      //	console.log(obj)
+					      }
+					  });
+    });
+    
 
-      <div class="col-md-5 col-sm-12 col-xs-9 pull-right" style="margin-top:5px;">
-           <!-- <div class="col-md-5 col-md-offset-2 col-xs-6">
-            <select class="form-control" id="shiftDropdown" style="font-size: 12px; padding: 2px;"
-             onchange= "tempData.cpsData.shiftsdata();">
-            </select>   
-          </div>  -->
-        <div class="col-md-5 col-xs-9 pull-right">  
-          <div class='input-group date datepicker-me' data-provide="datepicker">
-            <input type='text' class="form-control" id='userDateSel' name="userDateSel"  onchange="tempData.oeehome.getSelDate();"
-            style="cursor: pointer;" readonly="readonly"/>
-              <label class="input-group-addon btn" for="userDateSel">
-                  <span class="glyphicon glyphicon-calendar"></span>               
-              </label>
-          </div>  
-        </div>
-        </div>
-      </div>
+});
+</script>
+<style type="text/css">
+		/*.btn {
+		margin: 20px;
+		margin-left: 10px;
+		width: 200px;
+	}*/
+
+	.content>.row{
+		margin-top: 1%;
+	}
+
+	.btn-primary{
+		height: 78px;
+	    margin-top: 7px;
+    	margin-bottom: 10px;
+	}
+</style>
+ <div class="content-wrapper">
+	<section class="content">
+		<div class="row">
+
+				<div class="col-xs-6 col-md-2">
+					<button class="col-xs-12 col-md-12 btn btn-primary btn_style click_btn" id="b1" data-value='1'><strong>Reason Code 1</strong></button>
+				</div>
+
+				<div class="col-xs-6 col-md-2">
+					<button class="col-xs-12 col-md-12 btn btn-primary btn_style click_btn" id="b2" data-value='2'><strong>Reason Code 2</strong></button>
+				</div>
+
+				<div class="col-xs-6 col-md-2">
+					<button class="col-xs-12 col-md-12 btn btn-primary btn_style click_btn" id="b3" data-value='3'><strong>Reason Code 3</strong></button>
+				</div>
+
+				<div class="col-xs-6 col-md-2">
+					<button class="col-xs-12 col-md-12 btn btn-primary btn_style click_btn" id="b4" data-value='4'><strong>Reason Code 4</strong></button>
+				</div>
+
+				<div class="col-xs-6 col-md-2">
+					<button class="col-xs-12 col-md-12 btn btn-primary btn_style click_btn" id="b5" data-value='5'><strong>Reason Code 5</strong></button>
+				</div>
+
+				<div class="col-xs-6 col-md-2">
+					<button class="col-xs-12 col-md-12 btn btn-primary btn_style click_btn" id="b6" data-value='6'><strong>Reason Code 6</strong></button>
+				</div>
+		  
+        
+		
+				<div class="col-xs-6 col-md-2">
+					<button class="col-xs-12 col-md-12 btn btn-primary btn_style click_btn" id="b7" data-value='7'><strong>Reason Code 7</strong></button>
+				</div>
+
+				<div class="col-xs-6 col-md-2">
+					<button class="col-xs-12 col-md-12 btn btn-primary btn_style click_btn" id="b8" data-value='8'><strong>Reason Code 8</strong></button>
+				</div>
+
+				<div class="col-xs-6 col-md-2">
+					<button class="col-xs-12 col-md-12 btn btn-primary btn_style click_btn" id="b9" data-value='9'><strong>Reason Code 9</strong></button>
+				</div>
+
+				<div class="col-xs-6 col-md-2">
+					<button class="col-xs-12 col-md-12 btn btn-primary btn_style click_btn" id="b10" data-value='10'><strong>Reason Code 10</strong></button>
+				</div>
+
+				<div class="col-xs-6 col-md-2">
+					<button class="col-xs-12 col-md-12 btn btn-primary btn_style click_btn" id="b11" data-value='11'><strong>Reason Code 11</strong></button>
+				</div>
+
+				<div class="col-xs-6 col-md-2">
+					<button class="col-xs-12 col-md-12 btn btn-primary btn_style click_btn" id="b12" data-value='12'><strong>Reason Code 12</strong></button>
+				</div>
+	    
+		 		
+				<div class="col-xs-6 col-md-2">
+					<button class="col-xs-12 col-md-12 btn btn-primary btn_style click_btn" id="b13" data-value='13'><strong>Reason Code 13</strong></button>
+				</div>
+
+				<div class="col-xs-6 col-md-2">
+					<button class="col-xs-12 col-md-12 btn btn-primary btn_style click_btn" id="b14" data-value='14'><strong>Reason Code 14</strong></button>
+				</div>
+
+				<div class="col-xs-6 col-md-2">
+					<button class="col-xs-12 col-md-12 btn btn-primary btn_style click_btn" id="b15" data-value='15'><strong>Reason Code 15</strong></button>
+				</div>
+
+				<div class="col-xs-6 col-md-2">
+					<button class="col-xs-12 col-md-12 btn btn-primary btn_style click_btn" id="b16" data-value='16'><strong>Reason Code 16</strong></button>
+				</div>
+
+				<div class="col-xs-6 col-md-2">
+					<button class="col-xs-12 col-md-12 btn btn-primary btn_style click_btn" id="b17" data-value='17'><strong>Reason Code 17</strong></button>
+				</div>
+	        <div class="col-md-6 Headtitle text-center">  
+	
+		      <span class="reason" id="reason"><div class="dis"></div></span>
+		    </div>
 
 
-     <div class="col-xs-12 col-md-12 text-center">
-        <input type="text" class="knob" id="oeePerc" data-skin="tron" data-thickness="0.2" data-width="180" data-height="180" readonly>
-        <div class="knob-label commonSizeOEE">OEE</div>
-      </div>
-
-    <div class="row">
-      <div class="col-xs-12 col-md-4 text-center">
-        <input type="text" class="knob" id="availPerc" data-skin="tron" data-thickness="0.2" data-width="100" data-height="100" readonly>
-        <div class="knob-label commonSizeOEEOther">Availability</div>
-      </div>
-
-      <div class="col-xs-6 col-md-4 text-center">
-        <input type="text" class="knob" id="performPerc" data-skin="tron" data-thickness="0.2" data-width="100" data-height="100" readonly>
-        <div class="knob-label commonSizeOEEOther">Performance</div>
-      </div>
-
-      <div class="col-xs-6 col-md-4 text-center">
-        <input type="text" class="knob" id="qualityPerc" data-skin="tron" data-thickness="0.2" data-width="100" data-height="100" readonly>
-        <div class="knob-label commonSizeOEEOther">Quality</div>
-      </div>
-    </div>
-
-    <hr class="hr-primary"/>  
-
-      <div class="col-xs-12 col-md-4 col-md-offset-4" style="margin-bottom: 2%;margin-top: -2%;">
-            <h2 class="btn btn-primary btn-lg btn-block" onclick="tempData.oeehome.visitPlants()">View Details 
-             <i class="fa fa-arrow-circle-right" style="font-size: 27px;float: right;"></i> </h2>
-            
-        </div> 
-      </div> 
-
-
-    </section>
-    <!-- /.content -->
-  </div>
-  <!-- /.content-wrapper -->
-
-  <?php include('../common/footer.php'); ?>
-  <!-- Add the sidebar's background. This div must be placed
-       immediately after the control sidebar -->
-  <!-- <div class="control-sidebar-bg"></div> -->
+		</div>
+	</section>
 </div>
-<!-- ./wrapper -->
 
-</body>
-</html>

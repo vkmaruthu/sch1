@@ -1,6 +1,7 @@
 <?php 
 error_reporting(0);
 session_start(); 
+
 ?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN"
   "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
@@ -215,8 +216,7 @@ session_start();
       <a href="index.php" class="sidebar-toggle" data-toggle="push-menu" role="button">
         <span class="sr-only">Toggle navigation</span>
       </a>
-
-
+  
     <div class="col-md-10 Headtitle text-center">  
       <span class="product_title">smartFactory Dashboard</span><br>
       <span class="company_title" id="compNameDB"></span>
@@ -224,7 +224,8 @@ session_start();
 
     <div class="col-md-2" style=" margin-left: -6%;">  
       <span class="logo-mini" id="compImgMini">
-       <!--  <img src="../common/img/comp_logo/d/eimsdefault.png" class="cust_logo"> -->
+           
+    
       </span>
     </div>  
            
@@ -242,7 +243,7 @@ $(document).ready(function() {
     var selMonth=null;
     var selYear=null;
     var finalDateFormat=null;*/
-
+add();
       var setDateFormat="dd/mm/yyyy";
       $('.datepicker-me').datepicker({
           format: setDateFormat,
